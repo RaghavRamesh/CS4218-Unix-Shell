@@ -16,17 +16,17 @@ public class ShellImplementation implements Shell {
 			throws AbstractApplicationException, ShellException {
 		// TODO Auto-generated method stub
 		try {
-			String s = "Hello testing";
-			stdout.write(s.getBytes());
+//			String s = "Hello testing";
+//			stdout.write(s.getBytes());
+			// Identify cmdline into Call, Sequence and Pipe
 			Command comm = new CallCommand(cmdline);
-			
-			comm.evaluate(stdin, stdout);
+//			comm.evaluate(stdin, stdout);
 		} catch (Exception e) {
 			
 		}
 	}
 	
-	Command getCommand() {
+	Command getCommand(String cmdline) {
 		return null;
 	}
 	
