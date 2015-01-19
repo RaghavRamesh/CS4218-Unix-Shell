@@ -19,10 +19,9 @@ public class ShellImplementation implements Shell {
 			String s = "Hello testing";
 			stdout.write(s.getBytes());
 			Command comm = new CallCommand(cmdline);
-			
-			comm.evaluate(stdin, stdout);
+			comm.evaluate(System.in, stdout);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 	
