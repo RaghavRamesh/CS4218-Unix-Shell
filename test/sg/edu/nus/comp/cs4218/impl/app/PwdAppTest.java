@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +25,7 @@ public class PwdAppTest {
 		pwdApp = new PwdApp();
 		try {
 			pwdApp.run(null, null, null);
+			fail();
 		} catch (AbstractApplicationException e) {
 			assertEquals(e.getMessage(), "pwd: "
 					+ Consts.Messages.OUT_STR_NOT_NULL);
@@ -50,11 +52,10 @@ public class PwdAppTest {
 			temp.delete();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "pwd: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
+			fail();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			fail();
 		}
 	}
 
