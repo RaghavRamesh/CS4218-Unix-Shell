@@ -44,9 +44,9 @@ public class CallCommand implements Command {
 		// If quote encountered, treat till end of quote as single argument
 		String[] args;
 		List<String> argsList = new ArrayList<String>();
-		Pattern pattern = Pattern.compile("([a-zA-Z0-9]+|'[^']*')+");
+		Pattern pattern = Pattern.compile("([a-zA-Z0-9]+|'[^']*'|\"[^\"]*\"|`[^`]*`)+");
 		Matcher matcher = pattern.matcher(command);
-		for (int i = 0; matcher.find(); i++) {
+		while(matcher.find()) {
 		   argsList.add(matcher.group(0));
 		} 	
 		args = argsList.toArray(new String[argsList.size()]);
