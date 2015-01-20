@@ -20,9 +20,9 @@ public class ShellImplementation implements Shell {
 //			stdout.write(s.getBytes());
 			// Identify cmdline into Call, Sequence and Pipe
 			Command comm = new CallCommand(cmdline);
-//			comm.evaluate(stdin, stdout);
+			comm.evaluate(System.in, stdout);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 	
