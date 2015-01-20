@@ -1,10 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,12 +42,14 @@ public class CallCommand implements Command {
 	 */
 	String[] getArguments(String command) {
 		// If quote encountered, treat till end of quote as single argument
-		String[] args = new String[10];
+		String[] args;
+		List<String> argsList = new ArrayList<String>();
 		Pattern pattern = Pattern.compile("([a-zA-Z0-9]+|'[^']*')+");
 		Matcher matcher = pattern.matcher(command);
 		for (int i = 0; matcher.find(); i++) {
-		   args[i] = matcher.group(0);
+		   argsList.add(matcher.group(0));
 		} 	
+		args = argsList.toArray(new String[argsList.size()]);
 		return args;
 	}
 }
