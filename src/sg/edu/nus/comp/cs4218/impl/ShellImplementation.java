@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import sg.edu.nus.comp.cs4218.Command;

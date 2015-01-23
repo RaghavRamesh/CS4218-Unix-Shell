@@ -2,15 +2,13 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.QuoteParser;
 
 public class CallCommand implements Command {
 	private String command;
@@ -42,14 +40,8 @@ public class CallCommand implements Command {
 	 */
 	String[] getArguments(String command) {
 		// If quote encountered, treat till end of quote as single argument
-		String[] args;
-		List<String> argsList = new ArrayList<String>();
-		Pattern pattern = Pattern.compile("([a-zA-Z0-9]+|'[^']*'|\"[^\"]*\"|`[^`]*`)+");
-		Matcher matcher = pattern.matcher(command);
-		while(matcher.find()) {
-		   argsList.add(matcher.group(0));
-		} 	
-		args = argsList.toArray(new String[argsList.size()]);
+	  List<String> tokens = QuoteParser.parse(command); 
+		String[] args = tokens.toArray(new String[tokens.size()]);
 		return args;
 	}
 }
