@@ -20,7 +20,7 @@ public class ShellImplementation implements Shell {
 	  }
 	}
 	
-	Command getCommand() {
+	Command getCommand(String cmdline) {
 		return null;
 	}
 	
