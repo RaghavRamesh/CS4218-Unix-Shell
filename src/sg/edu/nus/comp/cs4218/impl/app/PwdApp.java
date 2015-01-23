@@ -1,6 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -33,5 +32,5 @@ public class PwdApp implements Application {
 		}
 
 	}
-	
+
 }

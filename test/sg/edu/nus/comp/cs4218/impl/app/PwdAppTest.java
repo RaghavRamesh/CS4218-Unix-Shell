@@ -35,9 +35,10 @@ public class PwdAppTest {
 	@Test
 	public void testPwd() {
 		pwdApp = new PwdApp();
+		File temp = null;
 		try {
 
-			File temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
 			String presentWorkingDir = System
@@ -48,14 +49,17 @@ public class PwdAppTest {
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(temp)));
 			assertEquals(buffReader.readLine(), presentWorkingDir);
-
-			temp.delete();
+			buffReader.close();
 
 		} catch (AbstractApplicationException e) {
 			fail();
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
+		} finally {
+			if (temp != null) {
+				temp.delete();
+			}
 		}
 	}
 

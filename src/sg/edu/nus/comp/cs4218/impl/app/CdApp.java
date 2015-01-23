@@ -10,22 +10,21 @@ import sg.edu.nus.comp.cs4218.DirectoryHelpers;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
-import sg.edu.nus.comp.cs4218.exception.PwdException;
 
 public class CdApp implements Application {
 
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException {
-		
-		if(args == null){
+
+		if (args == null) {
 			throw new CdException(Consts.Messages.ARG_NOT_NULL);
 		}
-		
-		if(stdout == null){
+
+		if (stdout == null) {
 			throw new CdException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
-		
+
 		if (args.length == 0) {
 			throw new CdException(Consts.Messages.NO_DIR_ENTERED);
 		}
@@ -40,24 +39,24 @@ public class CdApp implements Application {
 		String currentDirectory;
 		try {
 			currentDirectory = DirectoryHelpers.getCurrentDirectory();
-			
-			String requiredDirectory = currentDirectory + File.separator + folderName;
+
+			String requiredDirectory = currentDirectory + File.separator
+					+ folderName;
 			File reqdPathAsFile = new File(requiredDirectory);
 
 			if (!reqdPathAsFile.exists()) {
-				throw new PwdException(Consts.Messages.PATH_NOT_FOUND);
+				throw new CdException(Consts.Messages.PATH_NOT_FOUND);
 			}
-			
-			if(reqdPathAsFile.isFile()){
-				throw new PwdException(Consts.Messages.DIR_NOT_VALID);
+
+			if (reqdPathAsFile.isFile()) {
+				throw new CdException(Consts.Messages.DIR_NOT_VALID);
 			}
-			
+
 			System.setProperty(Consts.Keywords.USER_DIR, requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 
 			throw new CdException(e);
 		}
-
 
 	}
 
