@@ -7,7 +7,9 @@ import java.io.PrintWriter;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.DirectoryHelpers;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.PwdException;
 
 public class PwdApp implements Application {
@@ -20,22 +22,16 @@ public class PwdApp implements Application {
 			throw new PwdException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
 
-		String currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
-		File activePathAsFile = new File(currentDirectory);
-
-		// check if current directory information is not corrupted one
-		if (!activePathAsFile.exists()) {
-			throw new PwdException(Consts.Messages.CURDIR_NOT_EXIST);
-		}
-
-		if (activePathAsFile.isFile()) {
-			throw new PwdException(Consts.Messages.DIR_NOT_VALID);
-		}
-
-		if (activePathAsFile.isDirectory()) {
+		String currentDirectory;
+		try {
+			currentDirectory = DirectoryHelpers.getCurrentDirectory();
 			PrintWriter outPathWriter = new PrintWriter(stdout);
 			outPathWriter.write(currentDirectory);
 			outPathWriter.flush();
+		} catch (InvalidDirectoryException e) {
+			throw new PwdException(e);
 		}
+
 	}
+	
 }
