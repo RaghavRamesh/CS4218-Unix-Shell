@@ -1,19 +1,19 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 public class CharacterPosition {
-  int position;
-  Character character;
+  int mPosition;
+  Character mCharacter;
   
-  public CharacterPosition(Character _char, int _pos) {
-    character = _char;
-    position = _pos;
+  public CharacterPosition(Character character, int position) {
+    mPosition = position;
+    mCharacter = character;
   }
   
   public int getPosition() {
-    return position;
+    return mPosition;
   }
 
   public Character getCharacter() {
-    return character;
+    return mCharacter;
   }
 }

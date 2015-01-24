@@ -11,36 +11,39 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.QuoteParser;
 
 public class CallCommand implements Command {
-	private String command;
+	private String mCommandLine;
 	
-	public CallCommand(String command) {
-		this.command = command;
+	public CallCommand(String commandLine) {
+		this.mCommandLine = commandLine;
 	}
 
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		Application app = getApplication(command);
-		String[] args = getArguments(command);
-//		app.run(args, stdin, stdout);
+		Application app = getApplication(mCommandLine);
+		String[] args = getArguments(mCommandLine);
+		if (app != null) {
+		  app.run(args, stdin, stdout);
+		}
 	}
 
 	@Override
 	public void terminate() {
 		// TODO Auto-generated method stub
-		
+	  
 	}
 	
-	Application getApplication(String command) {
+	private Application getApplication(String command) {
 		return null;
 	}
 	
 	/**
 	 * Parses arguments after quoting.
 	 */
-	String[] getArguments(String command) {
-		// If quote encountered, treat till end of quote as single argument
-	  List<String> tokens = QuoteParser.parse(command); 
+	private String[] getArguments(String command) {
+	  List<String> tokens = QuoteParser.parse(command);
+	  // Remove the application token
+	  tokens.remove(0);
 		String[] args = tokens.toArray(new String[tokens.size()]);
 		return args;
 	}

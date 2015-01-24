@@ -8,6 +8,11 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class SeqCommand implements Command {
+  private String mCommandLine;
+  
+  public SeqCommand(String commandLine) {
+    this.mCommandLine = commandLine;
+  }
 
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
