@@ -20,8 +20,11 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		Application app = getApplication(mCommandLine);
-		String[] args = getArguments(mCommandLine);
+	  List<String> tokens = QuoteParser.parse(mCommandLine);
+	  String appId = tokens.get(0);
+		Application app = getApplication(appId);
+		tokens.remove(0);
+		String[] args = tokens.toArray(new String[tokens.size()]);
 		if (app != null) {
 		  app.run(args, stdin, stdout);
 		}
@@ -33,18 +36,7 @@ public class CallCommand implements Command {
 	  
 	}
 	
-	private Application getApplication(String command) {
+	private Application getApplication(String appId) {
 		return null;
-	}
-	
-	/**
-	 * Parses arguments after quoting.
-	 */
-	private String[] getArguments(String command) {
-	  List<String> tokens = QuoteParser.parse(command);
-	  // Remove the application token
-	  tokens.remove(0);
-		String[] args = tokens.toArray(new String[tokens.size()]);
-		return args;
 	}
 }
