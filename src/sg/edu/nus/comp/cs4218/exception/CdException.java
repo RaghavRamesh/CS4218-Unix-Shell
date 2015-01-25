@@ -4,4 +4,8 @@ public class CdException extends AbstractApplicationException {
    public CdException(String message) {
         super("cd: " + message);
    }
+
+public CdException(InvalidDirectoryException exception) {
+	super("cd: " + exception.getMessage());
+	}
 }
