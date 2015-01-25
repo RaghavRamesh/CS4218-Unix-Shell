@@ -4,4 +4,10 @@ public class PwdException extends AbstractApplicationException {
    public PwdException(String message) {
         super("pwd: " + message);
    }
+   
+   public PwdException(InvalidDirectoryException exception) {
+		super("pwd: " + exception.getMessage());
+	}
+
 }
+
