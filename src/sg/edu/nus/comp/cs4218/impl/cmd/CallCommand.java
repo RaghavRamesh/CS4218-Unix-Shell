@@ -9,6 +9,7 @@ import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.QuoteParser;
+import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 
 public class CallCommand implements Command {
 	private String mCommandLine;
@@ -25,9 +26,7 @@ public class CallCommand implements Command {
 		Application app = getApplication(appId);
 		tokens.remove(0);
 		String[] args = tokens.toArray(new String[tokens.size()]);
-		if (app != null) {
-		  app.run(args, stdin, stdout);
-		}
+		app.run(args, stdin, stdout);
 	}
 
 	@Override
@@ -36,7 +35,8 @@ public class CallCommand implements Command {
 	  
 	}
 	
-	private Application getApplication(String appId) {
-		return null;
+	private Application getApplication(String appId) throws AbstractApplicationException {
+    ApplicationFactory factory = new ApplicationFactory();
+    return factory.getApplication(appId);
 	}
 }

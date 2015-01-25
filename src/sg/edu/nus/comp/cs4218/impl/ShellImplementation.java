@@ -42,7 +42,7 @@ public class ShellImplementation implements Shell {
 	public static void main(String[] args) {
 	  try {
 	    ShellImplementation shellImplementation = new ShellImplementation();
-	    shellImplementation.parseAndEvaluate("echo \"hello world\"", System.out);
+	    shellImplementation.parseAndEvaluate("pwd", System.out);
 	  } catch (Exception e) {
 	    e.printStackTrace();
 	  }
