@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.AppNotFoundException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class ApplicationFactory {
   HashMap<String, Application> maps = new HashMap<String, Application>();
@@ -15,7 +16,7 @@ public class ApplicationFactory {
   }
   
   
-  public Application getApplication(String appId) throws AppNotFoundException {
+  public Application getApplication(String appId) throws ShellException {
     if (maps.containsKey(appId)) {
       return maps.get(appId);
     } else {
