@@ -16,35 +16,31 @@ public class ShellImplementation implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-	  try {
 	    Command command = getCommand(cmdline);
 	    command.evaluate(null, stdout);
-	  } catch (Exception e) {
-	    throw new ShellException(e.getMessage());
-	  }
 	}
-	
-	private Command getCommand(String cmdline) {
-	  List<String> tokens = QuoteParser.parse(cmdline);
-	  for (String token : tokens) {
-	    if (!QuoteParser.isQuoted(token) && token.contains(";")) {
-	      return new SeqCommand(cmdline);
-	    }
-	  }
-	  for (String token : tokens) {
-	    if (!QuoteParser.isQuoted(token) && token.contains("|")) {
-	      return new PipeCommand(cmdline);
-	    }
-	  }
-	  return new CallCommand(cmdline);
+
+	public static Command getCommand(String cmdline) {
+		List<String> tokens = QuoteParser.parse(cmdline);
+		for (String token : tokens) {
+			if (!QuoteParser.isQuoted(token) && token.contains(";")) {
+				return new SeqCommand(cmdline);
+			}
+		}
+		for (String token : tokens) {
+			if (!QuoteParser.isQuoted(token) && token.contains("|")) {
+				return new PipeCommand(cmdline);
+			}
+		}
+		return new CallCommand(cmdline);
 	}
 	
 	public static void main(String[] args) {
-	  try {
-	    ShellImplementation shellImplementation = new ShellImplementation();
-	    shellImplementation.parseAndEvaluate("pwd", System.out);
-	  } catch (Exception e) {
-	    e.printStackTrace();
-	  }
+		try {
+			ShellImplementation shellImplementation = new ShellImplementation();
+			shellImplementation.parseAndEvaluate("cd src; pwd; ls", System.out);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
