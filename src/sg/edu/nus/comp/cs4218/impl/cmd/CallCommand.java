@@ -8,7 +8,7 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.QuoteParser;
+import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 
 public class CallCommand implements Command {
@@ -17,7 +17,7 @@ public class CallCommand implements Command {
 	
 	public CallCommand(String commandLine) {
 		this.mCommandLine = commandLine;
-		this.mTokens = QuoteParser.parse(mCommandLine);
+		this.mTokens = Parser.parseCommandLine(mCommandLine);
 	}
 
 	@Override

@@ -21,14 +21,14 @@ public class ShellImplementation implements Shell {
 	}
 
 	public static Command getCommand(String cmdline) {
-		List<String> tokens = QuoteParser.parse(cmdline);
+		List<String> tokens = Parser.parseCommandLine(cmdline);
 		for (String token : tokens) {
-			if (!QuoteParser.isQuoted(token) && token.contains(";")) {
+			if (!Parser.isQuoted(token) && token.contains(";")) {
 				return new SeqCommand(cmdline);
 			}
 		}
 		for (String token : tokens) {
-			if (!QuoteParser.isQuoted(token) && token.contains("|")) {
+			if (!Parser.isQuoted(token) && token.contains("|")) {
 				return new PipeCommand(cmdline);
 			}
 		}
