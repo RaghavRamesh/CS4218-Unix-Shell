@@ -38,7 +38,7 @@ public class ShellImplementation implements Shell {
 	public static void main(String[] args) {
 		try {
 			ShellImplementation shellImplementation = new ShellImplementation();
-			shellImplementation.parseAndEvaluate("cd src; pwd; ls", System.out);
+			shellImplementation.parseAndEvaluate("cd src; pwd > a.txt; ls", System.out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

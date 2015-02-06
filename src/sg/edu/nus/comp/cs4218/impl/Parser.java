@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -14,6 +15,10 @@ public final class Parser {
 	
 	static final Character SEMICOLON = ';';
 	static final Character PIPE = '|';
+	static final Character IN_STREAM = '<';
+	static final Character OUT_STREAM = '>';
+	
+	static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, PIPE, IN_STREAM, OUT_STREAM);
 
 	private Parser() {
 	}
@@ -44,7 +49,7 @@ public final class Parser {
 					}
 				}
 			} else if (quoteStack.isEmpty() 
-			           && (currentChar.equals(SEMICOLON) || currentChar.equals(PIPE))) {
+			           && SPECIALS.contains(currentChar)) {
 			  // Add the current token without the last character
 			  addNonEmptyToList(tokens, currentToken.substring(0, currentToken.length() - 1));
 			  // Add the last character
@@ -91,7 +96,17 @@ public final class Parser {
 	
 	public static Boolean isSemicolon(String input) {
 	  return input.length() == 1
-	      && input.charAt(0) == ';';
+	      && input.charAt(0) == SEMICOLON;
+	}
+	
+	public static Boolean isInStream(String input) {
+	  return input.length() == 1
+	      && input.charAt(0) == IN_STREAM;
+	}
+	
+	public static Boolean isOutStream(String input) {
+	  return input.length() == 1
+	      && input.charAt(0) == OUT_STREAM;
 	}
 	 
 	private static Boolean addNonEmptyToList(List<String> list, String str) {
