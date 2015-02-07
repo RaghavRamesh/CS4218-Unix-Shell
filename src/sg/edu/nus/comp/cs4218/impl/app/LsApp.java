@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.LsException;
@@ -44,7 +45,7 @@ public class LsApp implements Application {
 			}
 
 			else { // current directory if argument is not mentioned
-				requiredDirectory = DirectoryHelpers.getCurrentDirectory();
+				requiredDirectory = Environment.getCurrentDirectory();
 			}
 
 			displayContentsInDirectory(stdout, requiredDirectory);
@@ -56,7 +57,7 @@ public class LsApp implements Application {
 	private void displayContentsInDirectory(OutputStream stdout,
 			String requiredDirectory) throws InvalidDirectoryException {
 
-		File[] currDirContents = DirectoryHelpers
+		File[] currDirContents = Environment
 				.getContentsInDirectory(requiredDirectory);
 		PrintWriter outPathWriter = new PrintWriter(stdout);
 

@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
@@ -157,7 +158,7 @@ public class LsAppTest {
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = DirectoryHelpers.getCurrentDirectory();
+			String currentDir = Environment.getCurrentDirectory();
 			newFile1 = new File(currentDir + File.separator + "test1.txt");
 			newFile2 = new File(currentDir + File.separator + "test2.xyz");
 			newFile3 = new File(currentDir + File.separator + "subdir1");
@@ -209,7 +210,7 @@ public class LsAppTest {
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = DirectoryHelpers.getCurrentDirectory();
+			String currentDir = Environment.getCurrentDirectory();
 			newFile1 = new File(currentDir + File.separator + "test1.txt");
 			newFile2 = new File(currentDir + File.separator + "test2.xyz");
 			newFile3 = new File(currentDir + File.separator + "subdir1");
@@ -295,7 +296,7 @@ public class LsAppTest {
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = DirectoryHelpers.getCurrentDirectory();
+			String currentDir = Environment.getCurrentDirectory();
 			newFile1 = new File(currentDir + File.separator + ".test1");
 			newFile2 = new File(currentDir + File.separator + ".subdir1");
 

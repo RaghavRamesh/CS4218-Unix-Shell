@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
@@ -38,7 +39,7 @@ public class CdApp implements Application {
 
 		String currentDirectory;
 		try {
-			currentDirectory = DirectoryHelpers.getCurrentDirectory();
+			currentDirectory = Environment.getCurrentDirectory();
 
 			String requiredDirectory = currentDirectory + File.separator
 					+ folderName;

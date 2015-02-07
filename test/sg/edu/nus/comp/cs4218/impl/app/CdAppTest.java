@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
@@ -130,7 +130,7 @@ public class CdAppTest {
 
 		try {
 			cmdApp.run(args, null, System.out);
-			String directoryAfterCd = DirectoryHelpers.getCurrentDirectory();
+			String directoryAfterCd = Environment.getCurrentDirectory();
 			assertEquals(currentDirectory + File.separator + tempFolder,
 					directoryAfterCd);
 

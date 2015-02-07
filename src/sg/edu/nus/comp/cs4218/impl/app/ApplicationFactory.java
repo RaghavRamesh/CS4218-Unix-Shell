@@ -12,6 +12,7 @@ public class ApplicationFactory {
 		maps.put("cd", new CdApp());
 		maps.put("ls", new LsApp());
 		maps.put("pwd", new PwdApp());
+		maps.put("cat", new CatApp());
 	}
 
 	public Application getApplication(String appId) throws AppNotFoundException {

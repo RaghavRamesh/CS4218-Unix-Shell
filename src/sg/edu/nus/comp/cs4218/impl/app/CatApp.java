@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
@@ -63,7 +64,7 @@ public class CatApp implements Application {
 					throw new CatException(Consts.Messages.FILE_NOT_VALID);
 				}
 
-				requiredDirectory = DirectoryHelpers.getCurrentDirectory()
+				requiredDirectory = Environment.getCurrentDirectory()
 						+ File.separator + args[i];
 				File reqdPathAsFile = new File(requiredDirectory);
 
