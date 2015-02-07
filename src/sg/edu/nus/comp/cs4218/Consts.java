@@ -16,7 +16,7 @@ public class Consts {
 		public static final String FILE_NOT_VALID = "File name is invalid";
 		public static final String INP_STR_NOT_NULL = "Input stream cannot be null";
 		public static final String ARG_NOT_EMPTY = "Argument cannot be empty";
-		
+		public static final String CANNOT_CREATE_FILE = "Cannot create file";
 	}
 	
 	public class Keywords{

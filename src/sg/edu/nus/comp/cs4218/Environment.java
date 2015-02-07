@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218;
 
 import java.io.File;
 
+import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public final class Environment {
@@ -43,4 +44,16 @@ public final class Environment {
 		return reqdDir.listFiles();
 	}
 	
+	public static File createFile(String relativePath) throws FileCreateException {
+		  try {
+		    String currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+		    File file = new File(currentDirectory, relativePath);
+		    if (!file.exists()) {
+		      file.createNewFile();
+		    }
+		    return file;
+		  } catch (Exception e) {
+		    throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
+		  }
+		}
 }
