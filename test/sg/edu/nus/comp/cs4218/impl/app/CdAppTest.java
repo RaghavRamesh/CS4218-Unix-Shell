@@ -52,7 +52,7 @@ public class CdAppTest {
 			cmdApp.run(null, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "cd: " + Consts.Messages.ARG_NOT_NULL);
+			assertEquals("cd: " + Consts.Messages.ARG_NOT_NULL, e.getMessage());
 		}
 	}
 

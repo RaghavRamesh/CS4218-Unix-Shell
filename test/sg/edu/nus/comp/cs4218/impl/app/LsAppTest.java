@@ -102,6 +102,10 @@ public class LsAppTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
+		} finally {
+			if (temp != null) {
+				temp.delete();
+			}
 		}
 	}
 

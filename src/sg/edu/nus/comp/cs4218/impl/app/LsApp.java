@@ -37,7 +37,9 @@ public class LsApp implements Application {
 		try {
 
 			if (args.length == 1 && args[0] != null) {
-				assert (args[0].length() > 0);
+				if (args[0].length() == 0) {
+					throw new LsException(Consts.Messages.ARG_NOT_EMPTY);
+				}
 				requiredDirectory = args[0];
 			}
 
