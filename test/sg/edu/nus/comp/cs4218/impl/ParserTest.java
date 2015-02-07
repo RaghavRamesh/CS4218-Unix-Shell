@@ -66,9 +66,10 @@ public class ParserTest {
 	@Test
 	public void parseWithBackAndSingleQuotes() {
 		List<String> tokens = Parser
-				.parseCommandLine("echo 'this is space: 'echo \" \"''");
+				.parseCommandLine("echo 'this is space: `echo \" \"`'");
+
 		List<String> expected = Arrays.asList("echo",
-				"'this is space: 'echo \" \"''");
+				"'this is space: `echo \" \"`'");
 		assertEquals(expected, tokens);
 	}
 }
