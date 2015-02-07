@@ -13,20 +13,22 @@ import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 
 public class CallCommand implements Command {
 	private String mCommandLine;
+	private List<String> mTokens;
 	
 	public CallCommand(String commandLine) {
 		this.mCommandLine = commandLine;
+		this.mTokens = QuoteParser.parse(mCommandLine);
 	}
 
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-	  List<String> tokens = QuoteParser.parse(mCommandLine);
-	  String appId = tokens.get(0);
-		Application app = getApplication(appId);
-		tokens.remove(0);
-		String[] args = tokens.toArray(new String[tokens.size()]);
-		app.run(args, stdin, stdout);
+	  if (mTokens.size() > 0) {
+	    Application app = getApplication(mTokens.get(0));
+	    List<String> argsList = mTokens.subList(1, mTokens.size());
+      String[] args = argsList.toArray(new String[argsList.size()]);
+      app.run(args, stdin, stdout);
+	  }
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class CallCommand implements Command {
 	  
 	}
 	
-	private Application getApplication(String appId) throws AbstractApplicationException {
+	private Application getApplication(String appId) throws ShellException {
     ApplicationFactory factory = new ApplicationFactory();
     return factory.getApplication(appId);
 	}

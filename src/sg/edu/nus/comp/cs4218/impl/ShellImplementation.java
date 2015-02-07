@@ -16,15 +16,11 @@ public class ShellImplementation implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		try {
-			Command command = getCommand(cmdline);
-			command.evaluate(null, stdout);
-		} catch (Exception e) {
-			throw new ShellException(e.getMessage());
-		}
+	    Command command = getCommand(cmdline);
+	    command.evaluate(null, stdout);
 	}
 
-	protected Command getCommand(String cmdline) {
+	public static Command getCommand(String cmdline) {
 		List<String> tokens = QuoteParser.parse(cmdline);
 		for (String token : tokens) {
 			if (!QuoteParser.isQuoted(token) && token.contains(";")) {
@@ -38,11 +34,11 @@ public class ShellImplementation implements Shell {
 		}
 		return new CallCommand(cmdline);
 	}
-
+	
 	public static void main(String[] args) {
 		try {
 			ShellImplementation shellImplementation = new ShellImplementation();
-			shellImplementation.parseAndEvaluate("pwd", System.out);
+			shellImplementation.parseAndEvaluate("cd src; pwd; ls", System.out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
