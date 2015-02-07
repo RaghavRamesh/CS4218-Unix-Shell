@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
