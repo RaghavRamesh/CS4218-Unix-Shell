@@ -58,9 +58,9 @@ public class QuoteParserTest {
 	@Test
 	public void parseWithBackAndSingleQuotes() {
 		List<String> tokens = QuoteParser
-				.parse("echo 'this is space: 'echo \" \"''");
+				.parse("echo 'this is space: `echo \" \"`'");
 		List<String> expected = Arrays.asList("echo",
-				"'this is space: 'echo \" \"''");
+				"'this is space: `echo \" \"`'");
 		assertEquals(expected, tokens);
 	}
 }
