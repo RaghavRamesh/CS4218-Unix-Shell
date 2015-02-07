@@ -8,7 +8,7 @@ import java.util.List;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.QuoteParser;
+import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class SeqCommand implements Command {
@@ -18,25 +18,17 @@ public class SeqCommand implements Command {
   
   public SeqCommand(String commandLine) {
     this.mCommandLine = commandLine;
-    this.mTokens = QuoteParser.parse(commandLine);
+    this.mTokens = Parser.parseCommandLine(commandLine);
     this.mCommands = new ArrayList<Command>();
     
     String currentCommand = "";
     for (String token : mTokens) {
-      currentCommand += " ";
-      if (QuoteParser.isQuoted(token)) {
-        currentCommand += token;
+      if (Parser.isSemicolon(token)) {
+        Command command = ShellImplementation.getCommand(currentCommand.trim());
+        mCommands.add(command);
+        currentCommand = "";
       } else {
-        for (int i = 0; i < token.length(); i++) {
-          Character currentCharacter = token.charAt(i);
-          if (currentCharacter == ';') {
-            Command command = ShellImplementation.getCommand(currentCommand.trim());
-            mCommands.add(command);
-            currentCommand = "";
-          } else {
-            currentCommand += currentCharacter;
-          }
-        }
+        currentCommand += " " + token;
       }
     }
     if (!currentCommand.trim().equals("")) {

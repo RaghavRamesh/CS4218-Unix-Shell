@@ -21,14 +21,14 @@ public class ShellImplementation implements Shell {
 	}
 
 	public static Command getCommand(String cmdline) {
-		List<String> tokens = QuoteParser.parse(cmdline);
+		List<String> tokens = Parser.parseCommandLine(cmdline);
 		for (String token : tokens) {
-			if (!QuoteParser.isQuoted(token) && token.contains(";")) {
+			if (Parser.isSemicolon(token)) {
 				return new SeqCommand(cmdline);
 			}
 		}
 		for (String token : tokens) {
-			if (!QuoteParser.isQuoted(token) && token.contains("|")) {
+			if (Parser.isPipe(token)) {
 				return new PipeCommand(cmdline);
 			}
 		}
@@ -38,7 +38,7 @@ public class ShellImplementation implements Shell {
 	public static void main(String[] args) {
 		try {
 			ShellImplementation shellImplementation = new ShellImplementation();
-			shellImplementation.parseAndEvaluate("cd src; pwd; ls", System.out);
+			shellImplementation.parseAndEvaluate("cd src; pwd > a.txt; ls", System.out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -12,6 +12,7 @@ public class Consts {
 		public static final String EXPECT_ONE_ARG = "Expected one argument only.";
 		public static final String PATH_NOT_FOUND = "The system cannot find the path specified.";
 		public static final String ARG_NOT_NULL = "Argument cannot be null";
+		public static final String CANNOT_CREATE_FILE = "Cannot create file";
 		
 	}
 	
