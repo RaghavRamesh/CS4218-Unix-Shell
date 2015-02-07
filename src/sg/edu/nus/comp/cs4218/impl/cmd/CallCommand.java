@@ -29,31 +29,39 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-	  if (mTokens.size() > 0) {
-	    try {
-	      Application app = getApplication(mTokens.get(0));
-	      List<String> argsList = new ArrayList<String>();
-	      int i = 1;
-	      while (i < mTokens.size()) {
-	        String token = mTokens.get(i++);
-	        if (Parser.isInStream(token)) {
-	          String inStream = mTokens.get(i++);
-	          stdin = new FileInputStream(DirectoryHelpers.createFile(inStream));
-	        } else if (Parser.isOutStream(token)) {
-	          String outStream = mTokens.get(i++);
-	          stdout = new FileOutputStream(DirectoryHelpers.createFile(outStream));
-	        } else {
-	          argsList.add(token);
-	        }
-	      }
-	      String[] args = argsList.toArray(new String[argsList.size()]);
-	      app.run(args, stdin, stdout);
-	    } catch (FileCreateException e) {
-	      throw new ShellException(e.getMessage());
-	    } catch (FileNotFoundException e) {
-	      throw new ShellException(e.getMessage());
-	    }
+	  if (mTokens.isEmpty()) {
+	    return;
 	  }
+	  
+    try {
+      Application app = getApplication(mTokens.get(0));
+      List<String> argsList = new ArrayList<String>();
+      int i = 1;
+      while (i < mTokens.size()) {
+        String token = mTokens.get(i++);
+        if (Parser.isInStream(token)) {
+          if (i == mTokens.size()) {
+            throw new ShellException("Input not provided");
+          }
+          String inStream = mTokens.get(i++);
+          stdin = new FileInputStream(DirectoryHelpers.createFile(inStream));
+        } else if (Parser.isOutStream(token)) {
+          if (i == mTokens.size()) {
+            throw new ShellException("Output not provided");
+          }
+          String outStream = mTokens.get(i++);
+          stdout = new FileOutputStream(DirectoryHelpers.createFile(outStream));
+        } else {
+          argsList.add(token);
+        }
+      }
+      String[] args = argsList.toArray(new String[argsList.size()]);
+      app.run(args, stdin, stdout);
+    } catch (FileCreateException e) {
+      throw new ShellException(e.getMessage());
+    } catch (FileNotFoundException e) {
+      throw new ShellException(e.getMessage());
+    }
 	}
 
 	@Override
