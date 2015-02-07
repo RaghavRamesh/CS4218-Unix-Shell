@@ -23,12 +23,12 @@ public class ShellImplementation implements Shell {
 	public static Command getCommand(String cmdline) {
 		List<String> tokens = Parser.parseCommandLine(cmdline);
 		for (String token : tokens) {
-			if (!Parser.isQuoted(token) && token.contains(";")) {
+			if (Parser.isSemicolon(token)) {
 				return new SeqCommand(cmdline);
 			}
 		}
 		for (String token : tokens) {
-			if (!Parser.isQuoted(token) && token.contains("|")) {
+			if (Parser.isPipe(token)) {
 				return new PipeCommand(cmdline);
 			}
 		}

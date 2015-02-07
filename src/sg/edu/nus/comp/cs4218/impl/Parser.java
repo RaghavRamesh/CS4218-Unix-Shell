@@ -99,6 +99,11 @@ public final class Parser {
 	      && input.charAt(0) == SEMICOLON;
 	}
 	
+	public static Boolean isPipe(String input) {
+	  return input.length() == 1
+	      && input.charAt(0) == PIPE;
+	}
+	
 	public static Boolean isInStream(String input) {
 	  return input.length() == 1
 	      && input.charAt(0) == IN_STREAM;
