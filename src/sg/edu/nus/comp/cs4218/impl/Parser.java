@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
+
 // Utility class to parse a string input into tokens based on quotes.
 // The quotes are not removed from the tokens.
 public final class Parser {
@@ -23,7 +26,7 @@ public final class Parser {
 	private Parser() {
 	}
 
-	public static List<String> parseCommandLine(String input) {
+	public static List<String> parseCommandLine(String input) throws ShellException {
 		String trimmedInput = input.trim();
 		String currentToken = "";
 		ArrayList<String> tokens = new ArrayList<String>();
@@ -37,9 +40,7 @@ public final class Parser {
 			}
 			currentToken += currentChar;
 			if (isQuote(currentChar)) {
-				if (quoteStack.isEmpty()
-						|| !quoteStack.peek().getCharacter()
-								.equals(currentChar)) {
+				if (quoteStack.isEmpty() || !quoteStack.peek().getCharacter().equals(currentChar)) {
 					quoteStack.push(new CharacterPosition(currentChar, i));
 				} else {
 					quoteStack.pop();
@@ -48,8 +49,7 @@ public final class Parser {
 						currentToken = "";
 					}
 				}
-			} else if (quoteStack.isEmpty() 
-			           && SPECIALS.contains(currentChar)) {
+			} else if (quoteStack.isEmpty() && SPECIALS.contains(currentChar)) {
 			  // Add the current token without the last character
 			  addNonEmptyToList(tokens, currentToken.substring(0, currentToken.length() - 1));
 			  // Add the last character
@@ -57,6 +57,9 @@ public final class Parser {
 			  currentToken = "";
 			}
 		}
+		if (!quoteStack.isEmpty()) {
+		  throw new ShellException(Consts.Messages.QUOTE_MISMATCH);
+		} 
 		addNonEmptyToList(tokens, currentToken);
 		return tokens;
 	}

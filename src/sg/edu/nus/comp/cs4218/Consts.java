@@ -4,7 +4,6 @@ public class Consts {
 	
 	// Put all messages for exceptions, feedback etc here
 	public class Messages{
-
 		public static final String OUT_STR_NOT_NULL = "Output Stream cannot be null";
 		public static final String CURDIR_NOT_EXIST = "Current Directory does not exist";
 		public static final String DIR_NOT_VALID = "The directory name is invalid.";
@@ -13,7 +12,11 @@ public class Consts {
 		public static final String PATH_NOT_FOUND = "The system cannot find the path specified.";
 		public static final String ARG_NOT_NULL = "Argument cannot be null";
 		public static final String CANNOT_CREATE_FILE = "Cannot create file";
-		
+		public static final String QUOTE_MISMATCH = "Quote mistmatch";
+		public static final String TOO_MANY_INPUT_REDIRECTION = "Too many input redirection: ";
+		public static final String TOO_MANY_OUTPUT_REDIRECTION = "Too many output redirection: ";
+		public static final String NO_INPUT_PROVIDED = "No input redirection provided: ";
+		public static final String NO_OUTPUT_PROVIDED = "No output redirection provided: ";
 	}
 	
 	public class Keywords{

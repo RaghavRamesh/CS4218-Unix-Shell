@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -13,25 +14,34 @@ public class ShellImplementationTest {
 	
 	@Test
 	public void testGetSeqCommand() {
-		si = new ShellImplementation();
-		String cmdLine = "cd articles; cat text1.txt";
-		Object obj = new SeqCommand(cmdLine);
-		assertEquals(obj.getClass(), si.getCommand(cmdLine).getClass());
+	  try {
+	    String cmdLine = "cd articles; cat text1.txt";
+	    Object obj = new SeqCommand(cmdLine);
+	    assertEquals(obj.getClass(), ShellImplementation.getCommand(cmdLine).getClass());
+	  } catch (Exception e) {
+	    fail("No exception should be thrown");
+	  }
 	}
 	
 	@Test
 	public void testGetCallCommand() {
-		si = new ShellImplementation();
-		String cmdLine = "cd articles";
-		Object obj = new CallCommand(cmdLine);
-		assertEquals(obj.getClass(), si.getCommand(cmdLine).getClass());
+	  try {
+	    String cmdLine = "cd articles";
+	    Object obj = new CallCommand(cmdLine);
+	    assertEquals(obj.getClass(), ShellImplementation.getCommand(cmdLine).getClass());
+	  } catch (Exception e) {
+	    fail("No exception should be thrown");
+	  }
 	}
 	
 	@Test
 	public void testGetPipeCommand() {
-		si = new ShellImplementation();
-		String cmdLine = "cat articles.txt | grep 'hello'";
-		Object obj = new PipeCommand(cmdLine);
-		assertEquals(obj.getClass(), si.getCommand(cmdLine).getClass());
+	  try {
+	    String cmdLine = "cat articles.txt | grep 'hello'";
+	    Object obj = new PipeCommand(cmdLine);
+	    assertEquals(obj.getClass(), ShellImplementation.getCommand(cmdLine).getClass());
+	  } catch (Exception e) {
+	    fail("No exception should be thrown");
+	  }
 	}
 }

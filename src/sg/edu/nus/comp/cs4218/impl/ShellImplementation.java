@@ -20,7 +20,7 @@ public class ShellImplementation implements Shell {
 	    command.evaluate(null, stdout);
 	}
 
-	public static Command getCommand(String cmdline) {
+	public static Command getCommand(String cmdline) throws ShellException {
 		List<String> tokens = Parser.parseCommandLine(cmdline);
 		for (String token : tokens) {
 			if (Parser.isSemicolon(token)) {

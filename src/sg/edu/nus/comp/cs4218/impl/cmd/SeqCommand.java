@@ -12,17 +12,14 @@ import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class SeqCommand implements Command {
-  private String mCommandLine;
-  private List<String> mTokens;
-  private List<Command> mCommands;
+  private final List<Command> mCommands;
   
-  public SeqCommand(String commandLine) {
-    this.mCommandLine = commandLine;
-    this.mTokens = Parser.parseCommandLine(commandLine);
+  public SeqCommand(String commandLine) throws ShellException {
     this.mCommands = new ArrayList<Command>();
+    List<String> tokens = Parser.parseCommandLine(commandLine);
     
     String currentCommand = "";
-    for (String token : mTokens) {
+    for (String token : tokens) {
       if (Parser.isSemicolon(token)) {
         Command command = ShellImplementation.getCommand(currentCommand.trim());
         mCommands.add(command);

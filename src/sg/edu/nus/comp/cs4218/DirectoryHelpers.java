@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218;
 
 import java.io.File;
+import java.io.IOException;
 
 import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
@@ -42,11 +43,15 @@ public final class DirectoryHelpers {
 	  try {
 	    String currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 	    File file = new File(currentDirectory, relativePath);
-	    if (!file.exists()) {
+	    if (file.exists()) {
+	      if (file.isDirectory()) {
+	        throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
+	      }
+	    } else {
 	      file.createNewFile();
 	    }
 	    return file;
-	  } catch (Exception e) {
+	  } catch (IOException e) {
 	    throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
 	  }
 	}
