@@ -11,6 +11,8 @@ import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class ParserTest {
+  private static final String SHOULD_NOT_THROW = "No exception should be thrown";
+  
 	@Test
 	public void testParseWithDoubleQuoteOnly() {
 	  try {
@@ -20,7 +22,7 @@ public class ParserTest {
 	        "\"S c a l a\"");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 
@@ -33,7 +35,7 @@ public class ParserTest {
 	        "'S c a l a'");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 
@@ -46,7 +48,7 @@ public class ParserTest {
 	        "`S c a l a`");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 	
@@ -59,7 +61,7 @@ public class ParserTest {
 	        "and", ";", "Python");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 
@@ -72,7 +74,7 @@ public class ParserTest {
 	        "\"this is space: `echo \" \"`\"");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 
@@ -85,7 +87,7 @@ public class ParserTest {
 	        "\"this is space: 'echo ' ''\"");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 
@@ -99,7 +101,7 @@ public class ParserTest {
 	        "'this is space: `echo \" \"`'");
 	    assertEquals(expected, tokens);
 	  } catch (Exception e) {
-	    fail("No exception should be thrown");
+	    fail(SHOULD_NOT_THROW);
 	  }
 	}
 	

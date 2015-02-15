@@ -35,6 +35,7 @@ public final class Parser {
 			Character currentChar = trimmedInput.charAt(i);
 			if (currentChar.equals(WHITESPACE) && quoteStack.isEmpty()) {
 				addNonEmptyToList(tokens, currentToken.toString());
+				currentToken = new StringBuilder();
 				continue;
 			}
 			currentToken.append(currentChar);
