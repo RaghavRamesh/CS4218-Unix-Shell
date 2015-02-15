@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 
@@ -31,7 +32,7 @@ public class CatAppTest {
 
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+		currentDirectory = Environment.getCurrentDirectory();
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator
@@ -51,7 +52,7 @@ public class CatAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		System.setProperty(Consts.Keywords.USER_DIR, currentDirectory);
+		Environment.setCurrentDirectory(currentDirectory);
 	}
 
 	@Test

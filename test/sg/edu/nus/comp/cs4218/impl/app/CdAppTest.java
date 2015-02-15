@@ -22,7 +22,7 @@ public class CdAppTest {
 
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+		currentDirectory = Environment.getCurrentDirectory();
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator
@@ -42,7 +42,7 @@ public class CdAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		System.setProperty(Consts.Keywords.USER_DIR, currentDirectory);
+		Environment.setCurrentDirectory(currentDirectory);
 	}
 
 	@Test

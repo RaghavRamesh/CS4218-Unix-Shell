@@ -42,17 +42,8 @@ public class CdApp implements Application {
 
 			String requiredDirectory = currentDirectory + File.separator
 					+ folderName;
-			File reqdPathAsFile = new File(requiredDirectory);
-
-			if (!reqdPathAsFile.exists()) {
-				throw new CdException(Consts.Messages.PATH_NOT_FOUND);
-			}
-
-			if (reqdPathAsFile.isFile()) {
-				throw new CdException(Consts.Messages.DIR_NOT_VALID);
-			}
-
-			System.setProperty(Consts.Keywords.USER_DIR, requiredDirectory);
+			
+			Environment.setCurrentDirectory(requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 
 			throw new CdException(e);

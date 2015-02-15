@@ -29,7 +29,8 @@ public class LsAppTest {
 
 	@Before
 	public void setUp() throws Exception {
-		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
+
+		originalCurrDir = Environment.getCurrentDirectory();
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(originalCurrDir + File.separator
@@ -40,8 +41,7 @@ public class LsAppTest {
 			fail();
 		}
 
-		System.setProperty(Consts.Keywords.USER_DIR,
-				tempTestDirectory.getAbsolutePath());
+		Environment.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
 	}
 
 	@After
@@ -53,7 +53,7 @@ public class LsAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		System.setProperty(Consts.Keywords.USER_DIR, originalCurrDir);
+		Environment.setCurrentDirectory(originalCurrDir);
 	}
 
 	@Test
@@ -193,11 +193,6 @@ public class LsAppTest {
 	@Test
 	public void testLsWithoutArgs() {
 
-		// change the current directory to TempTest folder to make things
-		// consistent across all machines
-		System.setProperty(Consts.Keywords.USER_DIR,
-				tempTestDirectory.getAbsolutePath());
-
 		lsApp = new LsApp();
 
 		File temp = null;
@@ -207,6 +202,11 @@ public class LsAppTest {
 		File newFile4 = null;
 
 		try {
+			// change the current directory to TempTest folder to make things
+			// consistent across all machines
+			Environment
+					.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
+
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
@@ -243,7 +243,13 @@ public class LsAppTest {
 			deleteIdealFiles(temp, newFile1, newFile2, newFile3, newFile4);
 
 			// change the current directory to original current directory
-			System.setProperty(Consts.Keywords.USER_DIR, originalCurrDir);
+			try {
+				Environment.setCurrentDirectory(originalCurrDir);
+			} catch (InvalidDirectoryException e) {
+
+				e.printStackTrace();
+				fail();
+			}
 		}
 	}
 
