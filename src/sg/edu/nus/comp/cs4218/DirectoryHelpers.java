@@ -45,14 +45,14 @@ public final class DirectoryHelpers {
 	    File file = new File(currentDirectory, relativePath);
 	    if (file.exists()) {
 	      if (file.isDirectory()) {
-	        throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
+	        throw new FileCreateException(Consts.Messages.CREATE_FILE_ERR + " " + relativePath);
 	      }
 	    } else {
 	      file.createNewFile();
 	    }
 	    return file;
 	  } catch (IOException e) {
-	    throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
+	    throw new FileCreateException(Consts.Messages.CREATE_FILE_ERR + " " + relativePath);
 	  }
 	}
 

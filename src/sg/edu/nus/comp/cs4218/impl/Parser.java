@@ -70,30 +70,30 @@ public final class Parser {
 	}
 	
   public static Boolean isDoubleQuoted(String input) {
-    int n = input.length();
-    if (n < 2) {
+    int length = input.length();
+    if (length < 2) {
       return false;
     }
     return (input.charAt(0) == DOUBLE_QUOTE)
-        && (input.charAt(n - 1) == DOUBLE_QUOTE);
+        && (input.charAt(length - 1) == DOUBLE_QUOTE);
   }
 	
 	public static Boolean isSingleQuoted(String input) {
-	  int n = input.length();
-    if (n < 2) {
+	  int length = input.length();
+    if (length < 2) {
       return false;
     }
     return (input.charAt(0) == SINGLE_QUOTE)
-        && (input.charAt(n - 1) == SINGLE_QUOTE);
+        && (input.charAt(length - 1) == SINGLE_QUOTE);
 	}
 	
 	public static Boolean isBackQuoted(String input) {
-	  int n = input.length();
-	  if (n < 2) {
+	  int length = input.length();
+	  if (length < 2) {
 	    return false;
 	  }
 	  return (input.charAt(0) == BACK_QUOTE)
-	      && (input.charAt(n - 1) == BACK_QUOTE);
+	      && (input.charAt(length - 1) == BACK_QUOTE);
 	}
 	
 	public static Boolean isSemicolon(String input) {
