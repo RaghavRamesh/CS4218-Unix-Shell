@@ -28,25 +28,24 @@ public final class Parser {
 
 	public static List<String> parseCommandLine(String input) throws ShellException {
 		String trimmedInput = input.trim();
-		String currentToken = "";
+		StringBuilder currentToken = new StringBuilder();
 		ArrayList<String> tokens = new ArrayList<String>();
 		Stack<CharacterPosition> quoteStack = new Stack<CharacterPosition>();
 		for (int i = 0; i < trimmedInput.length(); i++) {
 			Character currentChar = trimmedInput.charAt(i);
 			if (currentChar.equals(WHITESPACE) && quoteStack.isEmpty()) {
-				addNonEmptyToList(tokens, currentToken);
-				currentToken = "";
+				addNonEmptyToList(tokens, currentToken.toString());
 				continue;
 			}
-			currentToken += currentChar;
+			currentToken.append(currentChar);
 			if (isQuote(currentChar)) {
 				if (quoteStack.isEmpty() || !quoteStack.peek().getCharacter().equals(currentChar)) {
 					quoteStack.push(new CharacterPosition(currentChar, i));
 				} else {
 					quoteStack.pop();
 					if (quoteStack.isEmpty()) {
-						addNonEmptyToList(tokens, currentToken);
-						currentToken = "";
+						addNonEmptyToList(tokens, currentToken.toString());
+						currentToken = new StringBuilder();
 					}
 				}
 			} else if (quoteStack.isEmpty() && SPECIALS.contains(currentChar)) {
@@ -54,13 +53,13 @@ public final class Parser {
 			  addNonEmptyToList(tokens, currentToken.substring(0, currentToken.length() - 1));
 			  // Add the last character
 			  addNonEmptyToList(tokens, currentChar.toString());
-			  currentToken = "";
+			  currentToken = new StringBuilder();
 			}
 		}
 		if (!quoteStack.isEmpty()) {
 		  throw new ShellException(Consts.Messages.QUOTE_MISMATCH);
 		} 
-		addNonEmptyToList(tokens, currentToken);
+		addNonEmptyToList(tokens, currentToken.toString());
 		return tokens;
 	}
 
