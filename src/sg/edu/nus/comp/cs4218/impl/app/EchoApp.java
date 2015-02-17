@@ -7,15 +7,17 @@ import java.io.PrintStream;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.CdException;
+import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 public class EchoApp implements Application {
 
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
-		if (stdout == null) {
-			throw new CdException(Consts.Messages.OUT_STR_NOT_NULL); // TODO:
-		}
+		if (stdout == null)
+			throw new EchoException(Consts.Messages.OUT_STR_NOT_NULL); // TODO:
+
+		if (args == null)
+			throw new EchoException(Consts.Messages.ARG_NOT_NULL); // TODO:
 
 		final PrintStream printStream = new PrintStream(stdout);
 		for (String arg : args) {
@@ -24,7 +26,6 @@ public class EchoApp implements Application {
 		printStream.println();
 		printStream.close();
 
-		// TODO: handle backcomma
 	}
 
 }
