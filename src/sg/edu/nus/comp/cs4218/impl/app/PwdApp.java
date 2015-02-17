@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.PwdException;
@@ -23,7 +23,7 @@ public class PwdApp implements Application {
 
 		String currentDirectory;
 		try {
-			currentDirectory = DirectoryHelpers.getCurrentDirectory();
+			currentDirectory = Environment.getCurrentDirectory();
 			PrintWriter outPathWriter = new PrintWriter(stdout);
 			outPathWriter.write(currentDirectory);
 			outPathWriter.flush();

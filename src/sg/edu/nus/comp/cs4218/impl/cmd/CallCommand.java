@@ -11,9 +11,8 @@ import java.util.List;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
@@ -66,9 +65,9 @@ public class CallCommand implements Command {
         }
       }
       InputStream inStream = (inFile == null) ? stdin : 
-        new FileInputStream(DirectoryHelpers.createFile(inFile));
+        new FileInputStream(Environment.createFile(inFile));
       OutputStream outStream = (outFile == null) ? stdout :
-        new FileOutputStream(DirectoryHelpers.createFile(outFile));
+        new FileOutputStream(Environment.createFile(outFile));
       String[] args = argsList.toArray(new String[argsList.size()]);
       app.run(args, inStream, outStream);
     } catch (FileNotFoundException e) {
