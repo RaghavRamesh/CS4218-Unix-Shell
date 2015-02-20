@@ -15,6 +15,7 @@ public class ApplicationFactory {
     maps.put("cat", new CatApp());
     maps.put("echo", new EchoApp());
     maps.put("head", new HeadApp());
+    maps.put("wc", new WcApp());
   }
 
   public Application getApplication(String appId) throws AppNotFoundException {

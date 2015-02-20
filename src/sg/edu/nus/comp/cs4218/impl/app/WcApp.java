@@ -54,7 +54,7 @@ public class WcApp implements Application {
 		try {
 			ArrayList<String> fileNames = processArguments(args);
 
-			if (fileNames.size() == 0) {
+			if (fileNames.isEmpty()) {
 				reader = processCountFromInputStream(stdin, writer);
 				return;
 			}
@@ -72,7 +72,7 @@ public class WcApp implements Application {
 
 	}
 
-	private ArrayList<String> processArguments(String[] args)
+	private ArrayList<String> processArguments(String... args)
 			throws WcException {
 		ArrayList<String> fileNames = new ArrayList<String>();
 
@@ -172,15 +172,15 @@ public class WcApp implements Application {
 	}
 
 	private void updateDisplaySetting(String arg) throws WcException {
-		if (arg.equals("-m")) {
+		if ("-m".equals(arg)) {
 			displayBytes = true;
 		}
 
-		else if (arg.equals("-w")) {
+		else if ("-w".equals(arg)) {
 			displayWords = true;
 		}
 
-		else if (arg.equals("-l")) {
+		else if ("-l".equals(arg)) {
 			displayLineLength = true;
 		}
 

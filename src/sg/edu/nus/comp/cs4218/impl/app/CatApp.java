@@ -70,6 +70,16 @@ public class CatApp implements Application {
 				boolean pathExists = reqdPathAsFile.exists();
 				boolean pathIsFile = reqdPathAsFile.isFile();
 
+				if (!pathExists) {
+					throw new CatException("can't open '" + args[i] + "'. "
+							+ Consts.Messages.FILE_NOT_FOUND);
+				}
+
+				if (!pathIsFile) {
+					throw new CatException("can't open '" + args[i] + "'. "
+							+ Consts.Messages.FILE_NOT_VALID);
+				}
+
 				if (pathExists && pathIsFile) {
 					reader = new BufferedReader(new InputStreamReader(
 							new FileInputStream(requiredDirectory)));
@@ -79,16 +89,6 @@ public class CatApp implements Application {
 					}
 
 					writer.write("\n");
-				}
-
-				else if (!pathExists) {
-					throw new CatException("can't open '" + args[i] + "'. "
-							+ Consts.Messages.FILE_NOT_FOUND);
-				}
-
-				else if (!pathIsFile) {
-					throw new CatException("can't open '" + args[i] + "'. "
-							+ Consts.Messages.FILE_NOT_VALID);
 				}
 
 				reader.close();
