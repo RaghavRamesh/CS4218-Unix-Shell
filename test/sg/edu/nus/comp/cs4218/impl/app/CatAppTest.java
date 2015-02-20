@@ -17,7 +17,9 @@ import java.io.OutputStreamWriter;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -26,9 +28,17 @@ import sg.edu.nus.comp.cs4218.exception.CatException;
 
 public class CatAppTest {
 
+	private static final String TEST1 = "test1";
+	private static final String TEST2_TXT = "test2.txt";
+	private static final String TEST1_TXT = "test1.txt";
+	private static final String CAT_EXCEPTION = "cat: ";
+	private static final String TEMP_FOLDER = "TempTest";
 	File tempTestDirectory = null;
 	String currentDirectory = "";
-	String tempFolder = "TempTest";
+
+
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -36,7 +46,7 @@ public class CatAppTest {
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator
-				+ tempFolder);
+				+ TEMP_FOLDER);
 		boolean status = tempTestDirectory.mkdir();
 		if (!status) {
 			fail();
@@ -56,49 +66,48 @@ public class CatAppTest {
 	}
 
 	@Test
-	public void testCatAppWithNullArgument() {
+	public void testCatAppWithNullArgument()
+			throws AbstractApplicationException {
+		expectedEx.expect(CatException.class);
+		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.ARG_NOT_NULL);
 		CatApp cmdApp = new CatApp();
-		try {
-			cmdApp.run(null, null, System.out);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals("cat: " + Consts.Messages.ARG_NOT_NULL, e.getMessage());
-		}
+
+		cmdApp.run(null, null, System.out);
+
 	}
 
 	@Test
-	public void testCatAppWithNullOutputStreamArgument() {
+	public void testCatAppWithNullOutputStreamArgument()
+			throws AbstractApplicationException {
+		expectedEx.expect(CatException.class);
+		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.OUT_STR_NOT_NULL);
+
 		CatApp cmdApp = new CatApp();
 		String[] args = new String[2];
-		args[0] = tempFolder;
+		args[0] = TEMP_FOLDER;
 
-		try {
-			cmdApp.run(args, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "cat: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		cmdApp.run(args, null, null);
+
 	}
 
 	@Test
-	public void testCatAppWithoutAnyArgumentAndNullIputStream() {
+	public void testCatAppWithoutAnyArgumentAndNullIputStream()
+			throws AbstractApplicationException {
+		expectedEx.expect(CatException.class);
+		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.INP_STR_NOT_NULL);
+
 		CatApp cmdApp = new CatApp();
 		String[] args = {};
 
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
-
-		} catch (CatException e) {
-			assertEquals("cat: " + Consts.Messages.INP_STR_NOT_NULL,
-					e.getMessage());
-		} catch (AbstractApplicationException e) {
-			fail();
-			e.printStackTrace();
-		}
+		cmdApp.run(args, null, System.out);
 	}
 
+	/**
+	 * Tests Cat Application with empty argument list. Try..catch is used here
+	 * instead of throwing exception and then catching them because we want to clean up the temporary
+	 * files that were used by the test, even if there is some other exception thrown using
+	 * the finally block
+	 */
 	@Test
 	public void testCatAppWithoutAnyArgument() {
 
@@ -152,8 +161,8 @@ public class CatAppTest {
 	public void testCatAppForIdealWorkFlow() {
 		CatApp cmdApp = new CatApp();
 		String[] args = new String[2];
-		args[0] = tempFolder + File.separator + "test1.txt";
-		args[1] = tempFolder + File.separator + "test2.txt";
+		args[0] = TEMP_FOLDER + File.separator + TEST1_TXT;
+		args[1] = TEMP_FOLDER + File.separator + TEST2_TXT;
 
 		File temp = null;
 
@@ -161,10 +170,10 @@ public class CatAppTest {
 		File file2ToRead = null;
 
 		try {
-			file1ToRead = createFileWithContents(tempFolder + File.separator
-					+ "test1.txt", "Hi, This is a file1 to test cat workflow");
-			file2ToRead = createFileWithContents(tempFolder + File.separator
-					+ "test2.txt", "Hello, File2  is used to test cat workflow");
+			file1ToRead = createFileWithContents(TEMP_FOLDER + File.separator
+					+ TEST1_TXT, "Hi, This is a file1 to test cat workflow");
+			file2ToRead = createFileWithContents(TEMP_FOLDER + File.separator
+					+ TEST2_TXT, "Hello, File2  is used to test cat workflow");
 
 			// temp file used for storing and checking output correctness
 
@@ -188,20 +197,16 @@ public class CatAppTest {
 			e.printStackTrace();
 			fail();
 		} finally {
-			boolean status;
 			if (temp != null) {
-				status = temp.delete();
-				System.out.println("Status is" + status);
+				temp.delete();
 			}
 
 			if (file1ToRead != null) {
-				status = file1ToRead.delete();
-				System.out.println("Status is" + status);
+				file1ToRead.delete();
 			}
 
 			if (file2ToRead != null) {
-				status = file2ToRead.delete();
-				System.out.println("Status is" + status);
+				file2ToRead.delete();
 			}
 		}
 	}
@@ -219,35 +224,34 @@ public class CatAppTest {
 	}
 
 	@Test
-	public void testCatAppForNonExistentFile() {
+	public void testCatAppForNonExistentFile()
+			throws AbstractApplicationException {
+		expectedEx.expect(CatException.class);
+		expectedEx.expectMessage(CAT_EXCEPTION + "can't open 'test1.txt'. "
+				+ Consts.Messages.FILE_NOT_FOUND);
 		CatApp cmdApp = new CatApp();
-		String[] args = { "test1.txt" };
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
+		String[] args = { TEST1_TXT };
 
-		} catch (AbstractApplicationException e) {
-			assertEquals("cat: " + "can't open 'test1.txt'. "
-					+ Consts.Messages.FILE_NOT_FOUND, e.getMessage());
-		}
+		cmdApp.run(args, null, System.out);
+
 	}
 
 	@Test
-	public void testCatAppForReadingDir() {
+	public void testCatAppForReadingDir() throws AbstractApplicationException {
 		CatApp cmdApp = new CatApp();
 
 		// create a directory
 		File tempDir = new File(tempTestDirectory.getAbsolutePath()
-				+ File.separator + "test1");
+				+ File.separator + TEST1);
 		tempDir.mkdir();
-		String[] args = { "TempTest" + File.separator + "test1" };
+		String[] args = { TEMP_FOLDER + File.separator + TEST1 };
 		try {
 			cmdApp.run(args, null, System.out);
 			fail();
 
 		} catch (CatException exception) {
-			assertEquals("cat: can't open " + "'" + "TempTest" + File.separator
-					+ "test1" + "'. " + Consts.Messages.FILE_NOT_VALID,
+			assertEquals("cat: can't open " + "'" + TEMP_FOLDER + File.separator
+					+ TEST1 + "'. " + Consts.Messages.FILE_NOT_VALID,
 					exception.getMessage());
 		} catch (AbstractApplicationException e) {
 			fail();
