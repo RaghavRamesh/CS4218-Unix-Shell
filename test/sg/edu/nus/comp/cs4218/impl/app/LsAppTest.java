@@ -13,19 +13,27 @@ import java.io.OutputStream;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
+import sg.edu.nus.comp.cs4218.exception.LsException;
 
 public class LsAppTest {
 
+	private static final String TMP = ".tmp";
+	private static final String TEMP_FILE_NAME = "temp-file-name";
 	LsApp lsApp = null;
 	File tempTestDirectory = null;
 	String originalCurrDir = "";
 	String tempFolder = "TempTest";
+	
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -57,30 +65,28 @@ public class LsAppTest {
 	}
 
 	@Test
-	public void testLsWithNullOutputStream() {
+	public void testLsWithNullOutputStream() throws AbstractApplicationException {
 
+		expectedEx.expect(LsException.class);
+		expectedEx.expectMessage("ls: "
+				+ Consts.Messages.OUT_STR_NOT_NULL);
+		
 		String[] args = new String[1];
 		args[0] = tempTestDirectory.getAbsolutePath();
 
 		lsApp = new LsApp();
-		try {
-			lsApp.run(args, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "ls: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		lsApp.run(args, null, null);
+
 	}
 
 	@Test
-	public void testLsAppWithNullArgument() {
+	public void testLsAppWithNullArgument() throws AbstractApplicationException {
+		
+		expectedEx.expect(LsException.class);
+		expectedEx.expectMessage("ls: " + Consts.Messages.ARG_NOT_NULL);
+		
 		LsApp cmdApp = new LsApp();
-		try {
-			cmdApp.run(null, null, System.out);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "ls: " + Consts.Messages.ARG_NOT_NULL);
-		}
+		cmdApp.run(null, null, System.out);
 	}
 
 	@Test
@@ -93,7 +99,7 @@ public class LsAppTest {
 
 		lsApp = new LsApp();
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 			lsApp.run(args, null, fileOutStream);
 			fail();
@@ -119,7 +125,7 @@ public class LsAppTest {
 		args[0] = tempTestDirectory.getAbsolutePath();
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 			lsApp.run(args, null, fileOutStream);
 
@@ -155,7 +161,7 @@ public class LsAppTest {
 		args[0] = tempTestDirectory.getAbsolutePath();
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
 			String currentDir = Environment.getCurrentDirectory();
@@ -207,7 +213,7 @@ public class LsAppTest {
 			Environment
 					.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
 
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
 			String currentDir = Environment.getCurrentDirectory();
@@ -299,7 +305,7 @@ public class LsAppTest {
 		args[0] = tempTestDirectory.getAbsolutePath();
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
 			String currentDir = Environment.getCurrentDirectory();
