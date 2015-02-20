@@ -1,9 +1,15 @@
 package sg.edu.nus.comp.cs4218.impl;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Command;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
@@ -36,11 +42,20 @@ public class ShellImplementation implements Shell {
 	}
 	
 	public static void main(String[] args) {
-		try {
-			ShellImplementation shellImplementation = new ShellImplementation();
-			shellImplementation.parseAndEvaluate("cd src; pwd > a.txt; ls", System.out);
-		} catch (Exception e) {
-			e.printStackTrace();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		ShellImplementation shellImplementation = new ShellImplementation();
+		//PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
+		
+		//"cd src; pwd > a.txt; ls"
+		while (true) {
+			try {
+				System.out.print(Environment.getCurrentDirectory() + " # ");
+				
+				shellImplementation.parseAndEvaluate(reader.readLine(),
+						System.out);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
