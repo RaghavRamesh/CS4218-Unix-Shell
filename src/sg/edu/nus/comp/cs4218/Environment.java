@@ -28,11 +28,10 @@ public final class Environment {
 	public static void setCurrentDirectory(String directoryToChange)
 			throws InvalidDirectoryException {
 
-		checkIsDirectory(directoryToChange);
-		currentDirectory = directoryToChange;
+		currentDirectory = checkIsDirectory(directoryToChange);
 	}
 
-	private static void checkIsDirectory(String directoryToChange)
+	private static String checkIsDirectory(String directoryToChange)
 			throws InvalidDirectoryException {
 		File reqdPathAsFile = new File(directoryToChange);
 
@@ -43,6 +42,8 @@ public final class Environment {
 		if (reqdPathAsFile.isFile()) {
 			throw new InvalidDirectoryException(Consts.Messages.DIR_NOT_VALID);
 		}
+		
+		return reqdPathAsFile.getAbsolutePath();
 	}
 
 	public static File[] getContentsInDirectory(String requiredDirectory)

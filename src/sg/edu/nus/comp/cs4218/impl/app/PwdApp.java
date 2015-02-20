@@ -25,7 +25,7 @@ public class PwdApp implements Application {
 		try {
 			currentDirectory = Environment.getCurrentDirectory();
 			PrintWriter outPathWriter = new PrintWriter(stdout);
-			outPathWriter.write(currentDirectory);
+			outPathWriter.println(currentDirectory);
 			outPathWriter.flush();
 		} catch (InvalidDirectoryException e) {
 			throw new PwdException(e);

@@ -53,7 +53,6 @@ public class CatApp implements Application {
 				}
 
 				writer.write("\n");
-				reader.close();
 				return;
 			}
 
@@ -85,22 +84,17 @@ public class CatApp implements Application {
 							new FileInputStream(requiredDirectory)));
 					String line = null;
 					while ((line = reader.readLine()) != null) {
-						writer.write(line);
+						writer.println(line);
 					}
-
-					writer.write("\n");
 				}
 
+				writer.flush();
 				reader.close();
 			}
 		} catch (InvalidDirectoryException exception) {
 			throw new CatException(exception);
 		} catch (IOException exception) {
 			throw new CatException(exception);
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 
 	}
