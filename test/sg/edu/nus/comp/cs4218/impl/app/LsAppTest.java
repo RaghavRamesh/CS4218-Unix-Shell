@@ -31,7 +31,7 @@ public class LsAppTest {
 	File tempTestDirectory = null;
 	String originalCurrDir = "";
 	String tempFolder = "TempTest";
-	
+
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
@@ -65,12 +65,12 @@ public class LsAppTest {
 	}
 
 	@Test
-	public void testLsWithNullOutputStream() throws AbstractApplicationException {
+	public void testLsWithNullOutputStream()
+			throws AbstractApplicationException {
 
 		expectedEx.expect(LsException.class);
-		expectedEx.expectMessage("ls: "
-				+ Consts.Messages.OUT_STR_NOT_NULL);
-		
+		expectedEx.expectMessage("ls: " + Consts.Messages.OUT_STR_NOT_NULL);
+
 		String[] args = new String[1];
 		args[0] = tempTestDirectory.getAbsolutePath();
 
@@ -81,10 +81,10 @@ public class LsAppTest {
 
 	@Test
 	public void testLsAppWithNullArgument() throws AbstractApplicationException {
-		
+
 		expectedEx.expect(LsException.class);
 		expectedEx.expectMessage("ls: " + Consts.Messages.ARG_NOT_NULL);
-		
+
 		LsApp cmdApp = new LsApp();
 		cmdApp.run(null, null, System.out);
 	}

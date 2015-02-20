@@ -36,7 +36,6 @@ public class CatAppTest {
 	File tempTestDirectory = null;
 	String currentDirectory = "";
 
-
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
@@ -80,7 +79,8 @@ public class CatAppTest {
 	public void testCatAppWithNullOutputStreamArgument()
 			throws AbstractApplicationException {
 		expectedEx.expect(CatException.class);
-		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.OUT_STR_NOT_NULL);
+		expectedEx.expectMessage(CAT_EXCEPTION
+				+ Consts.Messages.OUT_STR_NOT_NULL);
 
 		CatApp cmdApp = new CatApp();
 		String[] args = new String[2];
@@ -94,7 +94,8 @@ public class CatAppTest {
 	public void testCatAppWithoutAnyArgumentAndNullIputStream()
 			throws AbstractApplicationException {
 		expectedEx.expect(CatException.class);
-		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.INP_STR_NOT_NULL);
+		expectedEx.expectMessage(CAT_EXCEPTION
+				+ Consts.Messages.INP_STR_NOT_NULL);
 
 		CatApp cmdApp = new CatApp();
 		String[] args = {};
@@ -104,9 +105,9 @@ public class CatAppTest {
 
 	/**
 	 * Tests Cat Application with empty argument list. Try..catch is used here
-	 * instead of throwing exception and then catching them because we want to clean up the temporary
-	 * files that were used by the test, even if there is some other exception thrown using
-	 * the finally block
+	 * instead of throwing exception and then catching them because we want to
+	 * clean up the temporary files that were used by the test, even if there is
+	 * some other exception thrown using the finally block
 	 */
 	@Test
 	public void testCatAppWithoutAnyArgument() {
@@ -250,9 +251,9 @@ public class CatAppTest {
 			fail();
 
 		} catch (CatException exception) {
-			assertEquals("cat: can't open " + "'" + TEMP_FOLDER + File.separator
-					+ TEST1 + "'. " + Consts.Messages.FILE_NOT_VALID,
-					exception.getMessage());
+			assertEquals("cat: can't open " + "'" + TEMP_FOLDER
+					+ File.separator + TEST1 + "'. "
+					+ Consts.Messages.FILE_NOT_VALID, exception.getMessage());
 		} catch (AbstractApplicationException e) {
 			fail();
 
