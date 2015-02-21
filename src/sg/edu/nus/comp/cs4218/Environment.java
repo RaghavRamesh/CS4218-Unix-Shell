@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218;
 
 import java.io.File;
+import java.io.IOException;
 
 import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.FileCreateException;
@@ -18,7 +19,7 @@ public final class Environment {
 	private Environment() {
 	};
 
-	public static String getCurrentDirectory() throws InvalidDirectoryException {
+	public static String getCurrentDirectory() throws InvalidDirectoryException, IOException {
 
 		// check if current directory information is not corrupted one
 		checkIsDirectory(currentDirectory);
@@ -26,13 +27,13 @@ public final class Environment {
 	}
 
 	public static void setCurrentDirectory(String directoryToChange)
-			throws InvalidDirectoryException {
+			throws InvalidDirectoryException, IOException {
 
 		currentDirectory = checkIsDirectory(directoryToChange);
 	}
 
 	private static String checkIsDirectory(String directoryToChange)
-			throws InvalidDirectoryException {
+			throws InvalidDirectoryException, IOException {
 		File reqdPathAsFile = new File(directoryToChange);
 
 		if (!reqdPathAsFile.exists()) {
@@ -43,12 +44,12 @@ public final class Environment {
 			throw new InvalidDirectoryException(Consts.Messages.DIR_NOT_VALID);
 		}
 		
-		return reqdPathAsFile.getAbsolutePath();
+		return reqdPathAsFile.getCanonicalPath();
 	}
 
 	public static File[] getContentsInDirectory(String requiredDirectory)
 			throws InvalidDirectoryException {
-		File reqdDir = new File(requiredDirectory);
+		File reqdDir = new File(Environment.currentDirectory,requiredDirectory);
 
 		if (!reqdDir.exists() || !reqdDir.isDirectory()) {
 			throw new InvalidDirectoryException(Consts.Messages.DIR_NOT_VALID);

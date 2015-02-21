@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -119,7 +120,7 @@ public class CdAppTest {
 
 	@Test
 	public void testCdAppForFolders() throws AbstractApplicationException,
-			InvalidDirectoryException {
+			InvalidDirectoryException, IOException {
 		CdApp cmdApp = new CdApp();
 		String[] args = new String[1];
 		args[0] = tempFolder;

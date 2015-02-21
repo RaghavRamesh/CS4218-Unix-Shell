@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -28,6 +29,8 @@ public class PwdApp implements Application {
 			outPathWriter.println(currentDirectory);
 			outPathWriter.flush();
 		} catch (InvalidDirectoryException e) {
+			throw new PwdException(e);
+		} catch (IOException e) {
 			throw new PwdException(e);
 		}
 

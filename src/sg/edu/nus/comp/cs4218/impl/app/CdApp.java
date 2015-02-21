@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -46,6 +47,8 @@ public class CdApp implements Application {
 			Environment.setCurrentDirectory(requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 
+			throw new CdException(e);
+		} catch (IOException e) {
 			throw new CdException(e);
 		}
 
