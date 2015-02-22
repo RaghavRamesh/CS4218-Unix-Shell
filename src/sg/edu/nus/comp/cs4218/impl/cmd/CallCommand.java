@@ -71,6 +71,8 @@ public class CallCommand implements Command {
 								+ mCommandLine);
 					}
 					outFile = mTokens.get(currentPos++);
+				} else if (Parser.isBackQuoted(token)) {
+					argsList.add(substitute(token));
 				} else {
 					argsList.add(token);
 				}
@@ -83,6 +85,10 @@ public class CallCommand implements Command {
 			app.run(args, inStream, outStream);
 		} catch (FileNotFoundException e) {
 			throw new ShellException(e.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new ShellException(e);
+			e.printStackTrace();
 		}
 	}
 
