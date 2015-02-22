@@ -116,7 +116,12 @@ public final class Parser {
 	  return input.length() == 1
 	      && input.charAt(0) == OUT_STREAM;
 	}
-	 
+	
+	public static Boolean isSpecialCharacster(String input) {
+	  return input.length() == 1
+	      && SPECIALS.contains(input.charAt(0));
+	}
+	
 	private static Boolean addNonEmptyToList(List<String> list, String str) {
 		if (str.trim().equals("")) {
 			return false;
