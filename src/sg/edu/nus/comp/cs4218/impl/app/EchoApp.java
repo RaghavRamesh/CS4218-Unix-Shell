@@ -21,7 +21,7 @@ public class EchoApp implements Application {
 
 		final PrintStream printStream = new PrintStream(stdout);
 		for (String arg : args) {
-			printStream.print(arg); // TODO: check if need spaces
+			printStream.print(arg + " "); // TODO: check if need spaces
 		}
 		printStream.println();
 		printStream.close();

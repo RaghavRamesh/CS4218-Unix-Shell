@@ -1,11 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Command;
@@ -22,8 +19,8 @@ public class ShellImplementation implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-	    Command command = getCommand(cmdline);
-	    command.evaluate(null, stdout);
+		Command command = getCommand(cmdline);
+		command.evaluate(null, stdout);
 	}
 
 	public static Command getCommand(String cmdline) throws ShellException {
@@ -40,17 +37,19 @@ public class ShellImplementation implements Shell {
 		}
 		return new CallCommand(cmdline);
 	}
-	
+
 	public static void main(String[] args) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				System.in));
 		ShellImplementation shellImplementation = new ShellImplementation();
-		//PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
-		
-		//"cd src; pwd > a.txt; ls"
+		// PrintWriter writer = new PrintWriter(new BufferedWriter(new
+		// OutputStreamWriter(System.out)));
+
+		// "cd src; pwd > a.txt; ls"
 		while (true) {
 			try {
 				System.out.print(Environment.getCurrentDirectory() + " # ");
-				
+
 				shellImplementation.parseAndEvaluate(reader.readLine(),
 						System.out);
 			} catch (Exception e) {
