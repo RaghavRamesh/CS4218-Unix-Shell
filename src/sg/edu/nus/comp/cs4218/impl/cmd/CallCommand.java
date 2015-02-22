@@ -46,18 +46,16 @@ public class CallCommand implements Command {
           if (inFile != null) {
             throw new ShellException(Consts.Messages.TOO_MANY_INPUT + mCommandLine);
           }
-          // TODO: Handle case < >
-          if (currentPos == mTokens.size()) {
-            throw new ShellException(Consts.Messages.NO_IN_PROVIDED + mCommandLine);
+          if (currentPos == mTokens.size() || Parser.isSpecialCharacster(mTokens.get(currentPos))) {
+            throw new ShellException(Consts.Messages.INVALID_INPUT + mCommandLine);
           }
           inFile = mTokens.get(currentPos++);
         } else if (Parser.isOutStream(token)) {
           if (outFile != null) {
             throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT + mCommandLine);
           }
-          // TODO: Handle case < >
-          if (currentPos == mTokens.size()) {
-            throw new ShellException(Consts.Messages.NO_OUT_PROVIDED + mCommandLine);
+          if (currentPos == mTokens.size() || Parser.isSpecialCharacster(mTokens.get(currentPos))) {
+            throw new ShellException(Consts.Messages.INVALID_OUTPUT + mCommandLine);
           }
           outFile = mTokens.get(currentPos++);
         } else {

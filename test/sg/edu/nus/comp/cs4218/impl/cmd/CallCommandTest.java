@@ -35,13 +35,27 @@ public class CallCommandTest {
   }
   
   @Test
-  public void testCallCommandWithInvalidOutputRedirection() {
+  public void testCallCommandWithNoOutputRedirectionProvided() {
     String cmdLine = "pwd test >";
     try {
       new CallCommand(cmdLine).evaluate(System.in,System.out);
       fail("Exception should be thrown");
     } catch (ShellException e) {
-      String expected = "shell: " + Consts.Messages.NO_OUT_PROVIDED + cmdLine;
+      String expected = "shell: " + Consts.Messages.INVALID_OUTPUT + cmdLine;
+      assertEquals(e.getMessage(), expected);
+    } catch (Exception e) {
+      fail("Wrong exception thrown");
+    }
+  }
+  
+  @Test
+  public void testCallCommandWithInvalidOutputRedirectionProvided() {
+    String cmdLine = "pwd test > <";
+    try {
+      new CallCommand(cmdLine).evaluate(System.in,System.out);
+      fail("Exception should be thrown");
+    } catch (ShellException e) {
+      String expected = "shell: " + Consts.Messages.INVALID_OUTPUT + cmdLine;
       assertEquals(e.getMessage(), expected);
     } catch (Exception e) {
       fail("Wrong exception thrown");
@@ -63,13 +77,27 @@ public class CallCommandTest {
   }
   
   @Test
-  public void testCallCommandWithInvalidInputRedirection() {
+  public void testCallCommandWithNoInputRedirectionProvided() {
     String cmdLine = "pwd test <";
     try {
       new CallCommand(cmdLine).evaluate(System.in,System.out);
       fail("Exception should be thrown");
     } catch (ShellException e) {
-      String expected = "shell: " + Consts.Messages.NO_IN_PROVIDED + cmdLine;
+      String expected = "shell: " + Consts.Messages.INVALID_INPUT + cmdLine;
+      assertEquals(e.getMessage(), expected);
+    } catch (Exception e) {
+      fail("Wrong exception thrown");
+    }
+  }
+  
+  @Test
+  public void testCallCommandWithInvalidInputRedirectionProvided() {
+    String cmdLine = "pwd test < <";
+    try {
+      new CallCommand(cmdLine).evaluate(System.in,System.out);
+      fail("Exception should be thrown");
+    } catch (ShellException e) {
+      String expected = "shell: " + Consts.Messages.INVALID_INPUT + cmdLine;
       assertEquals(e.getMessage(), expected);
     } catch (Exception e) {
       fail("Wrong exception thrown");
