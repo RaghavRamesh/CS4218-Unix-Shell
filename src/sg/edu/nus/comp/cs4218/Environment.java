@@ -1,9 +1,10 @@
 package sg.edu.nus.comp.cs4218;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import sg.edu.nus.comp.cs4218.exception.CatException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
@@ -32,6 +33,13 @@ public final class Environment {
 		currentDirectory = checkIsDirectory(directoryToChange);
 	}
 
+	/**
+	 * 
+	 * @param directoryToChange : absolute path of directory to check
+	 * @return the canonical path of the directory
+	 * @throws InvalidDirectoryException
+	 * @throws IOException
+	 */
 	public static String checkIsDirectory(String directoryToChange)
 			throws InvalidDirectoryException, IOException {
 		File reqdPathAsFile = new File(directoryToChange);
@@ -46,20 +54,26 @@ public final class Environment {
 		
 		return reqdPathAsFile.getCanonicalPath();
 	}
-	
-	public static String checkIsFile(String fileName) throws CatException, IOException{
+	/**
+	 * 
+	 * @param fileName: relative filename
+	 * @return the canonical path of the file
+	 * @throws InvalidFileException
+	 * @throws IOException
+	 */
+	public static String checkIsFile(String fileName) throws InvalidFileException, IOException{
 		File reqdPathAsFile = new File(Environment.currentDirectory,fileName);
 
 		boolean pathExists = reqdPathAsFile.exists();
 		boolean pathIsFile = reqdPathAsFile.isFile();
 
 		if (!pathExists) {
-			throw new CatException("can't open '" + fileName + "'. "
+			throw new InvalidFileException("can't open '" + fileName + "'. "
 					+ Consts.Messages.FILE_NOT_FOUND);
 		}
 
 		if (!pathIsFile) {
-			throw new CatException("can't open '" + fileName + "'. "
+			throw new InvalidFileException("can't open '" + fileName + "'. "
 					+ Consts.Messages.FILE_NOT_VALID);
 		}
 		
@@ -76,6 +90,15 @@ public final class Environment {
 
 		return reqdDir.listFiles();
 	}
+	
+	public static void deleteFolder(File folder) throws IOException {
+		  if (folder.isDirectory()) {
+		    for (File c : folder.listFiles())
+		    	deleteFolder(c);
+		  }
+		  if (!folder.delete())
+		    throw new FileNotFoundException("Failed to delete file: " + folder);
+		}
 
 	public static File createFile(String relativePath)
 			throws FileCreateException {

@@ -18,6 +18,7 @@ import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 
 public class CatApp implements Application {
 
@@ -84,11 +85,11 @@ public class CatApp implements Application {
 	}
 
 	private void checkValidityOfFiles(String[] args, List<String> validFiles)
-			throws CatException, IOException {
+			throws InvalidFileException, IOException {
 		for (int i = 0; i < args.length; i++) {
 
 			if (args[i].length() <= 0) {
-				throw new CatException(Consts.Messages.FILE_NOT_VALID);
+				throw new InvalidFileException(Consts.Messages.FILE_NOT_VALID);
 			}
 
 			String filePath = Environment.checkIsFile(args[i]);
