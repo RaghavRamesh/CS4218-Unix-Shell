@@ -80,8 +80,7 @@ public final class Environment {
 	public static File createFile(String relativePath)
 			throws FileCreateException {
 		try {
-			String currentDirectory = System
-					.getProperty(Consts.Keywords.USER_DIR);
+			String currentDirectory = getCurrentDirectory();
 			File file = new File(currentDirectory, relativePath);
 			if (!file.exists()) {
 				file.createNewFile();
