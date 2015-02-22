@@ -99,12 +99,13 @@ public class CallCommand implements Command {
 				// Remove back quotes
 				token = token.substring(1, token.length() - 1);
 				Command command = ShellImplementation.getCommand(token);
-				
-				File file = new File("temporary.txt");
-				OutputStream outStream = new FileOutputStream(file);
-				InputStreamReader fileInputStream = new InputStreamReader(new FileInputStream(file));
-				command.evaluate(null, outStream);
-				BufferedReader br = new BufferedReader(fileInputStream);
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				command.evaluate(null, byteArrayOutputStream);
+				byte[] bytes = byteArrayOutputStream.toByteArray();
+				ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+						bytes);
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						byteArrayInputStream));
 				tokens.set(i, br.readLine());
 			}
 		}
