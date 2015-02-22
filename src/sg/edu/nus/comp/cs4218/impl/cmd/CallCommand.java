@@ -53,7 +53,7 @@ public class CallCommand implements Command {
 								+ mCommandLine);
 					}
 					if (currentPos == mTokens.size()
-							|| Parser.isSpecialCharacster(mTokens
+							|| Parser.isSpecialCharacter(mTokens
 									.get(currentPos))) {
 						throw new ShellException(Consts.Messages.INVALID_INPUT
 								+ mCommandLine);
@@ -65,7 +65,7 @@ public class CallCommand implements Command {
 								Consts.Messages.TOO_MANY_OUTPUT + mCommandLine);
 					}
 					if (currentPos == mTokens.size()
-							|| Parser.isSpecialCharacster(mTokens
+							|| Parser.isSpecialCharacter(mTokens
 									.get(currentPos))) {
 						throw new ShellException(Consts.Messages.INVALID_OUTPUT
 								+ mCommandLine);

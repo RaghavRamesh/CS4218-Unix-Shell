@@ -117,7 +117,7 @@ public final class Parser {
 		return input.length() == 1 && input.charAt(0) == OUT_STREAM;
 	}
 
-	public static Boolean isSpecialCharacster(String input) {
+	public static Boolean isSpecialCharacter(String input) {
 		return input.length() == 1 && SPECIALS.contains(input.charAt(0));
 	}
 
