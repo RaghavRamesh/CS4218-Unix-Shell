@@ -87,7 +87,7 @@ public class CallCommand implements Command {
 	}
 
 	public String substitute(String input) throws AbstractApplicationException,
-		ShellException, IOException {
+			ShellException, IOException {
 		List<String> tokens = Parser.parseCommandLine(input);
 		for (int i = 0; i < tokens.size(); i++) {
 			String token = tokens.get(i);
@@ -104,7 +104,7 @@ public class CallCommand implements Command {
 						byteArrayInputStream));
 				tokens.set(i, br.readLine());
 			}
-		}	
+		}
 		// TODO: toString trims spaces
 		String result = "";
 		for (String token : tokens) {
