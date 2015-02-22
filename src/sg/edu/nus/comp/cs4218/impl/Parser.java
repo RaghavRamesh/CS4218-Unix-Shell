@@ -121,6 +121,14 @@ public final class Parser {
 		return input.length() == 1 && SPECIALS.contains(input.charAt(0));
 	}
 
+	public static Boolean containsBackQuote(String input) {
+		int length = input.length();
+		if (length < 2) {
+			return false;
+		}
+		return input.contains(BACK_QUOTE.toString());
+	}
+
 	private static Boolean addNonEmptyToList(List<String> list, String str) {
 		if (str.trim().equals("")) {
 			return false;
