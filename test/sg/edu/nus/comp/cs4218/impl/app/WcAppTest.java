@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +16,9 @@ import java.io.OutputStreamWriter;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -25,9 +28,14 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 
 public class WcAppTest {
 
+	private static final String TMP = ".tmp";
+	private static final String TEMP_FILE_INPUT = "temp-file-name-input";
 	File tempTestDirectory = null;
 	String currentDirectory = "";
 	String tempFolder = "TempTest";
+
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -55,47 +63,39 @@ public class WcAppTest {
 	}
 
 	@Test
-	public void testWcAppWithNullArgument() {
+	public void testWcAppWithNullArgument() throws AbstractApplicationException {
+
+		expectedEx.expect(WcException.class);
+		expectedEx.expectMessage("wc: " + Consts.Messages.ARG_NOT_NULL);
+
 		WcApp cmdApp = new WcApp();
-		try {
-			cmdApp.run(null, null, System.out);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals("wc: " + Consts.Messages.ARG_NOT_NULL, e.getMessage());
-		}
+		cmdApp.run(null, null, System.out);
 	}
 
 	@Test
-	public void testWcAppWithNullOutputStreamArgument() {
+	public void testWcAppWithNullOutputStreamArgument()
+			throws AbstractApplicationException {
+
+		expectedEx.expect(WcException.class);
+		expectedEx.expectMessage("wc: " + Consts.Messages.OUT_STR_NOT_NULL);
+
 		WcApp cmdApp = new WcApp();
 		String[] args = new String[2];
 		args[0] = tempFolder;
 
-		try {
-			cmdApp.run(args, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "wc: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		cmdApp.run(args, null, null);
 	}
 
 	@Test
-	public void testWcAppWithoutAnyArgumentAndNullIputStream() {
+	public void testWcAppWithoutAnyArgumentAndNullIputStream()
+			throws AbstractApplicationException {
+		expectedEx.expect(WcException.class);
+		expectedEx.expectMessage("wc: " + Consts.Messages.INP_STR_NOT_NULL);
+
 		WcApp cmdApp = new WcApp();
 		String[] args = {};
 
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
-
-		} catch (WcException e) {
-			assertEquals("wc: " + Consts.Messages.INP_STR_NOT_NULL,
-					e.getMessage());
-		} catch (AbstractApplicationException e) {
-			fail();
-			e.printStackTrace();
-		}
+		cmdApp.run(args, null, System.out);
 	}
 
 	@Test
@@ -108,7 +108,7 @@ public class WcAppTest {
 		OutputStream fileOutStream = null;
 
 		try {
-			tempInput = File.createTempFile("temp-file-name-input", ".tmp");
+			tempInput = File.createTempFile(TEMP_FILE_INPUT, TMP);
 			fileOutStream = new FileOutputStream(tempInput);
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -119,7 +119,7 @@ public class WcAppTest {
 
 			InputStream fileInputStream = new FileInputStream(tempInput);
 
-			tempOutput = File.createTempFile("temp-file-name", ".tmp");
+			tempOutput = File.createTempFile("temp-file-name", TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, fileInputStream, fileOutStream);
@@ -154,7 +154,7 @@ public class WcAppTest {
 		OutputStream fileOutStream = null;
 
 		try {
-			tempInput = File.createTempFile("temp-file-name-input", ".tmp");
+			tempInput = File.createTempFile(TEMP_FILE_INPUT, TMP);
 			fileOutStream = new FileOutputStream(tempInput);
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -165,7 +165,7 @@ public class WcAppTest {
 
 			InputStream fileInputStream = new FileInputStream(tempInput);
 
-			tempOutput = File.createTempFile("temp-file-name", ".tmp");
+			tempOutput = File.createTempFile("temp-file-name", TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, fileInputStream, fileOutStream);
@@ -196,13 +196,13 @@ public class WcAppTest {
 	public void testWcAppWithCountFromFile() {
 
 		WcApp cmdApp = new WcApp();
-		String[] args = { "-w", "-l", "temp-file-name-input" };
+		String[] args = { "-w", "-l", TEMP_FILE_INPUT };
 		File tempInput = null;
 		File tempOutput = null;
 		OutputStream fileOutStream = null;
 
 		try {
-			tempInput = Environment.createFile("temp-file-name-input");
+			tempInput = Environment.createFile(TEMP_FILE_INPUT);
 			fileOutStream = new FileOutputStream(tempInput);
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -211,7 +211,7 @@ public class WcAppTest {
 			writer.close();
 			fileOutStream.close();
 
-			tempOutput = File.createTempFile("temp-file-name", ".tmp");
+			tempOutput = File.createTempFile("temp-file-name", TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, null, fileOutStream);

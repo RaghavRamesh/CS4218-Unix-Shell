@@ -54,25 +54,31 @@ public class WcApp implements Application {
 		try {
 			ArrayList<String> fileNames = processArguments(args);
 
-			if (fileNames.size() == 0) {
+			if (fileNames.isEmpty()) {
 				reader = processCountFromInputStream(stdin, writer);
+				writer.flush();
 				return;
 			}
 
 			processCountFromFiles(reader, writer, fileNames);
+			writer.flush();
 		} catch (FileNotFoundException exception) {
 			throw new WcException(exception);
 		} catch (IOException exception) {
 			throw new WcException(exception);
 		} catch (InvalidDirectoryException exception) {
 			throw new WcException(exception);
-		} finally {
-			writer.close();
 		}
 
 	}
 
-	private ArrayList<String> processArguments(String[] args)
+	/**
+	 * Parses the arguments and identifies file names and options
+	 * @param args : file names, options such as -w,-m,-l
+	 * @return list of file names
+	 * @throws WcException
+	 */
+	private ArrayList<String> processArguments(String... args)
 			throws WcException {
 		ArrayList<String> fileNames = new ArrayList<String>();
 
@@ -112,7 +118,6 @@ public class WcApp implements Application {
 				lineLength);
 
 		writer.write("\n");
-		reader.close();
 		return reader;
 	}
 
@@ -151,10 +156,12 @@ public class WcApp implements Application {
 			writer.write("\n");
 		}
 
-		displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
-				totalLineLength);
+		if (fileNames.size() > 1) {
+			displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
+					totalLineLength);
 
-		writer.println(TOTAL);
+			writer.println(TOTAL);
+		}
 
 		reader.close();
 	}
@@ -172,15 +179,15 @@ public class WcApp implements Application {
 	}
 
 	private void updateDisplaySetting(String arg) throws WcException {
-		if (arg.equals("-m")) {
+		if ("-m".equals(arg)) {
 			displayBytes = true;
 		}
 
-		else if (arg.equals("-w")) {
+		else if ("-w".equals(arg)) {
 			displayWords = true;
 		}
 
-		else if (arg.equals("-l")) {
+		else if ("-l".equals(arg)) {
 			displayLineLength = true;
 		}
 

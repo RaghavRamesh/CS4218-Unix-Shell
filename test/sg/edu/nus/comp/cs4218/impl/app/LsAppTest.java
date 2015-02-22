@@ -13,19 +13,28 @@ import java.io.OutputStream;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
+import sg.edu.nus.comp.cs4218.exception.LsException;
 
 public class LsAppTest {
 
+	private static final String TMP = ".tmp";
+	private static final String TEMP_FILE_NAME = "temp-file-name";
 	LsApp lsApp = null;
 	File tempTestDirectory = null;
 	String originalCurrDir = "";
 	String tempFolder = "TempTest";
+
+	// used for those exception where we need to test message
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -41,7 +50,6 @@ public class LsAppTest {
 			fail();
 		}
 
-		Environment.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
 	}
 
 	@After
@@ -57,43 +65,41 @@ public class LsAppTest {
 	}
 
 	@Test
-	public void testLsWithNullOutputStream() {
+	public void testLsWithNullOutputStream()
+			throws AbstractApplicationException {
+
+		expectedEx.expect(LsException.class);
+		expectedEx.expectMessage("ls: " + Consts.Messages.OUT_STR_NOT_NULL);
 
 		String[] args = new String[1];
-		args[0] = tempTestDirectory.getAbsolutePath();
+		args[0] = tempFolder;
 
 		lsApp = new LsApp();
-		try {
-			lsApp.run(args, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "ls: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		lsApp.run(args, null, null);
+
 	}
 
 	@Test
-	public void testLsAppWithNullArgument() {
+	public void testLsAppWithNullArgument() throws AbstractApplicationException {
+
+		expectedEx.expect(LsException.class);
+		expectedEx.expectMessage("ls: " + Consts.Messages.ARG_NOT_NULL);
+
 		LsApp cmdApp = new LsApp();
-		try {
-			cmdApp.run(null, null, System.out);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "ls: " + Consts.Messages.ARG_NOT_NULL);
-		}
+		cmdApp.run(null, null, System.out);
 	}
 
 	@Test
 	public void testLsWithMoreThanOneArg() {
 
 		String[] args = new String[2];
-		args[0] = tempTestDirectory.getAbsolutePath();
-		args[1] = tempTestDirectory.getAbsolutePath();
+		args[0] = tempFolder;
+		args[1] = tempFolder;
 		File temp = null;
 
 		lsApp = new LsApp();
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 			lsApp.run(args, null, fileOutStream);
 			fail();
@@ -116,19 +122,20 @@ public class LsAppTest {
 
 		File temp = null;
 		String[] args = new String[1];
-		args[0] = tempTestDirectory.getAbsolutePath();
+		args[0] = tempFolder;
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 			lsApp.run(args, null, fileOutStream);
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(temp)));
-			assertEquals(buffReader.readLine(), null);
+			assertEquals("", buffReader.readLine());
 			buffReader.close();
 
 		} catch (AbstractApplicationException e) {
+			e.printStackTrace();
 			fail();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -152,13 +159,13 @@ public class LsAppTest {
 		File newFile4 = null;
 
 		String[] args = new String[1];
-		args[0] = tempTestDirectory.getAbsolutePath();
+		args[0] = tempFolder;
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = Environment.getCurrentDirectory();
+			String currentDir = tempTestDirectory.getAbsolutePath();
 			newFile1 = new File(currentDir + File.separator + "test1.txt");
 			newFile2 = new File(currentDir + File.separator + "test2.xyz");
 			newFile3 = new File(currentDir + File.separator + "subdir1");
@@ -181,9 +188,6 @@ public class LsAppTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (InvalidDirectoryException e) {
-			e.printStackTrace();
-			fail();
 		} finally {
 
 			deleteIdealFiles(temp, newFile1, newFile2, newFile3, newFile4);
@@ -191,7 +195,11 @@ public class LsAppTest {
 	}
 
 	@Test
-	public void testLsWithoutArgs() {
+	public void testLsWithoutArgs() throws InvalidDirectoryException,
+			IOException {
+
+		// change the current directory to make it consistent across machines
+		Environment.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
 
 		lsApp = new LsApp();
 
@@ -202,15 +210,10 @@ public class LsAppTest {
 		File newFile4 = null;
 
 		try {
-			// change the current directory to TempTest folder to make things
-			// consistent across all machines
-			Environment
-					.setCurrentDirectory(tempTestDirectory.getAbsolutePath());
-
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = Environment.getCurrentDirectory();
+			String currentDir = tempTestDirectory.getAbsolutePath();
 			newFile1 = new File(currentDir + File.separator + "test1.txt");
 			newFile2 = new File(currentDir + File.separator + "test2.xyz");
 			newFile3 = new File(currentDir + File.separator + "subdir1");
@@ -231,11 +234,9 @@ public class LsAppTest {
 			buffReader.close();
 
 		} catch (AbstractApplicationException e) {
-			fail();
-		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (InvalidDirectoryException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		} finally {
@@ -243,13 +244,8 @@ public class LsAppTest {
 			deleteIdealFiles(temp, newFile1, newFile2, newFile3, newFile4);
 
 			// change the current directory to original current directory
-			try {
-				Environment.setCurrentDirectory(originalCurrDir);
-			} catch (InvalidDirectoryException e) {
+			Environment.setCurrentDirectory(originalCurrDir);
 
-				e.printStackTrace();
-				fail();
-			}
 		}
 	}
 
@@ -278,13 +274,8 @@ public class LsAppTest {
 
 	private void checkAssertionsForIdealFileNamesAndDirs(
 			BufferedReader buffReader) throws IOException {
-		assertEquals("subdir1", buffReader.readLine());
-		assertEquals("\t", buffReader.readLine());
-		assertEquals("subdir2", buffReader.readLine());
-		assertEquals("\t", buffReader.readLine());
-		assertEquals("test1.txt", buffReader.readLine());
-		assertEquals("\t", buffReader.readLine());
-		assertEquals("test2.xyz", buffReader.readLine());
+		assertEquals("subdir1" + "\t" + "subdir2" + "\t" + "test1.txt" + "\t"
+				+ "test2.xyz" + "\t", buffReader.readLine());
 	}
 
 	@Test
@@ -296,13 +287,13 @@ public class LsAppTest {
 		File newFile2 = null;
 
 		String[] args = new String[1];
-		args[0] = tempTestDirectory.getAbsolutePath();
+		args[0] = tempFolder;
 
 		try {
-			temp = File.createTempFile("temp-file-name", ".tmp");
+			temp = File.createTempFile(TEMP_FILE_NAME, TMP);
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String currentDir = Environment.getCurrentDirectory();
+			String currentDir = tempTestDirectory.getAbsolutePath();
 			newFile1 = new File(currentDir + File.separator + ".test1");
 			newFile2 = new File(currentDir + File.separator + ".subdir1");
 
@@ -313,15 +304,13 @@ public class LsAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(temp)));
-			assertEquals(null, buffReader.readLine());
+			assertEquals("", buffReader.readLine());
 			buffReader.close();
 
 		} catch (AbstractApplicationException e) {
-			fail();
-		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
-		} catch (InvalidDirectoryException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
 		} finally {

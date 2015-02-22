@@ -4,21 +4,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class CdAppTest {
 
+	private static final String CD_EXPT = "cd: ";
 	File tempTestDirectory = null;
 	String currentDirectory = "";
 	String tempFolder = "TempTest";
+
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	@Before
 	public void setUp() throws Exception {
@@ -46,65 +54,60 @@ public class CdAppTest {
 	}
 
 	@Test
-	public void testCdAppWithNullArgument() {
+	public void testCdAppWithNullArgument() throws AbstractApplicationException {
+		expectedEx.expect(CdException.class);
+		expectedEx.expectMessage(CD_EXPT + Consts.Messages.ARG_NOT_NULL);
+
 		CdApp cmdApp = new CdApp();
-		try {
-			cmdApp.run(null, null, System.out);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals("cd: " + Consts.Messages.ARG_NOT_NULL, e.getMessage());
-		}
+		cmdApp.run(null, null, System.out);
+
 	}
 
 	@Test
-	public void testCdAppWithNullOutputStreamArgument() {
+	public void testCdAppWithNullOutputStreamArgument()
+			throws AbstractApplicationException {
+		expectedEx.expect(CdException.class);
+		expectedEx.expectMessage(CD_EXPT + Consts.Messages.OUT_STR_NOT_NULL);
+
 		CdApp cmdApp = new CdApp();
 		String[] args = new String[2];
 		args[0] = tempFolder;
 
-		try {
-			cmdApp.run(args, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "cd: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		cmdApp.run(args, null, null);
 	}
 
 	@Test
-	public void testCdAppWithMultipleArgs() {
+	public void testCdAppWithMultipleArgs() throws AbstractApplicationException {
+		expectedEx.expect(CdException.class);
+		expectedEx.expectMessage(CD_EXPT + Consts.Messages.EXPECT_ONE_ARG);
+
 		CdApp cmdApp = new CdApp();
 		String[] args = new String[2];
 		args[0] = tempFolder;
 		args[1] = "dummy";
 
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
-
-		} catch (AbstractApplicationException e) {
-			assertEquals("cd: " + Consts.Messages.EXPECT_ONE_ARG,
-					e.getMessage());
-		}
+		cmdApp.run(args, null, System.out);
 	}
 
 	@Test
-	public void testCdAppWithoutAnyArgument() {
+	public void testCdAppWithoutAnyArgument()
+			throws AbstractApplicationException {
+		expectedEx.expect(CdException.class);
+		expectedEx.expectMessage(CD_EXPT + Consts.Messages.NO_DIR_ENTERED);
+
 		CdApp cmdApp = new CdApp();
 		String[] args = {};
 
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
+		cmdApp.run(args, null, System.out);
 
-		} catch (AbstractApplicationException e) {
-			assertEquals("cd: " + Consts.Messages.NO_DIR_ENTERED,
-					e.getMessage());
-		}
 	}
 
 	@Test
-	public void testCdWithIncorrectDirectory() {
+	public void testCdWithIncorrectDirectory()
+			throws AbstractApplicationException {
+		expectedEx.expect(CdException.class);
+		expectedEx.expectMessage(CD_EXPT + Consts.Messages.PATH_NOT_FOUND);
+
 		CdApp cmdApp = new CdApp();
 
 		tempTestDirectory.delete();
@@ -112,35 +115,20 @@ public class CdAppTest {
 		String[] args = new String[1];
 		args[0] = tempFolder;
 
-		try {
-			cmdApp.run(args, null, System.out);
-			fail();
-
-		} catch (AbstractApplicationException e) {
-			assertEquals("cd: " + Consts.Messages.PATH_NOT_FOUND,
-					e.getMessage());
-		}
+		cmdApp.run(args, null, System.out);
 	}
 
 	@Test
-	public void testCdAppForFolders() {
+	public void testCdAppForFolders() throws AbstractApplicationException,
+			InvalidDirectoryException, IOException {
 		CdApp cmdApp = new CdApp();
 		String[] args = new String[1];
 		args[0] = tempFolder;
 
-		try {
-			cmdApp.run(args, null, System.out);
-			String directoryAfterCd = Environment.getCurrentDirectory();
-			assertEquals(currentDirectory + File.separator + tempFolder,
-					directoryAfterCd);
-
-		} catch (AbstractApplicationException e) {
-			e.printStackTrace();
-			fail();
-		} catch (InvalidDirectoryException e) {
-			e.printStackTrace();
-			fail();
-		}
+		cmdApp.run(args, null, System.out);
+		String directoryAfterCd = Environment.getCurrentDirectory();
+		assertEquals(currentDirectory + File.separator + tempFolder,
+				directoryAfterCd);
 	}
 
 }

@@ -15,8 +15,8 @@ public class Consts {
     public static final String QUOTE_MISMATCH = "Quote mistmatch";
     public static final String TOO_MANY_INPUT = "Too many input redirection: ";
     public static final String TOO_MANY_OUTPUT = "Too many output redirection: ";
-    public static final String NO_IN_PROVIDED = "No input redirection provided: ";
-    public static final String NO_OUT_PROVIDED = "No output redirection provided: ";
+    public static final String INVALID_INPUT = "Invalid input redirection provided: ";
+    public static final String INVALID_OUTPUT = "Invalid output redirection provided: ";
     public static final String FILE_NOT_FOUND = "The file could not be found";
     public static final String FILE_NOT_VALID = "File name is invalid";
     public static final String INP_STR_NOT_NULL = "Input stream cannot be null";

@@ -35,12 +35,12 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
+
 		if (mTokens.isEmpty()) {
 			return;
 		}
 
 		String inFile = null, outFile = null;
-
 		try {
 			Application app = getApplication(mTokens.get(0));
 			List<String> argsList = new ArrayList<String>();
@@ -52,9 +52,10 @@ public class CallCommand implements Command {
 						throw new ShellException(Consts.Messages.TOO_MANY_INPUT
 								+ mCommandLine);
 					}
-					// TODO: Handle case < >
-					if (currentPos == mTokens.size()) {
-						throw new ShellException(Consts.Messages.NO_IN_PROVIDED
+					if (currentPos == mTokens.size()
+							|| Parser.isSpecialCharacster(mTokens
+									.get(currentPos))) {
+						throw new ShellException(Consts.Messages.INVALID_INPUT
 								+ mCommandLine);
 					}
 					inFile = mTokens.get(currentPos++);
@@ -63,16 +64,13 @@ public class CallCommand implements Command {
 						throw new ShellException(
 								Consts.Messages.TOO_MANY_OUTPUT + mCommandLine);
 					}
-					// TODO: Handle case < >
-					if (currentPos == mTokens.size()) {
-						throw new ShellException(
-								Consts.Messages.NO_OUT_PROVIDED + mCommandLine);
+					if (currentPos == mTokens.size()
+							|| Parser.isSpecialCharacster(mTokens
+									.get(currentPos))) {
+						throw new ShellException(Consts.Messages.INVALID_OUTPUT
+								+ mCommandLine);
 					}
 					outFile = mTokens.get(currentPos++);
-				} else if (Parser.isBackQuoted(token)) {
-					// Check if back quote is before single quote, if so call
-					// getCommand, else do nothing
-					argsList.add(substitute(token));
 				} else {
 					argsList.add(token);
 				}
@@ -85,13 +83,11 @@ public class CallCommand implements Command {
 			app.run(args, inStream, outStream);
 		} catch (FileNotFoundException e) {
 			throw new ShellException(e.getMessage());
-		} catch (IOException e) {
-			throw new ShellException(e.getMessage());
 		}
 	}
 
 	public String substitute(String input) throws AbstractApplicationException,
-			ShellException, IOException {
+		ShellException, IOException {
 		List<String> tokens = Parser.parseCommandLine(input);
 		for (int i = 0; i < tokens.size(); i++) {
 			String token = tokens.get(i);
@@ -108,7 +104,7 @@ public class CallCommand implements Command {
 						byteArrayInputStream));
 				tokens.set(i, br.readLine());
 			}
-		}
+		}	
 		// TODO: toString trims spaces
 		String result = "";
 		for (String token : tokens) {

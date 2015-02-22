@@ -4,19 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class CatException extends AbstractApplicationException {
+	private static final String CAT = "cat: ";
+
 	public CatException(String message) {
-		super("cat: " + message);
+		super(CAT + message);
 	}
 
 	public CatException(InvalidDirectoryException exception) {
-		super("cat: " + exception.getMessage());
+		super(CAT + exception.getMessage());
 	}
 
 	public CatException(FileNotFoundException exception) {
-		super("cat: " + exception.getMessage());
+		super(CAT + exception.getMessage());
 	}
 
 	public CatException(IOException exception) {
-		super("cat: " + exception.getMessage());
+		super(CAT + exception.getMessage());
 	}
 }

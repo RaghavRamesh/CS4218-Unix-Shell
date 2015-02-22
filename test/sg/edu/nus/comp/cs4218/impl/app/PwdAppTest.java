@@ -11,25 +11,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.PwdException;
 
 public class PwdAppTest {
 
 	PwdApp pwdApp;
 
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
+
 	@Test
-	public void testPwdWithNullOutputStream() {
+	public void testPwdWithNullOutputStream()
+			throws AbstractApplicationException {
+
+		expectedEx.expect(PwdException.class);
+		expectedEx.expectMessage("pwd: " + Consts.Messages.OUT_STR_NOT_NULL);
+
 		pwdApp = new PwdApp();
-		try {
-			pwdApp.run(null, null, null);
-			fail();
-		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "pwd: "
-					+ Consts.Messages.OUT_STR_NOT_NULL);
-		}
+		pwdApp.run(null, null, null);
 	}
 
 	@Test
