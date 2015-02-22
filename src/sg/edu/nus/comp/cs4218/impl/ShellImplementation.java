@@ -16,8 +16,8 @@ public class ShellImplementation implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-	    Command command = getCommand(cmdline);
-	    command.evaluate(null, stdout);
+		Command command = getCommand(cmdline);
+		command.evaluate(null, stdout);
 	}
 
 	public static Command getCommand(String cmdline) throws ShellException {
@@ -34,11 +34,12 @@ public class ShellImplementation implements Shell {
 		}
 		return new CallCommand(cmdline);
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			ShellImplementation shellImplementation = new ShellImplementation();
-			shellImplementation.parseAndEvaluate("echo hello `echo haha`", System.out);
+			shellImplementation.parseAndEvaluate("echo hello `echo haha`",
+					System.out);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

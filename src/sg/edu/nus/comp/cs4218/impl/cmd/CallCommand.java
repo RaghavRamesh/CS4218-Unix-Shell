@@ -1,7 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,8 +39,7 @@ public class CallCommand implements Command {
 			return;
 		}
 
-		String inFile = null;
-		String outFile = null;
+		String inFile = null, outFile = null;
 
 		try {
 			Application app = getApplication(mTokens.get(0));
@@ -86,7 +86,7 @@ public class CallCommand implements Command {
 		} catch (FileNotFoundException e) {
 			throw new ShellException(e.getMessage());
 		} catch (IOException e) {
-			throw new ShellException(e.getMessage()); 
+			throw new ShellException(e.getMessage());
 		}
 	}
 
