@@ -2,21 +2,22 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CatException;
-import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class CatApp implements Application {
 
@@ -32,10 +33,10 @@ public class CatApp implements Application {
 			throw new CatException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
 
-		String requiredDirectory;
 		BufferedReader reader = null;
 		PrintWriter writer = new PrintWriter(new BufferedWriter(
 				new OutputStreamWriter(stdout)));
+		List<String> validFiles = new ArrayList<String>();
 
 		try {
 
@@ -53,50 +54,46 @@ public class CatApp implements Application {
 				}
 
 				writer.write("\n");
+				writer.flush();
 				return;
 			}
 
-			for (int i = 0; i < args.length; i++) {
+			checkValidityOfFiles(args, validFiles);
 
-				if (args[i].length() <= 0) {
-					throw new CatException(Consts.Messages.FILE_NOT_VALID);
-				}
-
-				requiredDirectory = Environment.getCurrentDirectory()
-						+ File.separator + args[i];
-				File reqdPathAsFile = new File(requiredDirectory);
-
-				boolean pathExists = reqdPathAsFile.exists();
-				boolean pathIsFile = reqdPathAsFile.isFile();
-
-				if (!pathExists) {
-					throw new CatException("can't open '" + args[i] + "'. "
-							+ Consts.Messages.FILE_NOT_FOUND);
-				}
-
-				if (!pathIsFile) {
-					throw new CatException("can't open '" + args[i] + "'. "
-							+ Consts.Messages.FILE_NOT_VALID);
-				}
-
-				if (pathExists && pathIsFile) {
-					reader = new BufferedReader(new InputStreamReader(
-							new FileInputStream(requiredDirectory)));
-					String line = null;
-					while ((line = reader.readLine()) != null) {
-						writer.println(line);
-					}
-				}
-
-				writer.flush();
-				reader.close();
-			}
-		} catch (InvalidDirectoryException exception) {
-			throw new CatException(exception);
+			displayContentInFiles(writer, validFiles);
 		} catch (IOException exception) {
 			throw new CatException(exception);
 		}
 
+	}
+
+	private void displayContentInFiles(PrintWriter writer,
+			List<String> validFiles) throws FileNotFoundException, IOException {
+		BufferedReader reader;
+		for (String filePath : validFiles) {
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(filePath)));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				writer.println(line);
+			}
+
+			writer.flush();
+			reader.close();
+		}
+	}
+
+	private void checkValidityOfFiles(String[] args, List<String> validFiles)
+			throws CatException, IOException {
+		for (int i = 0; i < args.length; i++) {
+
+			if (args[i].length() <= 0) {
+				throw new CatException(Consts.Messages.FILE_NOT_VALID);
+			}
+
+			String filePath = Environment.checkIsFile(args[i]);
+			validFiles.add(filePath);
+		}
 	}
 
 }

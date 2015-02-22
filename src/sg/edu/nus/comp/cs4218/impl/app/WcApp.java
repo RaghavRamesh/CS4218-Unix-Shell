@@ -56,22 +56,28 @@ public class WcApp implements Application {
 
 			if (fileNames.isEmpty()) {
 				reader = processCountFromInputStream(stdin, writer);
+				writer.flush();
 				return;
 			}
 
 			processCountFromFiles(reader, writer, fileNames);
+			writer.flush();
 		} catch (FileNotFoundException exception) {
 			throw new WcException(exception);
 		} catch (IOException exception) {
 			throw new WcException(exception);
 		} catch (InvalidDirectoryException exception) {
 			throw new WcException(exception);
-		} finally {
-			writer.close();
 		}
 
 	}
 
+	/**
+	 * Parses the arguments and identifies file names and options
+	 * @param args : file names, options such as -w,-m,-l
+	 * @return list of file names
+	 * @throws WcException
+	 */
 	private ArrayList<String> processArguments(String... args)
 			throws WcException {
 		ArrayList<String> fileNames = new ArrayList<String>();
@@ -112,7 +118,6 @@ public class WcApp implements Application {
 				lineLength);
 
 		writer.write("\n");
-		reader.close();
 		return reader;
 	}
 
@@ -151,10 +156,12 @@ public class WcApp implements Application {
 			writer.write("\n");
 		}
 
-		displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
-				totalLineLength);
+		if (fileNames.size() > 1) {
+			displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
+					totalLineLength);
 
-		writer.println(TOTAL);
+			writer.println(TOTAL);
+		}
 
 		reader.close();
 	}

@@ -3,7 +3,7 @@ package sg.edu.nus.comp.cs4218;
 import java.io.File;
 import java.io.IOException;
 
-import sg.edu.nus.comp.cs4218.exception.CdException;
+import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
@@ -32,7 +32,7 @@ public final class Environment {
 		currentDirectory = checkIsDirectory(directoryToChange);
 	}
 
-	private static String checkIsDirectory(String directoryToChange)
+	public static String checkIsDirectory(String directoryToChange)
 			throws InvalidDirectoryException, IOException {
 		File reqdPathAsFile = new File(directoryToChange);
 
@@ -46,7 +46,26 @@ public final class Environment {
 		
 		return reqdPathAsFile.getCanonicalPath();
 	}
+	
+	public static String checkIsFile(String fileName) throws CatException, IOException{
+		File reqdPathAsFile = new File(Environment.currentDirectory,fileName);
 
+		boolean pathExists = reqdPathAsFile.exists();
+		boolean pathIsFile = reqdPathAsFile.isFile();
+
+		if (!pathExists) {
+			throw new CatException("can't open '" + fileName + "'. "
+					+ Consts.Messages.FILE_NOT_FOUND);
+		}
+
+		if (!pathIsFile) {
+			throw new CatException("can't open '" + fileName + "'. "
+					+ Consts.Messages.FILE_NOT_VALID);
+		}
+		
+		return reqdPathAsFile.getCanonicalPath();
+	}
+	
 	public static File[] getContentsInDirectory(String requiredDirectory)
 			throws InvalidDirectoryException {
 		File reqdDir = new File(Environment.currentDirectory,requiredDirectory);
