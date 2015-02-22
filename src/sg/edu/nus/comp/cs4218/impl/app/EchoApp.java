@@ -24,7 +24,6 @@ public class EchoApp implements Application {
 			printStream.print(arg + " "); // TODO: check if need spaces
 		}
 		printStream.println();
-		printStream.close();
 
 	}
 
