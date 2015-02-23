@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
+import sg.edu.nus.comp.cs4218.exception.CatException;
 
 public class CatAppTest {
 
@@ -67,7 +67,7 @@ public class CatAppTest {
 	@Test
 	public void testCatAppWithNullArgument()
 			throws AbstractApplicationException {
-		expectedEx.expect(InvalidFileException.class);
+		expectedEx.expect(CatException.class);
 		expectedEx.expectMessage(CAT_EXCEPTION + Consts.Messages.ARG_NOT_NULL);
 		CatApp cmdApp = new CatApp();
 
@@ -78,7 +78,7 @@ public class CatAppTest {
 	@Test
 	public void testCatAppWithNullOutputStreamArgument()
 			throws AbstractApplicationException {
-		expectedEx.expect(InvalidFileException.class);
+		expectedEx.expect(CatException.class);
 		expectedEx.expectMessage(CAT_EXCEPTION
 				+ Consts.Messages.OUT_STR_NOT_NULL);
 
@@ -93,7 +93,7 @@ public class CatAppTest {
 	@Test
 	public void testCatAppWithoutAnyArgumentAndNullIputStream()
 			throws AbstractApplicationException {
-		expectedEx.expect(InvalidFileException.class);
+		expectedEx.expect(CatException.class);
 		expectedEx.expectMessage(CAT_EXCEPTION
 				+ Consts.Messages.INP_STR_NOT_NULL);
 
@@ -227,7 +227,7 @@ public class CatAppTest {
 	@Test
 	public void testCatAppForNonExistentFile()
 			throws AbstractApplicationException {
-		expectedEx.expect(InvalidFileException.class);
+		expectedEx.expect(CatException.class);
 		expectedEx.expectMessage(CAT_EXCEPTION + "can't open 'test1.txt'. "
 				+ Consts.Messages.FILE_NOT_FOUND);
 		CatApp cmdApp = new CatApp();
@@ -250,7 +250,7 @@ public class CatAppTest {
 			cmdApp.run(args, null, System.out);
 			fail();
 
-		} catch (InvalidFileException exception) {
+		} catch (CatException exception) {
 			assertEquals("cat: can't open " + "'" + TEMP_FOLDER
 					+ File.separator + TEST1 + "'. "
 					+ Consts.Messages.FILE_NOT_VALID, exception.getMessage());

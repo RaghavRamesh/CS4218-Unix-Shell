@@ -64,6 +64,8 @@ public class CatApp implements Application {
 			displayContentInFiles(writer, validFiles);
 		} catch (IOException exception) {
 			throw new CatException(exception);
+		} catch (InvalidFileException exception) {
+			throw new CatException(exception);
 		}
 
 	}

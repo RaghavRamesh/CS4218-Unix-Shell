@@ -1,8 +1,7 @@
 package sg.edu.nus.comp.cs4218.exception;
 
 
-public class InvalidFileException extends AbstractApplicationException {
-	private static final String CAT = "cat: ";
+public class InvalidFileException extends Exception {
 
 	public InvalidFileException(String message) {
         super(message);
