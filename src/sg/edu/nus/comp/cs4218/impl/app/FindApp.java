@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.FileSearcher;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
@@ -38,7 +38,7 @@ public class FindApp implements Application {
 		} else if (args.length == 1) {
 			FileSearcher fileSearcher = new FileSearcher(args[0]);
 			try {
-				Files.walkFileTree(Paths.get(DirectoryHelpers.getCurrentDirectory()), fileSearcher);
+				Files.walkFileTree(Paths.get(Environment.getCurrentDirectory()), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
 			} catch (IOException | InvalidDirectoryException e) {
