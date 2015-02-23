@@ -58,7 +58,7 @@ public class HeadApp implements Application {
 				}
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (FileNotFoundException e) {
-				throw new HeadException(e.getMessage());
+				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
 			} catch (NumberFormatException e) {
 				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
 			}
@@ -70,8 +70,8 @@ public class HeadApp implements Application {
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (NumberFormatException e) {
 				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
-			} catch (FileNotFoundException e) { // TODO:
-				throw new HeadException(e.getMessage());
+			} catch (FileNotFoundException e) {
+				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
 			}
 		} else {
 			throw new HeadException(Consts.Messages.TOO_MANY_ARGUMENTS);
