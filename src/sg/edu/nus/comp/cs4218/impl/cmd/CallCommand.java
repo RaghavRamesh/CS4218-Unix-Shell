@@ -29,7 +29,17 @@ public class CallCommand implements Command {
 
 	public CallCommand(String commandLine) throws ShellException {
 		mCommandLine = commandLine;
-		this.mTokens = Parser.parseCommandLine(commandLine);
+		List<String> tokens = Parser.parseCommandLine(commandLine);
+		mTokens = new ArrayList<String>();
+		for (String token : tokens) {
+		  // Remove the outer double/single quotes
+		  if (Parser.isDoubleQuoted(token) || Parser.isSingleQuoted(token)) {
+		    token = token.substring(1, token.length() - 1);
+		  }
+		  if (!token.isEmpty()) {
+		    mTokens.add(token);
+		  }
+		}
 	}
 
 	@Override
@@ -85,9 +95,8 @@ public class CallCommand implements Command {
 			String[] args = argsList.toArray(new String[argsList.size()]);
 			app.run(args, inStream, outStream);
 		} catch (FileNotFoundException e) {
-			throw new ShellException(e.getMessage());
+			throw new ShellException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new ShellException(e);
 		}
 	}
