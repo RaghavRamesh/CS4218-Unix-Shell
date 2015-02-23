@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.TailException;
 
 public class TailApp implements Application {
@@ -29,24 +28,32 @@ public class TailApp implements Application {
 		// --4-- head -n 23 filename.sdfsdf -- arg[0] and arg[1] needed
 
 		if (args == null) {
-			throw new HeadException(Consts.Messages.ARG_NOT_NULL);// TODO: check if this is needed
+			throw new TailException(Consts.Messages.ARG_NOT_NULL);// TODO: check if this is needed
 		}
 
 		if (stdout == null) {
-			throw new HeadException(Consts.Messages.OUT_STR_NOT_NULL);
+			throw new TailException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
 
 		BufferedReader reader = null;
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
-		int numOfLines = 10; // by default, read only 10 lines
+		long numOfLinesToRead = 10; // by default, read only 10 lines
 
 		if (args.length == 0) { // --1--
 
 			if (stdin == null) {
-				throw new HeadException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+				throw new TailException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
-			writeToPrintStream(writer, numOfLines, reader);
+
+			try {
+				reader.mark(0);
+				long lineCount = getLineCount(reader);
+				reader.reset();
+				writeToPrintStream(writer, lineCount - numOfLinesToRead, numOfLinesToRead, reader);
+			} catch (IOException e) {
+				throw new TailException(e.getMessage());
+			}
 
 		} else if (args.length == 1) {
 
@@ -54,28 +61,45 @@ public class TailApp implements Application {
 				if (stdin == null) { // --2--
 					reader = new BufferedReader(new FileReader(args[0]));
 				} else { // --3--
-					numOfLines = Integer.parseInt(args[0]);
+					numOfLinesToRead = Integer.parseInt(args[0]);
 					reader = new BufferedReader(new InputStreamReader(stdin));
 				}
-				writeToPrintStream(writer, numOfLines, reader);
+
+				try {
+					reader.mark(0);
+					long lineCount = getLineCount(reader);
+					reader.reset();
+					writeToPrintStream(writer, lineCount - numOfLinesToRead, numOfLinesToRead, new BufferedReader(reader));
+				} catch (IOException e) {
+					throw new TailException(e.getMessage());
+				}
 			} catch (FileNotFoundException e) {
-				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
+				throw new TailException(Consts.Messages.FILE_DOES_NOT_EXIST);
 			} catch (NumberFormatException e) {
-				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
 			}
 
 		} else if (args.length == 2) { // --4--
 			try {
-				numOfLines = Integer.parseInt(args[0]);
+				numOfLinesToRead = Long.parseLong(args[0]);
 				reader = new BufferedReader(new FileReader(args[1]));
-				writeToPrintStream(writer, numOfLines, reader);
+
+				try {
+					reader.mark(0);
+					long lineCount = getLineCount(reader);
+					reader.reset();
+					writeToPrintStream(writer, lineCount - numOfLinesToRead, numOfLinesToRead, reader);
+				} catch (IOException e) {
+					throw new TailException(e.getMessage());
+				}
+
 			} catch (NumberFormatException e) {
-				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
 			} catch (FileNotFoundException e) {
-				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
+				throw new TailException(Consts.Messages.FILE_DOES_NOT_EXIST);
 			}
 		} else {
-			throw new HeadException(Consts.Messages.TOO_MANY_ARGUMENTS);
+			throw new TailException(Consts.Messages.TOO_MANY_ARGUMENTS);
 		}
 
 	}
@@ -92,20 +116,21 @@ public class TailApp implements Application {
 		return numOfLines;
 	}
 
-	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead, final BufferedReader br) throws AbstractApplicationException {
+	private void writeToPrintStream(PrintWriter writer, long numOfLinesToNotRead, long numOfLinesToRead, final BufferedReader br)
+			throws AbstractApplicationException {
 
 		// TODO: see if double checking needed
 		if (writer == null)
-			throw new HeadException(Consts.Messages.OUT_STR_NOT_NULL);
+			throw new TailException(Consts.Messages.OUT_STR_NOT_NULL);
 		if (br == null)
-			throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
+			throw new TailException(Consts.Messages.IN_STR_NOT_NULL);
 		if (numOfLinesToRead < 0)
-			throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+			throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
 
-		long lineCount = getLineCount(br);
-		long numOfLinesToNotRead = 0;
-		if (lineCount > numOfLinesToRead)
-			numOfLinesToNotRead = lineCount - numOfLinesToNotRead;
+		// long lineCount = getLineCount(br);
+		// long numOfLinesToNotRead = 0;
+		// if (lineCount > numOfLinesToRead)
+		// numOfLinesToNotRead = lineCount - numOfLinesToRead;
 
 		String line = null;
 		try {
@@ -113,7 +138,7 @@ public class TailApp implements Application {
 			for (long i = 0; i < numOfLinesToNotRead; i++)
 				br.readLine();
 
-			for (int i = 0; i < numOfLinesToRead; i++) {
+			for (long i = 0; i < numOfLinesToRead; i++) {
 				if ((line = br.readLine()) != null) {
 					writer.write(line);
 				} else {
@@ -126,7 +151,7 @@ public class TailApp implements Application {
 			br.close();
 			writer.close();
 		} catch (IOException e) {
-			throw new HeadException(e.getMessage());
+			throw new TailException(e.getMessage());
 		}
 	}
 
