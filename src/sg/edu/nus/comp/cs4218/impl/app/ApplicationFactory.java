@@ -6,23 +6,24 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.AppNotFoundException;
 
 public class ApplicationFactory {
-  HashMap<String, Application> maps = new HashMap<String, Application>();
+	HashMap<String, Application> maps = new HashMap<String, Application>();
 
-  public ApplicationFactory() {
-    maps.put("cd", new CdApp());
-    maps.put("ls", new LsApp());
-    maps.put("pwd", new PwdApp());
-    maps.put("cat", new CatApp());
-    maps.put("echo", new EchoApp());
-    maps.put("head", new HeadApp());
-    maps.put("wc", new WcApp());
-  }
+	public ApplicationFactory() {
+		maps.put("cd", new CdApp());
+		maps.put("ls", new LsApp());
+		maps.put("pwd", new PwdApp());
+		maps.put("cat", new CatApp());
+		maps.put("echo", new EchoApp());
+		maps.put("head", new HeadApp());
+		maps.put("wc", new WcApp());
+		maps.put("find", new FindApp());
+	}
 
-  public Application getApplication(String appId) throws AppNotFoundException {
-    if (maps.containsKey(appId)) {
-      return maps.get(appId);
-    } else {
-      throw new AppNotFoundException(appId + " not found");
-    }
-  }
+	public Application getApplication(String appId) throws AppNotFoundException {
+		if (maps.containsKey(appId)) {
+			return maps.get(appId);
+		} else {
+			throw new AppNotFoundException(appId + " not found");
+		}
+	}
 }
