@@ -82,8 +82,7 @@ public class CallCommand implements Command {
 					}
 					outFile = mTokens.get(currentPos++);
 				} else if (Parser.containsBackQuote(token)) {
-					token = token.substring(1, token.length() - 1);
-					argsList.add(substitute(token));
+					argsList.add(substitute(token));		
 				} else {
 					argsList.add(token);
 				}
@@ -104,8 +103,20 @@ public class CallCommand implements Command {
 	public String substitute(String input) throws AbstractApplicationException,
 			ShellException, IOException {
 		List<String> tokens = Parser.parseCommandLine(input);
+		List<String> tokensWithoutQuotes = new ArrayList<String>();
 		for (int i = 0; i < tokens.size(); i++) {
 			String token = tokens.get(i);
+			if (Parser.isSingleQuoted(token) || Parser.isDoubleQuoted(token)) {
+				token = token.substring(1, token.length() - 1);
+				tokensWithoutQuotes.addAll(Parser.parseCommandLine(token));
+			} else {
+				tokensWithoutQuotes.add(token);
+			}
+		}
+		
+		for (int i = 0; i < tokensWithoutQuotes.size(); i++) {
+			String token = tokensWithoutQuotes.get(i);
+			
 			if (Parser.isBackQuoted(token)) {
 				// Remove back quotes
 				token = token.substring(1, token.length() - 1);
@@ -117,14 +128,15 @@ public class CallCommand implements Command {
 						bytes);
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						byteArrayInputStream));
-				tokens.set(i, br.readLine());
+				tokensWithoutQuotes.set(i, br.readLine());
 			}
 		}
 		// TODO: toString trims spaces
 		String result = "";
-		for (String token : tokens) {
+		for (String token : tokensWithoutQuotes) {
 			result += " " + token;
 		}
+//		System.out.println(result.trim());
 		return result.trim();
 	}
 
