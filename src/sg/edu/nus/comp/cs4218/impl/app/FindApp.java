@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,23 +30,35 @@ public class FindApp implements Application {
 			throw new FindException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
 
-		// if (args.length > 1) {
-		// throw new FindException(Consts.Messages.EXPECT_ONE_ARG);
-		// }
-
 		if (args.length == 0) {
-			// throw new FindException(Consts.Messages.OUT_STR_NOT_NULL);
+			throw new FindException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
 		} else if (args.length == 1) {
-			FileSearcher fileSearcher = new FileSearcher(args[0]);
 			try {
+				FileSearcher fileSearcher = new FileSearcher(args[0], DirectoryHelpers.getCurrentDirectory());
 				Files.walkFileTree(Paths.get(DirectoryHelpers.getCurrentDirectory()), fileSearcher);
+				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
+				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
+			} catch (InvalidDirectoryException e) {
+				throw new FindException(e.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else if (args.length == 2) {
+			try {
+				String pathArgument = args[0];
+				String dirToSearchIn = null;
+				if (pathArgument.startsWith("/")) { // absolute path
+					dirToSearchIn = pathArgument;
+				} else { // relative path
+					dirToSearchIn = DirectoryHelpers.getCurrentDirectory() + File.separator + pathArgument;
+				}
+				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn);
+				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
 			} catch (IOException | InvalidDirectoryException e) {
 				throw new FindException(e.getMessage());
 			}
-		} else if (args.length == 2) {
-
 		} else {
 			throw new FindException(Consts.Messages.TOO_MANY_ARGUMENTS);
 		}
