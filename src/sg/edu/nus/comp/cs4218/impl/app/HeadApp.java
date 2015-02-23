@@ -101,9 +101,10 @@ public class HeadApp implements Application {
 				}
 
 				writer.write("\n");
-				br.close();
-				writer.close();
 			}
+
+			br.close();
+			writer.close();
 		} catch (IOException e) {
 			throw new HeadException(e.getMessage());
 		}
