@@ -1,12 +1,13 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.CdException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
@@ -38,23 +39,16 @@ public class CdApp implements Application {
 
 		String currentDirectory;
 		try {
-			currentDirectory = DirectoryHelpers.getCurrentDirectory();
+			currentDirectory = Environment.getCurrentDirectory();
 
 			String requiredDirectory = currentDirectory + File.separator
 					+ folderName;
-			File reqdPathAsFile = new File(requiredDirectory);
-
-			if (!reqdPathAsFile.exists()) {
-				throw new CdException(Consts.Messages.PATH_NOT_FOUND);
-			}
-
-			if (reqdPathAsFile.isFile()) {
-				throw new CdException(Consts.Messages.DIR_NOT_VALID);
-			}
-
-			System.setProperty(Consts.Keywords.USER_DIR, requiredDirectory);
+			
+			Environment.setCurrentDirectory(requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 
+			throw new CdException(e);
+		} catch (IOException e) {
 			throw new CdException(e);
 		}
 

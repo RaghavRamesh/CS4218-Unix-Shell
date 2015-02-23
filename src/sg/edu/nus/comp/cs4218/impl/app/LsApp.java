@@ -4,13 +4,14 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.LsException;
@@ -36,25 +37,36 @@ public class LsApp implements Application {
 		String requiredDirectory;
 		try {
 
-			if (args.length == 1 && args[0] != null) {
-				assert (args[0].length() > 0);
-				requiredDirectory = args[0];
-			}
-
-			else { // current directory if argument is not mentioned
-				requiredDirectory = DirectoryHelpers.getCurrentDirectory();
-			}
+			requiredDirectory = getRequiredDirectory(args);
 
 			displayContentsInDirectory(stdout, requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 			throw new LsException(e);
+		} catch (IOException e) {
+			throw new LsException(e);
 		}
+	}
+
+	private String getRequiredDirectory(String... args) throws LsException,
+			InvalidDirectoryException, IOException {
+		String requiredDirectory;
+		if (args.length == 1 && args[0] != null) {
+			if (args[0].length() == 0) {
+				throw new LsException(Consts.Messages.ARG_NOT_EMPTY);
+			}
+			requiredDirectory = args[0];
+		}
+
+		else { // current directory if argument is not mentioned
+			requiredDirectory = "";
+		}
+		return requiredDirectory;
 	}
 
 	private void displayContentsInDirectory(OutputStream stdout,
 			String requiredDirectory) throws InvalidDirectoryException {
 
-		File[] currDirContents = DirectoryHelpers
+		File[] currDirContents = Environment
 				.getContentsInDirectory(requiredDirectory);
 		PrintWriter outPathWriter = new PrintWriter(stdout);
 
@@ -63,12 +75,12 @@ public class LsApp implements Application {
 			if (fileNameToDisplay != null && fileNameToDisplay.length() > 0
 					&& !fileNameToDisplay.startsWith(".")) {
 
-				outPathWriter.println(fileNameToDisplay);
-				outPathWriter.println("\t");
-				// TODO: check if this is right way of printing
+				outPathWriter.print(fileNameToDisplay);
+				outPathWriter.print("\t");
 			}
 		}
 
+		outPathWriter.println();
 		outPathWriter.flush();
 	}
 
