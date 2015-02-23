@@ -79,7 +79,6 @@ public class HeadApp implements Application {
 
 	}
 
-	// protected for testing
 	protected void writeToPrintStream(PrintWriter writer, int numOfLines, final BufferedReader br) throws AbstractApplicationException {
 
 		// TODO: see if double checking needed
