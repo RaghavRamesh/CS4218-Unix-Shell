@@ -19,4 +19,8 @@ public class WcException extends AbstractApplicationException {
 	public WcException(InvalidDirectoryException exception) {
 		super("wc: " + exception.getMessage());
 	}
+
+	public WcException(InvalidFileException exception) {
+		super("wc: " + exception.getMessage());
+	}
 }

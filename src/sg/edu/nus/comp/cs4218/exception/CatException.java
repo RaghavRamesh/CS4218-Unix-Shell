@@ -21,4 +21,8 @@ public class CatException extends AbstractApplicationException {
 	public CatException(IOException exception) {
 		super(CAT + exception.getMessage());
 	}
+
+	public CatException(InvalidFileException exception) {
+		super(CAT + exception.getMessage());
+	}
 }

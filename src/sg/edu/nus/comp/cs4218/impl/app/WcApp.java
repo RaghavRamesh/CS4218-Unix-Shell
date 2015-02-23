@@ -18,6 +18,7 @@ import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 
 public class WcApp implements Application {
@@ -34,6 +35,9 @@ public class WcApp implements Application {
 	int bytesLength = 0;
 	int wordsLength = 0;
 	int lineLength = 0;
+	
+	BufferedReader reader;
+	PrintWriter writer;
 
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
@@ -47,26 +51,28 @@ public class WcApp implements Application {
 			throw new WcException(Consts.Messages.OUT_STR_NOT_NULL);
 		}
 
-		BufferedReader reader = null;
-		PrintWriter writer = new PrintWriter(new BufferedWriter(
+		 reader = null;
+		 writer = new PrintWriter(new BufferedWriter(
 				new OutputStreamWriter(stdout)));
 
 		try {
 			ArrayList<String> fileNames = processArguments(args);
 
 			if (fileNames.isEmpty()) {
-				reader = processCountFromInputStream(stdin, writer);
+				reader = processCountFromInputStream(stdin);
 				writer.flush();
 				return;
 			}
 
-			processCountFromFiles(reader, writer, fileNames);
+			processCountFromFiles(fileNames);
 			writer.flush();
 		} catch (FileNotFoundException exception) {
 			throw new WcException(exception);
 		} catch (IOException exception) {
 			throw new WcException(exception);
 		} catch (InvalidDirectoryException exception) {
+			throw new WcException(exception);
+		} catch (InvalidFileException exception) {
 			throw new WcException(exception);
 		}
 
@@ -77,10 +83,12 @@ public class WcApp implements Application {
 	 * @param args : file names, options such as -w,-m,-l
 	 * @return list of file names
 	 * @throws WcException
+	 * @throws IOException 
+	 * @throws InvalidFileException 
 	 */
 	private ArrayList<String> processArguments(String... args)
-			throws WcException {
-		ArrayList<String> fileNames = new ArrayList<String>();
+			throws WcException, InvalidFileException, IOException {
+		ArrayList<String> filePaths = new ArrayList<String>();
 
 		for (int i = 0; i < args.length; i++) {
 
@@ -97,22 +105,21 @@ public class WcApp implements Application {
 			}
 
 			else {
-				fileNames.add(args[i]);
+				Environment.checkIsFile(args[i]);
+				filePaths.add(args[i]);
 			}
 		}
-		return fileNames;
+		return filePaths;
 	}
 
-	private BufferedReader processCountFromInputStream(InputStream stdin,
-			PrintWriter writer) throws WcException, IOException {
-		BufferedReader reader;
+	private BufferedReader processCountFromInputStream(InputStream stdin) throws WcException, IOException {
 		if (stdin == null) {
 			throw new WcException(Consts.Messages.INP_STR_NOT_NULL);
 		}
 
 		reader = new BufferedReader(new InputStreamReader(stdin));
 
-		readAndProcessLine(reader);
+		readAndProcessLinesInReader(reader);
 
 		displayCountBasedOnArgument(writer, bytesLength, wordsLength,
 				lineLength);
@@ -121,57 +128,69 @@ public class WcApp implements Application {
 		return reader;
 	}
 
-	private void processCountFromFiles(BufferedReader reader,
-			PrintWriter writer, ArrayList<String> fileNames)
-			throws InvalidDirectoryException, WcException,
-			FileNotFoundException, IOException {
+	// made protected to test the method
+	protected void processCountFromFiles(ArrayList<String> fileNames)
+			throws InvalidDirectoryException, WcException, IOException
+			 {
+		
+		if(fileNames == null)
+			throw new WcException(Consts.Messages.ARG_NOT_NULL);
+		
 		String requiredDirectory;
 		for (int k = 0; k < fileNames.size(); k++) {
 			requiredDirectory = Environment.getCurrentDirectory()
 					+ File.separator + fileNames.get(k);
-			File reqdPathAsFile = new File(requiredDirectory);
-
-			boolean pathExists = reqdPathAsFile.exists();
-			boolean pathIsFile = reqdPathAsFile.isFile();
-
-			if (!pathExists) {
-				throw new WcException("can't open '" + fileNames.get(k) + "'. "
-						+ Consts.Messages.FILE_NOT_FOUND);
-			}
-
-			if (!pathIsFile) {
-				throw new WcException("can't open '" + fileNames.get(k) + "'. "
-						+ Consts.Messages.FILE_NOT_VALID);
-			}
-
+			
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(requiredDirectory)));
 
-			readAndProcessLine(reader);
+			// Reset count of bytesLength,wordsLength,lineLength
+			this.bytesLength = 0;
+			this.wordsLength = 0;
+			this.lineLength = 0;
+			readAndProcessLinesInReader(reader);
 
+			if(writer != null)
 			displayCountBasedOnArgument(writer, bytesLength, wordsLength,
 					lineLength);
 
+			reader.close();
+			
+			if(writer!= null){
 			writer.write(fileNames.get(k));
 			writer.write("\n");
+			}
 		}
 
 		if (fileNames.size() > 1) {
 			displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
 					totalLineLength);
 
+			if(writer!=null)
 			writer.println(TOTAL);
 		}
 
 		reader.close();
 	}
 
-	private void readAndProcessLine(BufferedReader reader) throws IOException {
+	// made protected to test the method
+	protected void readAndProcessLinesInReader(BufferedReader reader) throws IOException {
 		// read line by line
 		String fileSentence = reader.readLine();
-		bytesLength += fileSentence.getBytes().length;
-		wordsLength += fileSentence.split(" ").length;
-		lineLength += 1;
+		String words[];
+		
+		while (fileSentence != null) {
+			// +1 to account for new line character
+			bytesLength += fileSentence.getBytes().length +1; 
+			words = fileSentence.split(" ");
+			for(String word:words){
+				if(word.length()>0){
+					wordsLength = wordsLength + 1;
+				}
+			}
+			lineLength += 1;
+			fileSentence = reader.readLine();
+		}
 
 		totalBytes = totalBytes + bytesLength;
 		totalWordsLength = totalWordsLength + wordsLength;
@@ -199,6 +218,9 @@ public class WcApp implements Application {
 	private void displayCountBasedOnArgument(PrintWriter writer,
 			int bytesLength, int wordsLength, int lineLength) {
 
+		if(writer == null)
+			return;
+		
 		// if all 3 are false, then print everything
 		if (!(displayBytes || displayWords || displayLineLength)) {
 			displayBytes = true;
