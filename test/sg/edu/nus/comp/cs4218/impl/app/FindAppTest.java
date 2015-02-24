@@ -194,8 +194,8 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp\n";
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp\n";
+			expectedOutput += "temp1" + "/" + "tempFileName1.tmp\n";
+			expectedOutput += "temp2" + "/" + "tempFileName2.tmp\n";
 			expectedOutput += "tempFileInRoot.tmp\n";
 			assertEquals(expectedOutput, testOutputStream.toString());
 
@@ -234,8 +234,8 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp\n";
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp\n";
+			expectedOutput += "temp1" + "/" + "tempFileName1.tmp\n";
+			expectedOutput += "temp2" + "/" + "tempFileName2.tmp\n";
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
