@@ -72,7 +72,7 @@ public class TailAppTest {
 				expectedOutput += "line" + (i + 2) + System.getProperty("line.separator");
 			}
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line1" + System.getProperty("line.separator")).getBytes());
+			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
 			testInpFileOutStream.close();
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -186,7 +186,7 @@ public class TailAppTest {
 				expectedOutput += "line" + (i + 2) + System.getProperty("line.separator");
 			}
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line1" + System.getProperty("line.separator")).getBytes());
+			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
 			testInpFileOutStream.close();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals(expectedOutput, testOutputStream.toString());
@@ -241,7 +241,7 @@ public class TailAppTest {
 	public void testAlphabeticalNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
 		FileInputStream testInputStream = null;
-		
+
 		File tempInpFile = null;
 		String[] args = new String[1];
 
