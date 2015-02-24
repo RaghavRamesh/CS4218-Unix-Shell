@@ -110,7 +110,7 @@ public class TailApp implements Application {
 
 			while (!lines.isEmpty()) {
 				writer.write(lines.remove());
-				writer.write("\n");
+				writer.write(System.getProperty("line.separator"));
 			}
 
 			br.close();
