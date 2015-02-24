@@ -46,12 +46,8 @@ public class FindApp implements Application {
 		} else if (args.length == 2) {
 			try {
 				String pathArgument = args[0];
-				String dirToSearchIn = null;
-				if (pathArgument.startsWith("/")) { // absolute path
-					dirToSearchIn = pathArgument;
-				} else { // relative path
-					dirToSearchIn = Environment.getCurrentDirectory() + File.separator + pathArgument;
-				}
+
+				String dirToSearchIn = Environment.checkIsDirectory(pathArgument);
 				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn);
 				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
@@ -70,7 +66,7 @@ public class FindApp implements Application {
 	private void writeStringArrToPrintStream(PrintWriter writer, String... stringsArr) {
 		for (int i = 0; i < stringsArr.length; i++) {
 			writer.write(stringsArr[i]);
-			writer.write("\n");
+			writer.write(System.getProperty("line.separator"));
 		}
 		writer.close();
 	}

@@ -332,23 +332,28 @@ public class WcAppTest {
 	public void testProcessCountFromFilesForNoInputFileNames() throws WcException, FileNotFoundException, InvalidDirectoryException, IOException{
 		expectedEx.expect(WcException.class);
 		expectedEx.expectMessage(WCEXP + Consts.Messages.ARG_NOT_NULL);
-				
+		
+		ArrayList<String> filePaths = new ArrayList<String>();
+		
 		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(null);
+		cmdApp.processCountFromFiles(null,filePaths);
 	}
 	
 	@Test(expected = FileNotFoundException.class)
 	public void testProcessCountFromFilesForInvalidFileNames() throws WcException, FileNotFoundException, InvalidDirectoryException, IOException{
 				
 		ArrayList<String> fileNames = new ArrayList<String>();
+		ArrayList<String> filePaths = new ArrayList<String>();
+		
 		fileNames.add("invalidFileName#@#$$%");
+		filePaths.add("/Z:/abcdd");
 		
 		File invalidFile = new File("invalidFileName#@#$$%");
 		if(invalidFile.exists())
 			invalidFile.delete();
 		
 		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(fileNames);
+		cmdApp.processCountFromFiles(fileNames,filePaths);
 	}
 	
 	@Test
@@ -356,11 +361,17 @@ public class WcAppTest {
 		File newFile1 = null;
 		File newFile2 = null; 
 		
+		ArrayList<String> filePaths = new ArrayList<String>();
+		ArrayList<String> fileNames = new ArrayList<String>();
+		
 		try{
 			
 		newFile1 = new File(this.tempTestDirectory.getAbsoluteFile() + File.separator + "TestFile1.txt");
 		newFile2 = new File(this.tempTestDirectory.getAbsoluteFile() + File.separator + "TestFile2.txt");
 
+		filePaths.add(newFile1.getCanonicalPath());
+		filePaths.add(newFile2.getCanonicalPath());
+		
 		newFile1.createNewFile();
 		newFile2.createNewFile();
 		
@@ -372,12 +383,11 @@ public class WcAppTest {
 		writer.write("This is a test code for file 2!");
 		writer .close();
 		
-		ArrayList<String> fileNames = new ArrayList<String>();
 		fileNames.add("/TempTest/TestFile1.txt");
 		fileNames.add("/TempTest/TestFile2.txt");
 		
 		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(fileNames);
+		cmdApp.processCountFromFiles(fileNames,filePaths);
 		
 		assertEquals(62,cmdApp.totalBytes);
 		assertEquals(2,cmdApp.totalLineLength);

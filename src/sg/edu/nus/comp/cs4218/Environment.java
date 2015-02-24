@@ -33,15 +33,19 @@ public final class Environment {
 
 	/**
 	 * 
-	 * @param directoryToChange
-	 *            : absolute path of directory to check
+	 * @param directoryToCheck
+	 *            : absolute path/relative path of directory to check
 	 * @return the canonical path of the directory
 	 * @throws InvalidDirectoryException
 	 * @throws IOException
 	 */
-	public static String checkIsDirectory(String directoryToChange) throws InvalidDirectoryException, IOException {
-		File reqdPathAsFile = new File(directoryToChange);
+	public static String checkIsDirectory(String directoryToCheck) throws InvalidDirectoryException, IOException {
+		File reqdPathAsFile = new File(directoryToCheck);
 
+		if(!reqdPathAsFile.isAbsolute()){
+			reqdPathAsFile =  new File(Environment.currentDirectory, directoryToCheck);
+		}
+		
 		if (!reqdPathAsFile.exists()) {
 			throw new InvalidDirectoryException(Consts.Messages.PATH_NOT_FOUND);
 		}
@@ -56,13 +60,20 @@ public final class Environment {
 	/**
 	 * 
 	 * @param fileName
-	 *            : relative filename
+	 *            : relative or absolute filename
 	 * @return the canonical path of the file
 	 * @throws InvalidFileException
 	 * @throws IOException
 	 */
 	public static String checkIsFile(String fileName) throws InvalidFileException, IOException {
-		File reqdPathAsFile = new File(Environment.currentDirectory, fileName);
+		
+		File reqdPathAsFile;
+		
+		reqdPathAsFile = new File(fileName);
+		
+		if (!reqdPathAsFile.isAbsolute()) {
+			reqdPathAsFile = new File(Environment.currentDirectory, fileName);
+		}
 
 		boolean pathExists = reqdPathAsFile.exists();
 		boolean pathIsFile = reqdPathAsFile.isFile();
@@ -79,7 +90,11 @@ public final class Environment {
 	}
 
 	public static File[] getContentsInDirectory(String requiredDirectory) throws InvalidDirectoryException {
-		File reqdDir = new File(Environment.currentDirectory, requiredDirectory);
+		File reqdDir = new File(requiredDirectory);
+		
+		if(!reqdDir.isAbsolute()){
+			reqdDir = new File(Environment.currentDirectory, requiredDirectory);
+		}
 
 		if (!reqdDir.exists() || !reqdDir.isDirectory()) {
 			throw new InvalidDirectoryException(Consts.Messages.DIR_NOT_VALID);

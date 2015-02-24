@@ -2,7 +2,6 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,7 +55,10 @@ public class WcApp implements Application {
 				new OutputStreamWriter(stdout)));
 
 		try {
-			ArrayList<String> fileNames = processArguments(args);
+			ArrayList<String> fileNames = new  ArrayList<String>();
+			ArrayList<String> filePaths = new ArrayList<String>();
+					
+			processArguments(fileNames,filePaths,args);
 
 			if (fileNames.isEmpty()) {
 				reader = processCountFromInputStream(stdin);
@@ -64,7 +66,7 @@ public class WcApp implements Application {
 				return;
 			}
 
-			processCountFromFiles(fileNames);
+			processCountFromFiles(fileNames,filePaths);
 			writer.flush();
 		} catch (FileNotFoundException exception) {
 			throw new WcException(exception);
@@ -80,15 +82,16 @@ public class WcApp implements Application {
 
 	/**
 	 * Parses the arguments and identifies file names and options
+	 * @param filePaths
+	 * @param fileNames 
 	 * @param args : file names, options such as -w,-m,-l
 	 * @return list of file names
 	 * @throws WcException
 	 * @throws IOException 
 	 * @throws InvalidFileException 
 	 */
-	private ArrayList<String> processArguments(String... args)
+	private ArrayList<String> processArguments(ArrayList<String> fileNames, ArrayList<String> filePaths, String... args)
 			throws WcException, InvalidFileException, IOException {
-		ArrayList<String> filePaths = new ArrayList<String>();
 
 		for (int i = 0; i < args.length; i++) {
 
@@ -105,8 +108,9 @@ public class WcApp implements Application {
 			}
 
 			else {
-				Environment.checkIsFile(args[i]);
-				filePaths.add(args[i]);
+				String path = Environment.checkIsFile(args[i]);
+				fileNames.add(args[i]);
+				filePaths.add(path);
 			}
 		}
 		return filePaths;
@@ -129,7 +133,7 @@ public class WcApp implements Application {
 	}
 
 	// made protected to test the method
-	protected void processCountFromFiles(ArrayList<String> fileNames)
+	protected void processCountFromFiles(ArrayList<String> fileNames,ArrayList<String> filePaths)
 			throws InvalidDirectoryException, WcException, IOException
 			 {
 		
@@ -138,8 +142,7 @@ public class WcApp implements Application {
 		
 		String requiredDirectory;
 		for (int k = 0; k < fileNames.size(); k++) {
-			requiredDirectory = Environment.getCurrentDirectory()
-					+ File.separator + fileNames.get(k);
+			requiredDirectory = filePaths.get(k);
 			
 			reader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(requiredDirectory)));

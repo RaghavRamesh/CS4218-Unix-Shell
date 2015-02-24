@@ -218,11 +218,12 @@ public class HeadAppTest {
 	}
 
 	@Test
-	public void testNegativeNumLines() {
+	public void testNegativeNumLines() throws IOException {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
 		String[] args = new String[1];
+		FileInputStream testInputStream = null;
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
@@ -231,7 +232,7 @@ public class HeadAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-1"; // n<0
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -242,6 +243,7 @@ public class HeadAppTest {
 			e.printStackTrace();
 			fail();
 		} finally {
+			testInputStream.close();
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
@@ -249,11 +251,12 @@ public class HeadAppTest {
 	}
 
 	@Test
-	public void testAlphabeticalNumLines() {
+	public void testAlphabeticalNumLines() throws IOException {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
 		String[] args = new String[1];
+		FileInputStream testInputStream = null;
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
@@ -262,7 +265,9 @@ public class HeadAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
+
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
+
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "abcd"; // n=?
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -274,6 +279,7 @@ public class HeadAppTest {
 			e.printStackTrace();
 			fail();
 		} finally {
+			testInputStream.close();
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}

@@ -77,7 +77,7 @@ public class TailAppTest {
 				expectedOutput += LINE + (i + 2) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line1" + System.getProperty(LINE_SEPARATOR)).getBytes());
+			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
 			testInpFileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INP_FILE_NAME);
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -191,7 +191,8 @@ public class TailAppTest {
 				expectedOutput += LINE + (i + 2) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line1" + System.getProperty(LINE_SEPARATOR)).getBytes());
+
+			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
 			testInpFileOutStream.close();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals(expectedOutput, testOutputStream.toString());
@@ -210,8 +211,9 @@ public class TailAppTest {
 	}
 
 	@Test
-	public void testNegativeNumLines() {
+	public void testNegativeNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
+		FileInputStream testInputStream = null;
 
 		File tempInpFile = null;
 		String[] args = new String[1];
@@ -223,13 +225,15 @@ public class TailAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream(TEMP_INP_FILE_NAME);
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-1"; // n<0
 			cmdApp.run(args, testInputStream, testOutputStream);
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), TAIL + Consts.Messages.ILLEGAL_LINE_CNT);
+			testInputStream.close();
+			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_CNT);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -241,8 +245,9 @@ public class TailAppTest {
 	}
 
 	@Test
-	public void testAlphabeticalNumLines() {
+	public void testAlphabeticalNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
+		FileInputStream testInputStream = null;
 
 		File tempInpFile = null;
 		String[] args = new String[1];
@@ -254,14 +259,16 @@ public class TailAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream(TEMP_INP_FILE_NAME);
+
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "abcd"; // n=?
 			cmdApp.run(args, testInputStream, testOutputStream);
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), TAIL + Consts.Messages.ILLEGAL_LINE_CNT);
+			testInputStream.close();
+			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_CNT);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
