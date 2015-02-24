@@ -26,6 +26,7 @@ public class Consts {
     public static final String NO_INPUT_FILE_OR_STDIN = "No input found";
     public static final String ILLEGAL_LINE_COUNT = "Illegal line count";
     public static final String TOO_MANY_ARGUMENTS = "Too many arguments";
+	public static final String FILE_DOES_NOT_EXIST = "File does not exist";
   }
 
   public class Keywords {

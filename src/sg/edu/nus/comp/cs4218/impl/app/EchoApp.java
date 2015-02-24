@@ -12,7 +12,8 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
 public class EchoApp implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 		if (stdout == null)
 			throw new EchoException(Consts.Messages.OUT_STR_NOT_NULL); // TODO:
 
@@ -20,8 +21,13 @@ public class EchoApp implements Application {
 			throw new EchoException(Consts.Messages.ARG_NOT_NULL); // TODO:
 
 		final PrintStream printStream = new PrintStream(stdout);
-		for (String arg : args) {
-			printStream.print(arg + " "); // TODO: check if need spaces
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			if (arg != null)
+				printStream.print(arg);
+			if (i != args.length - 1) {
+				printStream.print(" ");
+			}
 		}
 		printStream.println();
 
