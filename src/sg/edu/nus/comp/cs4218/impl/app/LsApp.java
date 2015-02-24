@@ -47,6 +47,15 @@ public class LsApp implements Application {
 		}
 	}
 
+	/**
+	 * Parses the argument and returns the name of the directory that has to be displayed
+	 * 
+	 * @param args
+	 * @return name of the directory that has to be displayed
+	 * @throws LsException
+	 * @throws InvalidDirectoryException
+	 * @throws IOException
+	 */
 	private String getRequiredDirectory(String... args) throws LsException,
 			InvalidDirectoryException, IOException {
 		String requiredDirectory;
@@ -63,6 +72,13 @@ public class LsApp implements Application {
 		return requiredDirectory;
 	}
 
+	/**
+	 * Displays the contents of the directory 
+	 * 
+	 * @param stdout	Output stream to which the contents have to be written
+	 * @param requiredDirectory	directory whose content has to be displayed
+	 * @throws InvalidDirectoryException
+	 */
 	private void displayContentsInDirectory(OutputStream stdout,
 			String requiredDirectory) throws InvalidDirectoryException {
 

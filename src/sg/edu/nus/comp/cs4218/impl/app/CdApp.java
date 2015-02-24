@@ -34,8 +34,8 @@ public class CdApp implements Application {
 			throw new CdException(Consts.Messages.EXPECT_ONE_ARG);
 		}
 
+		// Cd takes in only relative path directories
 		String folderName = args[0];
-		// TODO : check for ..,/bin, ~ after consulting tutor
 
 		String currentDirectory;
 		try {

@@ -70,6 +70,13 @@ public class CatApp implements Application {
 
 	}
 
+	/**
+	 * Reads the contents of files in  the list validFiles and writes it to the writer
+	 * @param writer		The writer to which contents have to be written
+	 * @param validFiles 	The list of files to display
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private void displayContentInFiles(PrintWriter writer,
 			List<String> validFiles) throws FileNotFoundException, IOException {
 		BufferedReader reader;
@@ -86,6 +93,13 @@ public class CatApp implements Application {
 		}
 	}
 
+	/**
+	 * Checks whether the arguments are valid files
+	 * @param args	list of arguments
+	 * @param validFiles	list of valid file path created from args
+	 * @throws InvalidFileException
+	 * @throws IOException
+	 */
 	private void checkValidityOfFiles(String[] args, List<String> validFiles)
 			throws InvalidFileException, IOException {
 		for (int i = 0; i < args.length; i++) {

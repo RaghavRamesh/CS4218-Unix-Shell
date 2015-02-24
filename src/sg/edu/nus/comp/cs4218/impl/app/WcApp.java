@@ -61,7 +61,7 @@ public class WcApp implements Application {
 			processArguments(fileNames,filePaths,args);
 
 			if (fileNames.isEmpty()) {
-				reader = processCountFromInputStream(stdin);
+				processCountFromInputStream(stdin);
 				writer.flush();
 				return;
 			}
@@ -82,8 +82,8 @@ public class WcApp implements Application {
 
 	/**
 	 * Parses the arguments and identifies file names and options
-	 * @param filePaths
-	 * @param fileNames 
+	 * @param filePaths	List of file paths
+	 * @param fileNames 	List of file names
 	 * @param args : file names, options such as -w,-m,-l
 	 * @return list of file names
 	 * @throws WcException
@@ -116,7 +116,14 @@ public class WcApp implements Application {
 		return filePaths;
 	}
 
-	private BufferedReader processCountFromInputStream(InputStream stdin) throws WcException, IOException {
+	/**
+	 * Reads input from the input stream
+	 * 
+	 * @param stdin
+	 * @throws WcException
+	 * @throws IOException
+	 */
+	private void processCountFromInputStream(InputStream stdin) throws WcException, IOException {
 		if (stdin == null) {
 			throw new WcException(Consts.Messages.INP_STR_NOT_NULL);
 		}
@@ -125,13 +132,21 @@ public class WcApp implements Application {
 
 		readAndProcessLinesInReader(reader);
 
-		displayCountBasedOnArgument(writer, bytesLength, wordsLength,
+		displayCount(writer, bytesLength, wordsLength,
 				lineLength);
 
 		writer.write("\n");
-		return reader;
 	}
 
+	/**
+	 * Takes care of reading all the files specified in the fileNames and having paths present in filePaths  
+	 * 
+	 * @param fileNames	List of file names to process
+	 * @param filePaths	path of files to process
+	 * @throws InvalidDirectoryException
+	 * @throws WcException
+	 * @throws IOException
+	 */
 	// made protected to test the method
 	protected void processCountFromFiles(ArrayList<String> fileNames,ArrayList<String> filePaths)
 			throws InvalidDirectoryException, WcException, IOException
@@ -154,7 +169,7 @@ public class WcApp implements Application {
 			readAndProcessLinesInReader(reader);
 
 			if(writer != null)
-			displayCountBasedOnArgument(writer, bytesLength, wordsLength,
+			displayCount(writer, bytesLength, wordsLength,
 					lineLength);
 
 			reader.close();
@@ -166,7 +181,7 @@ public class WcApp implements Application {
 		}
 
 		if (fileNames.size() > 1) {
-			displayCountBasedOnArgument(writer, totalBytes, totalWordsLength,
+			displayCount(writer, totalBytes, totalWordsLength,
 					totalLineLength);
 
 			if(writer!=null)
@@ -176,6 +191,12 @@ public class WcApp implements Application {
 		reader.close();
 	}
 
+	/**
+	 * Reads content from the reader and caculates bytes, character and word lengths 
+	 * 
+	 * @param reader	reader from which contents have to be read
+	 * @throws IOException
+	 */
 	// made protected to test the method
 	protected void readAndProcessLinesInReader(BufferedReader reader) throws IOException {
 		// read line by line
@@ -200,6 +221,12 @@ public class WcApp implements Application {
 		totalLineLength = totalLineLength + lineLength;
 	}
 
+	/**
+	 * Identifies display settings based on the argument
+	 * 
+	 * @param arg	settings info like -m,-w and -l
+	 * @throws WcException
+	 */
 	private void updateDisplaySetting(String arg) throws WcException {
 		if ("-m".equals(arg)) {
 			displayBytes = true;
@@ -218,7 +245,15 @@ public class WcApp implements Application {
 		}
 	}
 
-	private void displayCountBasedOnArgument(PrintWriter writer,
+	/**
+	 * Displays the byte length, word length and line length based on the settings displayBytes, displayWords and displayLineLength
+	 * 
+	 * @param writer		writer to which output has to be written to
+	 * @param bytesLength	byte length to display
+	 * @param wordsLength	word length to display
+	 * @param lineLength	line length to display
+	 */
+	private void displayCount(PrintWriter writer,
 			int bytesLength, int wordsLength, int lineLength) {
 
 		if(writer == null)
