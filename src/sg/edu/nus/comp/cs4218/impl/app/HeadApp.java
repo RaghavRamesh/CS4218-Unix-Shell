@@ -99,7 +99,7 @@ public class HeadApp implements Application {
 					break;
 				}
 
-				writer.write("\n");
+				writer.write(System.getProperty("line.separator"));
 			}
 
 			br.close();
