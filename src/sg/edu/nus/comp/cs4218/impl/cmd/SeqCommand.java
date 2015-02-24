@@ -14,15 +14,14 @@ import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 public class SeqCommand implements Command {
 	private final List<Command> mCommands;
 
-	public SeqCommand(String commandLine) throws ShellException {
+	public SeqCommand(String commandLine) throws ShellException, AbstractApplicationException {
 		this.mCommands = new ArrayList<Command>();
 		List<String> tokens = Parser.parseCommandLine(commandLine);
 
 		String currentCommand = "";
 		for (String token : tokens) {
 			if (Parser.isSemicolon(token)) {
-				Command command = ShellImplementation.getCommand(currentCommand
-						.trim());
+				Command command = ShellImplementation.getCommand(currentCommand.trim());
 				mCommands.add(command);
 				currentCommand = "";
 			} else {
@@ -30,15 +29,13 @@ public class SeqCommand implements Command {
 			}
 		}
 		if (!currentCommand.trim().equals("")) {
-			mCommands
-					.add(ShellImplementation.getCommand(currentCommand.trim()));
+			mCommands.add(ShellImplementation.getCommand(currentCommand.trim()));
 		}
 	}
 
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < mCommands.size(); i++) {
 			Command command = mCommands.get(i);
 			InputStream input = i == 0 ? stdin : null;
@@ -49,7 +46,6 @@ public class SeqCommand implements Command {
 	@Override
 	public void terminate() {
 		// TODO Auto-generated method stub
-
 	}
 
 }
