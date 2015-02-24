@@ -59,7 +59,7 @@ public class ShellImplementation implements Shell {
 				shellImplementation.parseAndEvaluate(reader.readLine(),
 						System.out);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
 	}

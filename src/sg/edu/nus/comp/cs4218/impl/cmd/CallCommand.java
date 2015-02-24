@@ -53,13 +53,13 @@ public class CallCommand implements Command {
       throws AbstractApplicationException, ShellException {
 	  InputStream inStream = null;
 	  OutputStream outStream = null;
+	  String inFile = findInput();
+      String outFile = findOutput();
 	  
 	if (mSubstitutedTokens.isEmpty()) {
       return;
     }
     try {
-      String inFile = findInput();
-      String outFile = findOutput();
       List<String> argsList = findArguments();
       inStream = (inFile == null) ? stdin 
           : new FileInputStream(Environment.createFile(inFile));
@@ -74,14 +74,13 @@ public class CallCommand implements Command {
     }finally{
 
 		try {
-			if (inStream != null)
+			if (inStream != null && inFile!= null)
 				inStream.close();
-			if (outStream != null)
+			if (outStream != null && outFile != null)
 				outStream.close();
 				System.gc();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ShellException(e);
 		}
 
 	}
