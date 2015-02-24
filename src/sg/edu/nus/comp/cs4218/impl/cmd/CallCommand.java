@@ -71,6 +71,11 @@ public class CallCommand implements Command {
     }
   }
 
+  /**
+   * Substitute each input token with the corresponding result from command substitution if necessary.
+   * @param tokens A list of tokens.
+   * @return A list of substituted tokens.
+   */
   public static List<String> substituteAll(List<String> tokens)
       throws AbstractApplicationException, ShellException, IOException {
     ArrayList<String> result = new ArrayList<String>();
@@ -122,6 +127,11 @@ public class CallCommand implements Command {
     return result.trim();
   }
   
+  /**
+   * Find the input redirection from the command.
+   * @return A string which represents the input path, null if the command does not have any input redirection.
+   * @throws ShellException if the input redirection is invalid or there are multiple inputs. 
+   */
   public String findInput() throws ShellException {
     String result = null;
     int currentIndex = 0;
@@ -141,6 +151,11 @@ public class CallCommand implements Command {
     return result;
   }
   
+  /**
+   * Find the output redirection from the command.
+   * @return A string which represents the output path, null if the command does not have any output redirection.
+   * @throws ShellException if the output redirection is invalid or there are multiple outputs. 
+   */
   public String findOutput() throws ShellException {
     String result = null;
     int currentIndex = 0;
@@ -160,6 +175,10 @@ public class CallCommand implements Command {
     return result;
   }
   
+  /**
+   * Find the arguments from the command which does not include IO redirections.
+   * @return A list of string that represents arguments. 
+   */
   public List<String> findArguments() {
     ArrayList<String> result = new ArrayList<String>();
     int currentIndex = 0;
