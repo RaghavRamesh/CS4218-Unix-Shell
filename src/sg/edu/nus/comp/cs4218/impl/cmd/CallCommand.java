@@ -51,16 +51,19 @@ public class CallCommand implements Command {
   @Override
   public void evaluate(InputStream stdin, OutputStream stdout)
       throws AbstractApplicationException, ShellException {
-    if (mSubstitutedTokens.isEmpty()) {
+	  InputStream inStream = null;
+	  OutputStream outStream = null;
+	  
+	if (mSubstitutedTokens.isEmpty()) {
       return;
     }
     try {
       String inFile = findInput();
       String outFile = findOutput();
       List<String> argsList = findArguments();
-      InputStream inStream = (inFile == null) ? stdin 
+      inStream = (inFile == null) ? stdin 
           : new FileInputStream(Environment.createFile(inFile));
-      OutputStream outStream = (outFile == null) ? stdout
+      outStream = (outFile == null) ? stdout
           : new FileOutputStream(Environment.createFile(outFile));
       Application app = getApplication(argsList.get(0));
       List<String> argumentsWithoutApp = argsList.subList(1, argsList.size());
@@ -68,7 +71,20 @@ public class CallCommand implements Command {
       app.run(args, inStream, outStream); 
     } catch (FileNotFoundException e) {
       throw new ShellException(e);
-    }
+    }finally{
+
+		try {
+			if (inStream != null)
+				inStream.close();
+			if (outStream != null)
+				outStream.close();
+				System.gc();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
   }
 
   /**
