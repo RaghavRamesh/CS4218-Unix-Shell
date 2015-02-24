@@ -46,7 +46,6 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		File tempOutFile = null;
 		String[] args = new String[0];
 
 		try {
@@ -61,7 +60,6 @@ public class HeadAppTest {
 
 			// testing for an input of 10 lines or less
 			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
@@ -87,9 +85,6 @@ public class HeadAppTest {
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -98,7 +93,6 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		File tempOutFile = null;
 		String[] args = new String[1];
 		args[0] = "15"; // n=15
 
@@ -114,7 +108,6 @@ public class HeadAppTest {
 
 			// testing for an input of less than n lines
 			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(lessThanNlinesContent, testOutputStream.toString());
@@ -151,9 +144,6 @@ public class HeadAppTest {
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -162,7 +152,6 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		File tempOutFile = null;
 		String[] args = new String[1];
 
 		try {
@@ -178,7 +167,6 @@ public class HeadAppTest {
 			args[0] = "temp-input-file-name.tmp";
 
 			// testing for an input of 10 lines or less
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
@@ -201,9 +189,6 @@ public class HeadAppTest {
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -211,14 +196,12 @@ public class HeadAppTest {
 	public void testFileNotFound() {
 		HeadApp cmdApp = new HeadApp();
 
-		File tempOutFile = null;
 		String[] args = new String[1];
 
 		try {
 
 			args[0] = "temp-input-file-name.tmp"; // this filename does not exist
 
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals("", testOutputStream.toString());
@@ -226,13 +209,6 @@ public class HeadAppTest {
 
 		} catch (AbstractApplicationException e) {
 			assertEquals(e.getMessage(), "head: " + Consts.Messages.FILE_DOES_NOT_EXIST);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} finally {
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -241,7 +217,6 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		File tempOutFile = null;
 		String[] args = new String[1];
 
 		try {
@@ -252,7 +227,6 @@ public class HeadAppTest {
 
 			// testing for alphabets instead of number
 			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-1"; // n<0
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -266,9 +240,6 @@ public class HeadAppTest {
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -277,7 +248,6 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		File tempOutFile = null;
 		String[] args = new String[1];
 
 		try {
@@ -288,7 +258,6 @@ public class HeadAppTest {
 
 			// testing for alphabets instead of number
 			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "abcd"; // n=?
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -303,9 +272,6 @@ public class HeadAppTest {
 			if (tempInpFile != null) {
 				tempInpFile.delete();
 			}
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 
@@ -313,26 +279,17 @@ public class HeadAppTest {
 	public void testTooManyArguments() {
 		HeadApp cmdApp = new HeadApp();
 
-		File tempOutFile = null;
 		String[] args = new String[3];
 		args[0] = "abc";
 		args[1] = "bcd";
 		args[2] = "cde";
 
 		try {
-			tempOutFile = File.createTempFile("temp-output-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
 			fail();
 		} catch (AbstractApplicationException e) {
 			assertEquals(e.getMessage(), "head: " + Consts.Messages.TOO_MANY_ARGUMENTS);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		} finally {
-			if (tempOutFile != null) {
-				tempOutFile.delete();
-			}
 		}
 	}
 }
