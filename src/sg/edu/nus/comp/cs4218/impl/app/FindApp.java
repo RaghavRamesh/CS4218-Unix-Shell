@@ -68,7 +68,7 @@ public class FindApp implements Application {
 	private void writeStringArrToPrintStream(PrintWriter writer, String[] stringsArr) {
 		for (int i = 0; i < stringsArr.length; i++) {
 			writer.write(stringsArr[i]);
-			writer.write("\n");
+			writer.write(System.getProperty("line.separator"));
 		}
 		writer.close();
 	}
