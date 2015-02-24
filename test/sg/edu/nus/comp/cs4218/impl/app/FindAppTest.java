@@ -16,6 +16,9 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 
 public class FindAppTest {
 
+	private static final String FIND = "find: ";
+	private static final String TEMP_FILE_NAME2 = "tempFileName2.tmp\n";
+	private static final String TEMP_FILE_NAME1 = "tempFileName1.tmp\n";
 	FindApp findApp = null;
 	File tempRootDirectory = null;
 	File tempSubDirectory1 = null;
@@ -44,9 +47,9 @@ public class FindAppTest {
 		System.setProperty(Consts.Keywords.USER_DIR, tempRootDirectory.getAbsolutePath());
 
 		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath() + File.separator + "tempFileInRoot.tmp");
-		PrintWriter tempFileInRootWriter = new PrintWriter(tempFileInRoot);
-		tempFileInRootWriter.println("random data");
-		tempFileInRootWriter.close();
+		PrintWriter tempFileWriter = new PrintWriter(tempFileInRoot);
+		tempFileWriter.println("random data");
+		tempFileWriter.close();
 
 		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath() + File.separator + "temp1");
 		if (!tempSubDirectory1.mkdir()) {
@@ -89,7 +92,7 @@ public class FindAppTest {
 			findApp.run(null, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.ARG_NOT_NULL);
+			assertEquals(e.getMessage(), FIND + Consts.Messages.ARG_NOT_NULL);
 		}
 	}
 
@@ -102,7 +105,7 @@ public class FindAppTest {
 			findApp.run(args, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+			assertEquals(e.getMessage(), FIND + Consts.Messages.NO_INP_FOUND);
 		}
 	}
 
@@ -117,7 +120,7 @@ public class FindAppTest {
 			findApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), FIND + Consts.Messages.OUT_STR_NOT_NULL);
 		}
 	}
 
@@ -133,7 +136,7 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.DIR_NOT_VALID);
+			assertEquals(e.getMessage(), FIND + Consts.Messages.DIR_NOT_VALID);
 		}
 	}
 
@@ -184,8 +187,8 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp\n";
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp\n";
+			expectedOutput += "temp1" + File.separator + TEMP_FILE_NAME1;
+			expectedOutput += "temp2" + File.separator + TEMP_FILE_NAME2;
 			expectedOutput += "tempFileInRoot.tmp\n";
 			assertEquals(expectedOutput, testOutputStream.toString());
 
@@ -224,8 +227,8 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp\n";
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp\n";
+			expectedOutput += "temp1" + File.separator + TEMP_FILE_NAME1;
+			expectedOutput += "temp2" + File.separator + TEMP_FILE_NAME2;
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
@@ -245,7 +248,7 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "tempFileName1.tmp\n";
+			expectedOutput += TEMP_FILE_NAME1;
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
@@ -265,7 +268,7 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "tempFileName1.tmp\n";
+			expectedOutput += TEMP_FILE_NAME1;
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {

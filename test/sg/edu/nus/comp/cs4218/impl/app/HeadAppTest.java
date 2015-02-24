@@ -15,6 +15,11 @@ import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 
 public class HeadAppTest {
+	private static final String LINE = "line";
+	private static final String HEAD = "head: ";
+	private static final String TEMP_INPUT_FILE = "temp-input-file-name.tmp";
+	private static final String LINE_SEPARATOR = "line.separator";
+
 	@Test
 	public void testNullArgument() {
 		HeadApp cmdApp = new HeadApp();
@@ -22,7 +27,7 @@ public class HeadAppTest {
 			cmdApp.run(null, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.ARG_NOT_NULL);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_NULL);
 		}
 	}
 
@@ -37,7 +42,7 @@ public class HeadAppTest {
 			cmdApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.OUT_STR_NOT_NULL);
 		}
 	}
 
@@ -49,17 +54,17 @@ public class HeadAppTest {
 		String[] args = new String[0];
 
 		try {
-			tempInpFile = new File("temp-input-file-name.tmp");
+			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			String tenLinesContent = "";
 			for (int i = 0; i < 10; i++) {
-				tenLinesContent += "line" + (i + 1) + System.getProperty("line.separator");
+				tenLinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream.write(tenLinesContent.getBytes());
 			testInpFileOutStream.close();
 
 			// testing for an input of 10 lines or less
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
@@ -68,9 +73,9 @@ public class HeadAppTest {
 
 			// testing for an input of more than 10
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
+			testInpFileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
 			testInpFileOutStream.close();
-			testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
 			testInputStream.close();
@@ -97,17 +102,17 @@ public class HeadAppTest {
 		args[0] = "15"; // n=15
 
 		try {
-			tempInpFile = new File("temp-input-file-name.tmp");
+			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			String lessThanNlinesContent = "";
 			for (int i = 0; i < Integer.parseInt(args[0]) - 1; i++) {
-				lessThanNlinesContent += "line" + (i + 1) + System.getProperty("line.separator");
+				lessThanNlinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream.write(lessThanNlinesContent.getBytes());
 			testInpFileOutStream.close();
 
 			// testing for an input of less than n lines
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(lessThanNlinesContent, testOutputStream.toString());
@@ -115,11 +120,11 @@ public class HeadAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of n lines
-			String nLinesOfContent = lessThanNlinesContent + "line" + Integer.parseInt(args[0]) + System.getProperty("line.separator");
+			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[0]) + System.getProperty(LINE_SEPARATOR);
 			testInpFileOutStream = new FileOutputStream(tempInpFile, false);
 			testInpFileOutStream.write(nLinesOfContent.getBytes());
 			testInpFileOutStream.close();
-			testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(nLinesOfContent, testOutputStream.toString());
 			testInputStream.close();
@@ -127,9 +132,9 @@ public class HeadAppTest {
 
 			// testing for an input of more than n lines
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line" + (Integer.parseInt(args[0]) + 1) + System.getProperty("line.separator")).getBytes());
+			testInpFileOutStream.write((LINE + (Integer.parseInt(args[0]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
 			testInpFileOutStream.close();
-			testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(nLinesOfContent, testOutputStream.toString());
 			testInputStream.close();
@@ -155,16 +160,16 @@ public class HeadAppTest {
 		String[] args = new String[1];
 
 		try {
-			tempInpFile = new File("temp-input-file-name.tmp");
+			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			String tenLinesContent = "";
 			for (int i = 0; i < 10; i++) {
-				tenLinesContent += "line" + (i + 1) + System.getProperty("line.separator");
+				tenLinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream.write(tenLinesContent.getBytes());
 			testInpFileOutStream.close();
 
-			args[0] = "temp-input-file-name.tmp";
+			args[0] = TEMP_INPUT_FILE;
 
 			// testing for an input of 10 lines or less
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -174,7 +179,7 @@ public class HeadAppTest {
 
 			// testing for an input of more than 10
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line11" + System.getProperty("line.separator")).getBytes());
+			testInpFileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
 			testInpFileOutStream.close();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
@@ -200,7 +205,7 @@ public class HeadAppTest {
 
 		try {
 
-			args[0] = "temp-input-file-name.tmp"; // this filename does not exist
+			args[0] = TEMP_INPUT_FILE; // this filename does not exist
 
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
@@ -208,7 +213,7 @@ public class HeadAppTest {
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.FILE_DOES_NOT_EXIST);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.FILE_NOT_EXISTS);
 		}
 	}
 
@@ -220,19 +225,19 @@ public class HeadAppTest {
 		String[] args = new String[1];
 
 		try {
-			tempInpFile = new File("temp-input-file-name.tmp");
+			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-1"; // n<0
 			cmdApp.run(args, testInputStream, testOutputStream);
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.ILLEGAL_LINE_COUNT);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ILLEGAL_LINE_CNT);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -251,20 +256,20 @@ public class HeadAppTest {
 		String[] args = new String[1];
 
 		try {
-			tempInpFile = new File("temp-input-file-name.tmp");
+			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "abcd"; // n=?
 			cmdApp.run(args, testInputStream, testOutputStream);
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.ILLEGAL_LINE_COUNT);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ILLEGAL_LINE_CNT);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -289,7 +294,7 @@ public class HeadAppTest {
 			cmdApp.run(args, null, testOutputStream);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "head: " + Consts.Messages.TOO_MANY_ARGUMENTS);
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.TOO_MANY_ARGS);
 		}
 	}
 }

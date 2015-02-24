@@ -106,7 +106,13 @@ public final class Environment {
 			}
 			return file;
 		} catch (Exception e) {
-			throw new FileCreateException(Consts.Messages.CANNOT_CREATE_FILE + " " + relativePath);
+			throw new FileCreateException(Consts.Messages.CANNOT_CRT_FILE + " " + relativePath);
 		}
+	}
+	
+	public static String calculateRelativePath(String base, String basePlusExtraPath) {
+		if (base == null || basePlusExtraPath == null)
+			return null;
+		return new File(base).toURI().relativize(new File(basePlusExtraPath).toURI()).getPath();
 	}
 }

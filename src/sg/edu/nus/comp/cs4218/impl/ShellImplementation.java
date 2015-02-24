@@ -44,19 +44,17 @@ public class ShellImplementation implements Shell {
 		return new CallCommand(cmdline);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				System.in));
-		ShellImplementation shellImplementation = new ShellImplementation();
-		// PrintWriter writer = new PrintWriter(new BufferedWriter(new
-		// OutputStreamWriter(System.out)));
+		ShellImplementation shellImpl = new ShellImplementation();
 
 		// "cd src; pwd > a.txt; ls"
 		while (true) {
 			try {
 				System.out.print(Environment.getCurrentDirectory() + " # ");
 
-				shellImplementation.parseAndEvaluate(reader.readLine(),
+				shellImpl.parseAndEvaluate(reader.readLine(),
 						System.out);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());

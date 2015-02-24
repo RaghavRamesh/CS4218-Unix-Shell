@@ -7,7 +7,7 @@ public class ShellException extends Exception {
 		super("shell: " + message);
 	}
 
-	public ShellException(IOException e) {
-		super("shell: " + e.getMessage());
+	public ShellException(IOException exception) {
+		super("shell: " + exception.getMessage());
 	}
 }

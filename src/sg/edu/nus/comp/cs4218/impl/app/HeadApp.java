@@ -42,7 +42,7 @@ public class HeadApp implements Application {
 		if (args.length == 0) { // --1--
 
 			if (stdin == null) {
-				throw new HeadException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+				throw new HeadException(Consts.Messages.NO_INP_FOUND);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 			writeToPrintStream(writer, numOfLines, reader);
@@ -58,9 +58,9 @@ public class HeadApp implements Application {
 				}
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (FileNotFoundException e) {
-				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
+				throw new HeadException(e);
 			} catch (NumberFormatException e) {
-				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new HeadException(e);
 			}
 
 		} else if (args.length == 2) { // --4--
@@ -69,31 +69,31 @@ public class HeadApp implements Application {
 				reader = new BufferedReader(new FileReader(args[1]));
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (NumberFormatException e) {
-				throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new HeadException(e);
 			} catch (FileNotFoundException e) {
-				throw new HeadException(Consts.Messages.FILE_DOES_NOT_EXIST);
+				throw new HeadException(e);
 			}
 		} else {
-			throw new HeadException(Consts.Messages.TOO_MANY_ARGUMENTS);
+			throw new HeadException(Consts.Messages.TOO_MANY_ARGS);
 		}
 
 	}
 
-	protected void writeToPrintStream(PrintWriter writer, int numOfLines, final BufferedReader br) throws AbstractApplicationException {
+	protected void writeToPrintStream(PrintWriter writer, int numOfLines, final BufferedReader reader) throws AbstractApplicationException {
 
 		// TODO: see if double checking needed
 		if (writer == null)
 			throw new HeadException(Consts.Messages.OUT_STR_NOT_NULL);
-		if (br == null)
+		if (reader == null)
 			throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
 		if (numOfLines < 0)
-			throw new HeadException(Consts.Messages.ILLEGAL_LINE_COUNT);
+			throw new HeadException(Consts.Messages.ILLEGAL_LINE_CNT);
 		;
 
 		String line = null;
 		try {
 			for (int i = 0; i < numOfLines; i++) {
-				if ((line = br.readLine()) != null) {
+				if ((line = reader.readLine()) != null) {
 					writer.write(line);
 				} else {
 					break;
@@ -102,10 +102,10 @@ public class HeadApp implements Application {
 				writer.write(System.getProperty("line.separator"));
 			}
 
-			br.close();
+			reader.close();
 			writer.close();
 		} catch (IOException e) {
-			throw new HeadException(e.getMessage());
+			throw new HeadException(e);
 		}
 	}
 

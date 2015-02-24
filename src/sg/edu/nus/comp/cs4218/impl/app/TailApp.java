@@ -44,7 +44,7 @@ public class TailApp implements Application {
 		if (args.length == 0) { // --1--
 
 			if (stdin == null) {
-				throw new TailException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+				throw new TailException(Consts.Messages.NO_INP_FOUND);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 			writeToPrintStream(writer, numOfLines, reader);
@@ -60,9 +60,9 @@ public class TailApp implements Application {
 				}
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (FileNotFoundException e) {
-				throw new TailException(Consts.Messages.FILE_DOES_NOT_EXIST);
-			} catch (NumberFormatException e) {
-				throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new TailException(e);
+			} catch (NumberFormatException exception) {
+				throw new TailException(exception);
 			}
 
 		} else if (args.length == 2) { // --4--
@@ -71,39 +71,39 @@ public class TailApp implements Application {
 				reader = new BufferedReader(new FileReader(args[1]));
 				writeToPrintStream(writer, numOfLines, reader);
 			} catch (NumberFormatException e) {
-				throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
+				throw new TailException(e);
 			} catch (FileNotFoundException e) {
-				throw new TailException(Consts.Messages.FILE_DOES_NOT_EXIST);
+				throw new TailException(e);
 			}
 		} else {
-			throw new TailException(Consts.Messages.TOO_MANY_ARGUMENTS);
+			throw new TailException(Consts.Messages.TOO_MANY_ARGS);
 		}
 
 	}
 
-	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead, final BufferedReader br) throws AbstractApplicationException {
+	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead, final BufferedReader reader) throws AbstractApplicationException {
 
 		// TODO: see if double checking needed
 		if (writer == null)
 			throw new TailException(Consts.Messages.OUT_STR_NOT_NULL);
-		if (br == null)
+		if (reader == null)
 			throw new TailException(Consts.Messages.IN_STR_NOT_NULL);
 		if (numOfLinesToRead < 0)
-			throw new TailException(Consts.Messages.ILLEGAL_LINE_COUNT);
+			throw new TailException(Consts.Messages.ILLEGAL_LINE_CNT);
 
 		Queue<String> lines = new LinkedList<String>();
 		String line = null;
 
 		try {
 			for (int i = 0; i < numOfLinesToRead; i++) {
-				if ((line = br.readLine()) == null) {
+				if ((line = reader.readLine()) == null) {
 					break;
 				} else {
 					lines.add(line);
 				}
 			}
 
-			while ((line = br.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 				lines.remove();
 				lines.add(line);
 			}
@@ -113,10 +113,10 @@ public class TailApp implements Application {
 				writer.write(System.getProperty("line.separator"));
 			}
 
-			br.close();
+			reader.close();
 			writer.close();
-		} catch (IOException e) {
-			throw new TailException(e.getMessage());
+		} catch (IOException exception) {
+			throw new TailException(exception);
 		}
 
 	}

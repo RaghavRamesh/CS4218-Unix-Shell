@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
-import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.FileSearcher;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
@@ -31,15 +31,15 @@ public class FindApp implements Application {
 		}
 
 		if (args.length == 0) {
-			throw new FindException(Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+			throw new FindException(Consts.Messages.NO_INP_FOUND);
 		} else if (args.length == 1) {
 			try {
-				FileSearcher fileSearcher = new FileSearcher(args[0], DirectoryHelpers.getCurrentDirectory());
-				Files.walkFileTree(Paths.get(DirectoryHelpers.getCurrentDirectory()), fileSearcher);
+				FileSearcher fileSearcher = new FileSearcher(args[0], Environment.getCurrentDirectory());
+				Files.walkFileTree(Paths.get(Environment.getCurrentDirectory()), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
 			} catch (InvalidDirectoryException e) {
-				throw new FindException(e.getMessage());
+				throw new FindException(e);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -50,22 +50,24 @@ public class FindApp implements Application {
 				if (pathArgument.startsWith("/")) { // absolute path
 					dirToSearchIn = pathArgument;
 				} else { // relative path
-					dirToSearchIn = DirectoryHelpers.getCurrentDirectory() + File.separator + pathArgument;
+					dirToSearchIn = Environment.getCurrentDirectory() + File.separator + pathArgument;
 				}
 				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn);
 				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
-			} catch (IOException | InvalidDirectoryException e) {
-				throw new FindException(e.getMessage());
+			} catch (IOException e) {
+				throw new FindException(e);
+			} catch(InvalidDirectoryException e){
+				throw new FindException(e);
 			}
 		} else {
-			throw new FindException(Consts.Messages.TOO_MANY_ARGUMENTS);
+			throw new FindException(Consts.Messages.TOO_MANY_ARGS);
 		}
 
 	}
 
-	private void writeStringArrToPrintStream(PrintWriter writer, String[] stringsArr) {
+	private void writeStringArrToPrintStream(PrintWriter writer, String... stringsArr) {
 		for (int i = 0; i < stringsArr.length; i++) {
 			writer.write(stringsArr[i]);
 			writer.write("\n");

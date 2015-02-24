@@ -21,12 +21,12 @@ public class Consts {
     public static final String FILE_NOT_VALID = "File name is invalid";
     public static final String INP_STR_NOT_NULL = "Input stream cannot be null";
     public static final String ARG_NOT_EMPTY = "Argument cannot be empty";
-    public static final String CANNOT_CREATE_FILE = "Cannot create file";
+    public static final String CANNOT_CRT_FILE = "Cannot create file";
     public static final String INVALID_OPTION = "Invalid Option";
-    public static final String NO_INPUT_FILE_OR_STDIN = "No input found";
-    public static final String ILLEGAL_LINE_COUNT = "Illegal line count";
-    public static final String TOO_MANY_ARGUMENTS = "Too many arguments";
-	public static final String FILE_DOES_NOT_EXIST = "File does not exist";
+    public static final String NO_INP_FOUND = "No input found";
+    public static final String ILLEGAL_LINE_CNT = "Illegal line count";
+    public static final String TOO_MANY_ARGS = "Too many arguments";
+	public static final String FILE_NOT_EXISTS = "File does not exist";
   }
 
   public class Keywords {

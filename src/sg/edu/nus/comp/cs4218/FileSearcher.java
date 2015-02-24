@@ -13,8 +13,8 @@ import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class FileSearcher extends SimpleFileVisitor<Path> {
 	private final PathMatcher matcher;
-	private ArrayList<String> filePaths;
-	private String rootDirectory;
+	private final ArrayList<String> filePaths;
+	private final String rootDirectory;
 
 	public FileSearcher(String globPattern, String rootDir) throws InvalidDirectoryException {
 		matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
@@ -40,7 +40,7 @@ public class FileSearcher extends SimpleFileVisitor<Path> {
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		Path pathName = file.getFileName();
 		if (pathName != null && matcher.matches(pathName)) {
-			filePaths.add(DirectoryHelpers.calculateRelativePath(rootDirectory, file.toAbsolutePath().toString()));
+			filePaths.add(Environment.calculateRelativePath(rootDirectory, file.toAbsolutePath().toString()));
 		}
 		return FileVisitResult.CONTINUE;
 	}
