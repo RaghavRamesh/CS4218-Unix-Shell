@@ -30,38 +30,44 @@ public class FindAppTest {
 
 		/*
 		 * Creates the following temp dir and file structure:
-		 * TempTestDir->tempFileInRoot.tmp
-		 * TempTestDir->temp1->tempFileName1.tmp
+		 * TempTestDir->tempFileInRoot.tmp TempTestDir->temp1->tempFileName1.tmp
 		 * TempTestDir->temp2->tempFileName2.tmp
 		 */
 
 		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
-		tempRootDirectory = new File(originalCurrDir + File.separator + "TempTestDir");
+		tempRootDirectory = new File(originalCurrDir + File.separator
+				+ "TempTestDir");
 		boolean status = tempRootDirectory.mkdir();
 		if (!status) {
 			fail();
 		}
-		System.setProperty(Consts.Keywords.USER_DIR, tempRootDirectory.getAbsolutePath());
+		System.setProperty(Consts.Keywords.USER_DIR,
+				tempRootDirectory.getAbsolutePath());
 
-		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath() + File.separator + "tempFileInRoot.tmp");
+		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + "tempFileInRoot.tmp");
 		PrintWriter tempFileInRootWriter = new PrintWriter(tempFileInRoot);
 		tempFileInRootWriter.println("random data");
 		tempFileInRootWriter.close();
 
-		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath() + File.separator + "temp1");
+		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + "temp1");
 		if (!tempSubDirectory1.mkdir()) {
 			fail();
 		}
-		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath() + File.separator + "tempFileName1.tmp");
+		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath()
+				+ File.separator + "tempFileName1.tmp");
 		PrintWriter tempFile1Writer = new PrintWriter(tempFileIn1);
 		tempFile1Writer.println("random data");
 		tempFile1Writer.close();
 
-		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath() + File.separator + "temp2");
+		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + "temp2");
 		if (!tempSubDirectory2.mkdir()) {
 			fail();
 		}
-		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath() + File.separator + "tempFileName2.tmp");
+		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath()
+				+ File.separator + "tempFileName2.tmp");
 		PrintWriter tempFile2Writer = new PrintWriter(tempFileIn2);
 		tempFile2Writer.println("random data");
 		tempFile2Writer.close();
@@ -89,7 +95,8 @@ public class FindAppTest {
 			findApp.run(null, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.ARG_NOT_NULL);
+			assertEquals(e.getMessage(), "find: "
+					+ Consts.Messages.ARG_NOT_NULL);
 		}
 	}
 
@@ -102,7 +109,8 @@ public class FindAppTest {
 			findApp.run(args, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.NO_INPUT_FILE_OR_STDIN);
+			assertEquals(e.getMessage(), "find: "
+					+ Consts.Messages.NO_INPUT_FILE_OR_STDIN);
 		}
 	}
 
@@ -117,7 +125,8 @@ public class FindAppTest {
 			findApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), "find: "
+					+ Consts.Messages.OUT_STR_NOT_NULL);
 		}
 	}
 
@@ -133,7 +142,8 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "find: " + Consts.Messages.DIR_NOT_VALID);
+			assertEquals(e.getMessage(), "find: "
+					+ Consts.Messages.PATH_NOT_FOUND);
 		}
 	}
 
@@ -229,6 +239,7 @@ public class FindAppTest {
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
+			e.printStackTrace();
 			fail();
 		}
 	}
@@ -249,6 +260,7 @@ public class FindAppTest {
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
+			e.printStackTrace();
 			fail();
 		}
 	}
@@ -258,7 +270,8 @@ public class FindAppTest {
 		findApp = new FindApp();
 
 		String[] args = new String[2];
-		args[0] = System.getProperty(Consts.Keywords.USER_DIR) + File.separator + "temp1/";
+		args[0] = System.getProperty(Consts.Keywords.USER_DIR) + File.separator
+				+ "temp1/";
 		args[1] = "temp*Name*";
 
 		try {
@@ -269,6 +282,7 @@ public class FindAppTest {
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
+			e.printStackTrace();
 			fail();
 		}
 	}

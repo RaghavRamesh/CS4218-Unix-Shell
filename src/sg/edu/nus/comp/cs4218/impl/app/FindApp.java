@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.DirectoryHelpers;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.FileSearcher;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.FindException;
@@ -46,12 +47,8 @@ public class FindApp implements Application {
 		} else if (args.length == 2) {
 			try {
 				String pathArgument = args[0];
-				String dirToSearchIn = null;
-				if (pathArgument.startsWith("/")) { // absolute path
-					dirToSearchIn = pathArgument;
-				} else { // relative path
-					dirToSearchIn = DirectoryHelpers.getCurrentDirectory() + File.separator + pathArgument;
-				}
+				String dirToSearchIn = Environment.checkIsDirectory(pathArgument);
+			
 				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn);
 				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));

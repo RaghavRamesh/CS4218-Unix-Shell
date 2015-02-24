@@ -83,7 +83,7 @@ public class EnvironmentTest {
 
 	// positive test
 	@Test
-	public void testCheckIsDirectoryForValidDirectory()
+	public void testCheckIsDirectoryForValidAbsoluteDirectory()
 			throws InvalidDirectoryException, IOException {
 
 		// create a new directory
@@ -96,6 +96,25 @@ public class EnvironmentTest {
 
 		String dirPath = Environment.checkIsDirectory(validDirectory
 				.getAbsolutePath());
+		assertEquals(validDirectory.getCanonicalPath(), dirPath);
+
+		validDirectory.delete();
+	}
+	
+	// positive test
+	@Test
+	public void testCheckIsDirectoryForValidRelativeDirectory()
+			throws InvalidDirectoryException, IOException {
+
+		// create a new directory
+		File validDirectory = new File(tempTestDirectory + File.separator
+				+ "validDirectory");
+		boolean status = validDirectory.mkdir();
+		if (!status) {
+			fail();
+		}
+
+		String dirPath = Environment.checkIsDirectory("TempTest/validDirectory");
 		assertEquals(validDirectory.getCanonicalPath(), dirPath);
 
 		validDirectory.delete();
@@ -135,7 +154,7 @@ public class EnvironmentTest {
 
 	// positive test
 	@Test
-	public void testCheckIsFileForValidFile() throws IOException,
+	public void testCheckIsFileForValidRelativeFile() throws IOException,
 			InvalidFileException {
 
 		// create a valid file
@@ -147,6 +166,24 @@ public class EnvironmentTest {
 			fail();
 		}
 		String filePath = Environment.checkIsFile("TempTest/validFile.txt");
+		assertEquals(validFile.getCanonicalPath(), filePath);
+
+		validFile.delete();
+	}
+	
+	@Test
+	public void testCheckIsFileForValidAbsoluteFile() throws IOException,
+			InvalidFileException {
+
+		// create a valid file
+		File validFile = new File(tempTestDirectory + File.separator
+				+ "validFile.txt");
+
+		boolean status = validFile.createNewFile();
+		if(!status){
+			fail();
+		}
+		String filePath = Environment.checkIsFile(validFile.getAbsolutePath());
 		assertEquals(validFile.getCanonicalPath(), filePath);
 
 		validFile.delete();

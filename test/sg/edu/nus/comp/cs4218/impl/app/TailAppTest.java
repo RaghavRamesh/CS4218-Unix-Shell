@@ -205,8 +205,9 @@ public class TailAppTest {
 	}
 
 	@Test
-	public void testNegativeNumLines() {
+	public void testNegativeNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
+		FileInputStream testInputStream = null;
 
 		File tempInpFile = null;
 		String[] args = new String[1];
@@ -218,12 +219,13 @@ public class TailAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-1"; // n<0
 			cmdApp.run(args, testInputStream, testOutputStream);
 
 		} catch (AbstractApplicationException e) {
+			testInputStream.close();
 			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_COUNT);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -236,9 +238,10 @@ public class TailAppTest {
 	}
 
 	@Test
-	public void testAlphabeticalNumLines() {
+	public void testAlphabeticalNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
-
+		FileInputStream testInputStream = null;
+		
 		File tempInpFile = null;
 		String[] args = new String[1];
 
@@ -249,13 +252,14 @@ public class TailAppTest {
 			testInpFileOutStream.close();
 
 			// testing for alphabets instead of number
-			FileInputStream testInputStream = new FileInputStream("temp-input-file-name.tmp");
+			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "abcd"; // n=?
 			cmdApp.run(args, testInputStream, testOutputStream);
 			fail();
 
 		} catch (AbstractApplicationException e) {
+			testInputStream.close();
 			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_COUNT);
 		} catch (IOException e) {
 			e.printStackTrace();
