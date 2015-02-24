@@ -2,11 +2,14 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class CallCommandTest {
@@ -108,5 +111,36 @@ public class CallCommandTest {
 		} catch (Exception e) {
 			fail("Wrong exception thrown");
 		}
+	}
+	
+	@Test
+	public void testSubstituteWithDoubleQuoteAndBackQuote() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo \"this is space: `echo \" \"`\"";
+		assertEquals("echo this is space:", CallCommand.substitute(cmdLine));
+	}
+	
+	@Test
+	public void testSubstituteWithSingleQuoteAndBackQuote() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo 'hello `echo world`'";
+		assertEquals("echo hello world", CallCommand.substitute(cmdLine));
+	}
+	
+	@Test
+	public void testSubstituteWithAllQuotes() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo \"echo 'echo `echo hello world` world' world\"";
+		assertEquals("echo echo 'echo `echo hello world` world' world", CallCommand.substitute(cmdLine));
+	}
+	
+	
+	@Test
+	public void testSubstituteWithMultipleEchoStatements() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo 'echo hello `echo world`'";
+		assertEquals("echo echo hello world", CallCommand.substitute(cmdLine));
+	}
+	
+	@Test
+	public void testSubstituteWithOnlyBackQuote() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo `echo hello`";
+		assertEquals("echo hello", CallCommand.substitute(cmdLine));
 	}
 }

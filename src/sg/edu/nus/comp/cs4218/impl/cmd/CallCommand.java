@@ -24,117 +24,134 @@ import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 
 public class CallCommand implements Command {
-	private final String mCommandLine;
-	private final List<String> mTokens;
+  private final String mCommandLine;
+  private final List<String> mTokens;
 
-	public CallCommand(String commandLine) throws ShellException {
-		mCommandLine = commandLine;
-		List<String> tokens = Parser.parseCommandLine(commandLine);
-		mTokens = new ArrayList<String>();
-		for (String token : tokens) {
-		  // Remove the outer double/single quotes
-		  if (Parser.isDoubleQuoted(token) || Parser.isSingleQuoted(token)) {
-		    token = token.substring(1, token.length() - 1);
-		  }
-		  if (!token.isEmpty()) {
-		    mTokens.add(token);
-		  }
-		}
-	}
+  public CallCommand(String commandLine) throws ShellException {
+    mCommandLine = commandLine;
+    List<String> tokens = Parser.parseCommandLine(commandLine);
+    mTokens = new ArrayList<String>();
+    for (String token : tokens) {
+      // Remove the outer double/single quotes
+      if (Parser.isDoubleQuoted(token) || Parser.isSingleQuoted(token)) {
+        token = token.substring(1, token.length() - 1);
+      }
+      if (!token.isEmpty()) {
+        mTokens.add(token);
+      }
+    }
+  }
 
-	@Override
-	public void evaluate(InputStream stdin, OutputStream stdout)
-			throws AbstractApplicationException, ShellException {
+  @Override
+  public void evaluate(InputStream stdin, OutputStream stdout)
+      throws AbstractApplicationException, ShellException {
+    if (mTokens.isEmpty()) {
+      return;
+    }
+    try {
+      List<String> substitutedTokens = substituteAll(mTokens);
+      String inFile = null, outFile = null;
+      Application app = getApplication(substitutedTokens.get(0));
+      List<String> argsList = new ArrayList<String>();
+      int currentPos = 1;
+      while (currentPos < substitutedTokens.size()) {
+        String token = substitutedTokens.get(currentPos++);
+        if (Parser.isInStream(token)) {
+          if (inFile != null) {
+            throw new ShellException(Consts.Messages.TOO_MANY_INPUT + mCommandLine);
+          }
+          if (currentPos == substitutedTokens.size()
+              || Parser.isSpecialCharacter(substitutedTokens.get(currentPos))) {
+            throw new ShellException(Consts.Messages.INVALID_INPUT + mCommandLine);
+          }
+          inFile = substitutedTokens.get(currentPos++);
+        } else if (Parser.isOutStream(token)) {
+          if (outFile != null) {
+            throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT + mCommandLine);
+          }
+          if (currentPos == substitutedTokens.size()
+              || Parser.isSpecialCharacter(substitutedTokens.get(currentPos))) {
+            throw new ShellException(Consts.Messages.INVALID_OUTPUT + mCommandLine);
+          }
+          outFile = substitutedTokens.get(currentPos++);
+        } else {
+          argsList.add(token);
+        }
+      }
+      InputStream inStream = (inFile == null) ? stdin 
+          : new FileInputStream(Environment.createFile(inFile));
+      OutputStream outStream = (outFile == null) ? stdout
+          : new FileOutputStream(Environment.createFile(outFile));
+      String[] args = argsList.toArray(new String[argsList.size()]);
+      app.run(args, inStream, outStream);
+    } catch (FileNotFoundException e) {
+      throw new ShellException(e);
+    } catch (IOException e) {
+      throw new ShellException(e);
+    }
+  }
 
-		if (mTokens.isEmpty()) {
-			return;
-		}
+  public static List<String> substituteAll(List<String> tokens)
+      throws AbstractApplicationException, ShellException, IOException {
+    ArrayList<String> result = new ArrayList<String>();
+    for (String token : tokens) {
+      if (Parser.containsBackQuote(token)) {
+        result.add(substitute(token));
+      } else {
+        result.add(token);
+      }
+    }
+    return result;
+  }
 
-		String inFile = null, outFile = null;
-		try {
-			Application app = getApplication(mTokens.get(0));
-			List<String> argsList = new ArrayList<String>();
-			int currentPos = 1;
-			while (currentPos < mTokens.size()) {
-				String token = mTokens.get(currentPos++);
-				if (Parser.isInStream(token)) {
-					if (inFile != null) {
-						throw new ShellException(Consts.Messages.TOO_MANY_INPUT
-								+ mCommandLine);
-					}
-					if (currentPos == mTokens.size()
-							|| Parser.isSpecialCharacter(mTokens
-									.get(currentPos))) {
-						throw new ShellException(Consts.Messages.INVALID_INPUT
-								+ mCommandLine);
-					}
-					inFile = mTokens.get(currentPos++);
-				} else if (Parser.isOutStream(token)) {
-					if (outFile != null) {
-						throw new ShellException(
-								Consts.Messages.TOO_MANY_OUTPUT + mCommandLine);
-					}
-					if (currentPos == mTokens.size()
-							|| Parser.isSpecialCharacter(mTokens
-									.get(currentPos))) {
-						throw new ShellException(Consts.Messages.INVALID_OUTPUT
-								+ mCommandLine);
-					}
-					outFile = mTokens.get(currentPos++);
-				} else if (Parser.isBackQuoted(token)) {
-					argsList.add(substitute(token));
-				} else {
-					argsList.add(token);
-				}
-			}
-			InputStream inStream = (inFile == null) ? stdin
-					: new FileInputStream(Environment.createFile(inFile));
-			OutputStream outStream = (outFile == null) ? stdout
-					: new FileOutputStream(Environment.createFile(outFile));
-			String[] args = argsList.toArray(new String[argsList.size()]);
-			app.run(args, inStream, outStream);
-		} catch (FileNotFoundException e) {
-			throw new ShellException(e);
-		} catch (IOException e) {
-			throw new ShellException(e);
-		}
-	}
+  public static String substitute(String input)
+      throws AbstractApplicationException, ShellException, IOException {
+    List<String> tokens = Parser.parseCommandLine(input);
+    List<String> tokensWithoutQuotes = new ArrayList<String>();
+    for (int i = 0; i < tokens.size(); i++) {
+      String token = tokens.get(i);
+      if (Parser.isSingleQuoted(token) || Parser.isDoubleQuoted(token)) {
+        token = token.substring(1, token.length() - 1);
+        tokensWithoutQuotes.addAll(Parser.parseCommandLine(token));
+      } else {
+        tokensWithoutQuotes.add(token);
+      }
+    }
 
-	public String substitute(String input) throws AbstractApplicationException,
-			ShellException, IOException {
-		List<String> tokens = Parser.parseCommandLine(input);
-		for (int i = 0; i < tokens.size(); i++) {
-			String token = tokens.get(i);
-			if (Parser.isBackQuoted(token)) {
-				// Remove back quotes
-				token = token.substring(1, token.length() - 1);
-				Command command = ShellImplementation.getCommand(token);
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				command.evaluate(null, byteArrayOutputStream);
-				byte[] bytes = byteArrayOutputStream.toByteArray();
-				ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-						bytes);
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						byteArrayInputStream));
-				tokens.set(i, br.readLine());
-			}
-		}
-		// TODO: toString trims spaces
-		String result = "";
-		for (String token : tokens) {
-			result += " " + token;
-		}
-		return result.trim();
-	}
+    for (int i = 0; i < tokensWithoutQuotes.size(); i++) {
+      String token = tokensWithoutQuotes.get(i);
 
-	@Override
-	public void terminate() {
-		// TODO Auto-generated method stub
+      if (Parser.isBackQuoted(token)) {
+        // Remove back quotes
+        token = token.substring(1, token.length() - 1);
+        Command command = ShellImplementation.getCommand(token);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        command.evaluate(null, byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+            bytes);
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+            byteArrayInputStream));
+        tokensWithoutQuotes.set(i, br.readLine());
+      }
+    }
+    // TODO: toString trims spaces
+    String result = "";
+    for (String token : tokensWithoutQuotes) {
+      result += " " + token;
+    }
+    // System.out.println(result.trim());
+    return result.trim();
+  }
 
-	}
+  @Override
+  public void terminate() {
+    // TODO Auto-generated method stub
 
-	private Application getApplication(String appId) throws ShellException {
-		ApplicationFactory factory = new ApplicationFactory();
-		return factory.getApplication(appId);
-	}
+  }
+
+  private Application getApplication(String appId) throws ShellException {
+    ApplicationFactory factory = new ApplicationFactory();
+    return factory.getApplication(appId);
+  }
 }
