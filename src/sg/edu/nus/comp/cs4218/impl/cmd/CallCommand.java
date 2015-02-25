@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
@@ -62,8 +64,12 @@ public class CallCommand implements Command {
     String outFile = findOutput();
     try {
       List<String> argsList = findArguments();
-      inStream = (inFile == null) ? stdin : new FileInputStream(
-          Environment.createFile(inFile));
+      if (inFile == null) {
+        inStream = stdin;
+      } else {
+        inFile = Environment.checkIsFile(inFile);
+        inStream = new FileInputStream(new File(inFile));
+      }
       outStream = (outFile == null) ? stdout : new FileOutputStream(
           Environment.createFile(outFile));
       Application app = getApplication(argsList.get(0));
@@ -71,7 +77,9 @@ public class CallCommand implements Command {
       String[] args = argumentsWithoutApp
           .toArray(new String[argumentsWithoutApp.size()]);
       app.run(args, inStream, outStream);
-    } catch (FileNotFoundException e) {
+    } catch (InvalidFileException e) {
+      throw new ShellException(e);
+    } catch (IOException e) {
       throw new ShellException(e);
     } finally {
       try {
