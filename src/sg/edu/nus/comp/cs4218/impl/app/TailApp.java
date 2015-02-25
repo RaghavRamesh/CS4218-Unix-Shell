@@ -24,10 +24,10 @@ public class TailApp implements Application {
 	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
 
 		// 4 different cases:
-		// --1-- head "sdfsdf" -- only stdin needed
-		// --2-- head filename.sdfs -- only arg[0] needed
-		// --3-- head -n 15 "afsdfsd" -- arg[0] and stdin needed
-		// --4-- head -n 23 filename.sdfsdf -- arg[0] and arg[1] needed
+		// --1-- tail "sdfsdf" -- only stdin needed
+		// --2-- tail filename.sdfs -- only arg[0] needed
+		// --3-- tail -n 15 "afsdfsd" -- arg[0], arg[1] and stdin needed
+		// --4-- tail -n 23 filename.sdfsdf -- arg[0], arg[1] and arg[2] needed
 
 		if (args == null) {
 			throw new TailException(Consts.Messages.ARG_NOT_NULL);// TODO: check if this is needed
@@ -41,39 +41,55 @@ public class TailApp implements Application {
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 		int numOfLines = 10; // by default, read only 10 lines
 
-		if (args.length == 0) { // --1--
+		if (args.length == 0) { // case 1
 
 			if (stdin == null) {
-				throw new TailException(Consts.Messages.NO_INP_FOUND);
+				throw new TailException(Consts.Messages.IN_STR_NOT_NULL);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 			writeToPrintStream(writer, numOfLines, reader);
 
-		} else if (args.length == 1) {
+		} else if (args.length == 1) { // case 2
+
+			if (args[0] == null)
+				throw new TailException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0)
+				throw new TailException(Consts.Messages.ARG_NOT_EMPTY);
 
 			try {
-				if (stdin == null) { // --2--
-					reader = new BufferedReader(new FileReader(args[0]));
-				} else { // --3--
-					numOfLines = Integer.parseInt(args[0]);
-					reader = new BufferedReader(new InputStreamReader(stdin));
-				}
-				writeToPrintStream(writer, numOfLines, reader);
+				reader = new BufferedReader(new FileReader(args[0]));
 			} catch (FileNotFoundException e) {
 				throw new TailException(e);
-			} catch (NumberFormatException exception) {
-				throw new TailException(exception);
 			}
+			writeToPrintStream(writer, numOfLines, reader);
 
-		} else if (args.length == 2) { // --4--
-			try {
-				numOfLines = Integer.parseInt(args[0]);
-				reader = new BufferedReader(new FileReader(args[1]));
-				writeToPrintStream(writer, numOfLines, reader);
-			} catch (NumberFormatException e) {
-				throw new TailException(e);
-			} catch (FileNotFoundException e) {
-				throw new TailException(e);
+		} else if (args.length == 2 || args.length == 3) { // case 3 or 4
+
+			if (args[0] == null || args[1] == null)
+				throw new TailException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0 || args[1].length() == 0)
+				throw new TailException(Consts.Messages.ARG_NOT_EMPTY);
+
+			if (args[0].equals("-n")) {
+				try {
+					numOfLines = Integer.parseInt(args[1]);
+					if (args.length == 2)
+						reader = new BufferedReader(new InputStreamReader(stdin));// case 3
+					else {
+						if (args[2] == null)
+							throw new TailException(Consts.Messages.ARG_NOT_NULL);
+						if (args[2].length() == 0)
+							throw new TailException(Consts.Messages.ARG_NOT_EMPTY);
+						reader = new BufferedReader(new FileReader(args[2]));// case 4
+					}
+					writeToPrintStream(writer, numOfLines, reader);
+				} catch (NumberFormatException e) {
+					throw new TailException(Consts.Messages.ILLEGAL_LINE_CNT);
+				} catch (FileNotFoundException e) {
+					throw new TailException(e);
+				}
+			} else {
+				throw new TailException(Consts.Messages.INVALID_OPTION);
 			}
 		} else {
 			throw new TailException(Consts.Messages.TOO_MANY_ARGS);
@@ -118,7 +134,5 @@ public class TailApp implements Application {
 		} catch (IOException exception) {
 			throw new TailException(exception);
 		}
-
 	}
-
 }
