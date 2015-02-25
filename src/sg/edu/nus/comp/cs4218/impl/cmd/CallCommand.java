@@ -150,12 +150,12 @@ public class CallCommand implements Command {
     }
     // TODO: toString trims spaces
     String result = "";
-    for (String token : tokensWithoutQuotes) {
-      result += " " + token;
-    }
     // System.out.println(result.trim());
     return result.trim();
   }
+			if (token == null) {
+				continue;
+			}
 
   /**
    * Find the input redirection from the command.
