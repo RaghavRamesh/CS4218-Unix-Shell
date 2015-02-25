@@ -147,9 +147,12 @@ public class CallCommand implements Command {
 						bytes);
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						byteArrayInputStream));
-				String readLine = br.readLine();
-				System.out.println("readLine: " + readLine);
-				tokensWithoutQuotes.set(i, readLine);
+				String result = "";
+		        String line;
+		        while ((line = br.readLine()) != null) {
+		        	result += line + "\n" ;
+		        }
+				tokensWithoutQuotes.set(i, result);
 			}
 		}
 		// TODO: toString trims spaces
