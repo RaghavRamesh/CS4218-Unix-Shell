@@ -192,8 +192,8 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
 
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp" + System.getProperty("line.separator");
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp1/"  + "tempFileName1.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp2/"   + "tempFileName2.tmp" + System.getProperty("line.separator");
 			expectedOutput += "tempFileInRoot.tmp" + System.getProperty("line.separator");
 			assertEquals(expectedOutput, testOutputStream.toString());
 
@@ -214,8 +214,8 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
 
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp" + System.getProperty("line.separator");
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp1/" + "tempFileName1.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp2/" + "tempFileName2.tmp" + System.getProperty("line.separator");
 			expectedOutput += "tempFileInRoot.tmp" + System.getProperty("line.separator");
 			assertEquals(expectedOutput, testOutputStream.toString());
 
@@ -254,8 +254,8 @@ public class FindAppTest {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
-			expectedOutput += "temp1" + File.separator + "tempFileName1.tmp" + System.getProperty("line.separator");
-			expectedOutput += "temp2" + File.separator + "tempFileName2.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp1/" + "tempFileName1.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp2/" + "tempFileName2.tmp" + System.getProperty("line.separator");
 			assertEquals(expectedOutput, testOutputStream.toString());
 
 		} catch (AbstractApplicationException e) {
