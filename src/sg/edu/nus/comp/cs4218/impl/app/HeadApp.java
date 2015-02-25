@@ -49,21 +49,37 @@ public class HeadApp implements Application {
 
 		} else if (args.length == 1) {// case 2
 
-			if (stdin == null) {
-				throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
-			} else {
-				reader = new BufferedReader(new InputStreamReader(stdin));
-				writeToPrintStream(writer, numOfLines, reader);
+			if (args[0] == null)
+				throw new HeadException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0)
+				throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
+
+			try {
+				reader = new BufferedReader(new FileReader(args[0]));
+			} catch (FileNotFoundException e) {
+				throw new HeadException(e);
 			}
+			writeToPrintStream(writer, numOfLines, reader);
 
 		} else if (args.length == 2 || args.length == 3) { // case 3 or 4
+
+			if (args[0] == null || args[1] == null)
+				throw new HeadException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0 || args[1].length() == 0)
+				throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
+
 			if (args[0].equals("-n")) {
 				try {
-					numOfLines = Integer.parseInt(args[0]);
+					numOfLines = Integer.parseInt(args[1]);
 					if (args.length == 2)
 						reader = new BufferedReader(new InputStreamReader(stdin));// case 3
-					else
+					else {
+						if (args[2] == null)
+							throw new HeadException(Consts.Messages.ARG_NOT_NULL);
+						if (args[2].length() == 0)
+							throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
 						reader = new BufferedReader(new FileReader(args[2]));// case 4
+					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
 					throw new HeadException(e);
