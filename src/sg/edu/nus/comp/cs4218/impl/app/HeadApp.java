@@ -103,7 +103,7 @@ public class HeadApp implements Application {
 			}
 
 			reader.close();
-			writer.close();
+			writer.flush();
 		} catch (IOException e) {
 			throw new HeadException(e);
 		}

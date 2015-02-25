@@ -68,6 +68,6 @@ public class FindApp implements Application {
 			writer.write(stringsArr[i]);
 			writer.write(System.getProperty("line.separator"));
 		}
-		writer.close();
+		writer.flush();
 	}
 }

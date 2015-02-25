@@ -114,7 +114,7 @@ public class TailApp implements Application {
 			}
 
 			reader.close();
-			writer.close();
+			writer.flush();
 		} catch (IOException exception) {
 			throw new TailException(exception);
 		}

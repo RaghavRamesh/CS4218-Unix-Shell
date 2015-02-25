@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.junit.After;
@@ -12,7 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class FindAppTest {
 
@@ -37,15 +40,14 @@ public class FindAppTest {
 		 * TempTestDir->temp2->tempFileName2.tmp
 		 */
 
-		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
+		originalCurrDir = Environment.getCurrentDirectory();
 		tempRootDirectory = new File(originalCurrDir + File.separator
 				+ "TempTestDir");
 		boolean status = tempRootDirectory.mkdir();
 		if (!status) {
 			fail();
 		}
-		System.setProperty(Consts.Keywords.USER_DIR,
-				tempRootDirectory.getAbsolutePath());
+		Environment.setCurrentDirectory(tempRootDirectory.getAbsolutePath());
 
 		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath()
 				+ File.separator + "tempFileInRoot.tmp");
@@ -88,7 +90,7 @@ public class FindAppTest {
 		tempSubDirectory1.delete();
 		tempSubDirectory2.delete();
 		tempRootDirectory.delete();
-		System.setProperty(Consts.Keywords.USER_DIR, originalCurrDir);
+		Environment.setCurrentDirectory(originalCurrDir);
 	}
 
 	@Test
@@ -273,11 +275,11 @@ public class FindAppTest {
 	}
 
 	@Test
-	public void test1MatchWithAbsoluteSearchPathSupplied() {
+	public void test1MatchWithAbsoluteSearchPathSupplied() throws InvalidDirectoryException, IOException {
 		findApp = new FindApp();
 
 		String[] args = new String[2];
-		args[0] = System.getProperty(Consts.Keywords.USER_DIR) + File.separator + "temp1" + "/";
+		args[0] = Environment.getCurrentDirectory() + File.separator + "temp1" + "/";
 
 		args[1] = "temp*Name*";
 
