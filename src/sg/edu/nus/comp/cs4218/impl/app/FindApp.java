@@ -32,6 +32,11 @@ public class FindApp implements Application {
 		if (args.length == 0) {
 			throw new FindException(Consts.Messages.NO_INP_FOUND);
 		} else if (args.length == 1) {
+			if (args[0] == null)
+				throw new FindException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0)
+				throw new FindException(Consts.Messages.ARG_NOT_EMPTY);
+
 			try {
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 				FileSearcher fileSearcher = new FileSearcher(args[0], Environment.getCurrentDirectory(), writer);
@@ -43,6 +48,12 @@ public class FindApp implements Application {
 				e.printStackTrace();
 			}
 		} else if (args.length == 2) {
+
+			if (args[0] == null || args[1] == null)
+				throw new FindException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0 || args[1].length() == 0)
+				throw new FindException(Consts.Messages.ARG_NOT_EMPTY);
+
 			try {
 				String pathArgument = args[0];
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
