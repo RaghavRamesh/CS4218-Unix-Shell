@@ -71,10 +71,9 @@ public class CallCommand implements Command {
 			outStream = (outFile == null) ? stdout : new FileOutputStream(
 					Environment.createFile(outFile));
 			Application app = getApplication(argsList.get(0));
-			List<String> argsWithoutApp = argsList.subList(1,
-					argsList.size());
-			String[] args = argsWithoutApp
-					.toArray(new String[argsWithoutApp.size()]);
+			List<String> argsWithoutApp = argsList.subList(1, argsList.size());
+			String[] args = argsWithoutApp.toArray(new String[argsWithoutApp
+					.size()]);
 			app.run(args, inStream, outStream);
 		} catch (InvalidFileException e) {
 			throw new ShellException(e);
@@ -140,19 +139,19 @@ public class CallCommand implements Command {
 				// Remove back quotes
 				token = token.substring(1, token.length() - 1);
 				Command command = ShellImplementation.getCommand(token);
-//				System.out.println("Command: " + command.getClass());
+				// System.out.println("Command: " + command.getClass());
 				ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
 				command.evaluate(null, byteOutStream);
 				byte[] bytes = byteOutStream.toByteArray();
 				ByteArrayInputStream byteInStream = new ByteArrayInputStream(
 						bytes);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(
-				    byteInStream));
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(byteInStream));
 				String result = "";
-		        String line;
-		        while ((line = reader.readLine()) != null) {
-		        	result += line + "\n" ;
-		        }
+				String line;
+				while ((line = reader.readLine()) != null) {
+					result += line + "\n";
+				}
 				withoutQuotes.set(i, result);
 			}
 		}
@@ -164,7 +163,7 @@ public class CallCommand implements Command {
 			}
 			result += " " + token;
 		}
-//		System.out.println(result.trim());
+		// System.out.println(result.trim());
 		return result.trim();
 	}
 

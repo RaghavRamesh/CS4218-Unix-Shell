@@ -14,14 +14,16 @@ import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 public class SeqCommand implements Command {
 	private final List<Command> mCommands;
 
-	public SeqCommand(String commandLine) throws ShellException, AbstractApplicationException {
+	public SeqCommand(String commandLine) throws ShellException,
+			AbstractApplicationException {
 		this.mCommands = new ArrayList<Command>();
 		List<String> tokens = Parser.parseCommandLine(commandLine);
 
 		String currentCommand = "";
 		for (String token : tokens) {
 			if (Parser.isSemicolon(token)) {
-				Command command = ShellImplementation.getCommand(currentCommand.trim());
+				Command command = ShellImplementation.getCommand(currentCommand
+						.trim());
 				mCommands.add(command);
 				currentCommand = "";
 			} else {
@@ -29,7 +31,8 @@ public class SeqCommand implements Command {
 			}
 		}
 		if (!currentCommand.trim().equals("")) {
-			mCommands.add(ShellImplementation.getCommand(currentCommand.trim()));
+			mCommands
+					.add(ShellImplementation.getCommand(currentCommand.trim()));
 		}
 	}
 

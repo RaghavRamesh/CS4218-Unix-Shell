@@ -23,13 +23,15 @@ public class ShellImplementation implements Shell {
 		command.evaluate(null, stdout);
 	}
 
-  /**
-   * Construct an appropriate command from an command line input string.
-   * @param cmdline The original string input to check.
-   * @return A command.
-   */
-	public static Command getCommand(String cmdline) 
-	    throws ShellException, AbstractApplicationException {
+	/**
+	 * Construct an appropriate command from an command line input string.
+	 * 
+	 * @param cmdline
+	 *            The original string input to check.
+	 * @return A command.
+	 */
+	public static Command getCommand(String cmdline) throws ShellException,
+			AbstractApplicationException {
 		List<String> tokens = Parser.parseCommandLine(cmdline);
 		for (String token : tokens) {
 			if (Parser.isSemicolon(token)) {
@@ -54,8 +56,7 @@ public class ShellImplementation implements Shell {
 			try {
 				System.out.print(Environment.getCurrentDirectory() + " # ");
 
-				shellImpl.parseAndEvaluate(reader.readLine(),
-						System.out);
+				shellImpl.parseAndEvaluate(reader.readLine(), System.out);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}

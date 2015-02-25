@@ -21,7 +21,8 @@ import sg.edu.nus.comp.cs4218.exception.TailException;
 public class TailApp implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 
 		// 4 different cases:
 		// --1-- tail "sdfsdf" -- only stdin needed
@@ -30,7 +31,9 @@ public class TailApp implements Application {
 		// --4-- tail -n 23 filename.sdfsdf -- arg[0], arg[1] and arg[2] needed
 
 		if (args == null) {
-			throw new TailException(Consts.Messages.ARG_NOT_NULL);// TODO: check if this is needed
+			throw new TailException(Consts.Messages.ARG_NOT_NULL);// TODO: check
+																	// if this
+																	// is needed
 		}
 
 		if (stdout == null) {
@@ -38,7 +41,8 @@ public class TailApp implements Application {
 		}
 
 		BufferedReader reader = null;
-		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
+		PrintWriter writer = new PrintWriter(new BufferedWriter(
+				new OutputStreamWriter(stdout)));
 		int numOfLines = 10; // by default, read only 10 lines
 
 		if (args.length == 0) { // case 1
@@ -74,13 +78,17 @@ public class TailApp implements Application {
 				try {
 					numOfLines = Integer.parseInt(args[1]);
 					if (args.length == 2)
-						reader = new BufferedReader(new InputStreamReader(stdin));// case 3
+						reader = new BufferedReader(
+								new InputStreamReader(stdin));// case 3
 					else {
 						if (args[2] == null)
-							throw new TailException(Consts.Messages.ARG_NOT_NULL);
+							throw new TailException(
+									Consts.Messages.ARG_NOT_NULL);
 						if (args[2].length() == 0)
-							throw new TailException(Consts.Messages.ARG_NOT_EMPTY);
-						reader = new BufferedReader(new FileReader(args[2]));// case 4
+							throw new TailException(
+									Consts.Messages.ARG_NOT_EMPTY);
+						reader = new BufferedReader(new FileReader(args[2]));// case
+																				// 4
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
@@ -98,7 +106,8 @@ public class TailApp implements Application {
 	}
 
 	/**
-	 * Writes to the PrintWriter object while reading from the BufferedReader object from the end upto a limited number of lines specified
+	 * Writes to the PrintWriter object while reading from the BufferedReader
+	 * object from the end upto a limited number of lines specified
 	 * 
 	 * @param writer
 	 *            : a PrintWriter object to write to
@@ -108,7 +117,8 @@ public class TailApp implements Application {
 	 *            : BufferedReader object to read from
 	 * @throws AbstractApplicationException
 	 */
-	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead, final BufferedReader reader) throws AbstractApplicationException {
+	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead,
+			final BufferedReader reader) throws AbstractApplicationException {
 
 		if (writer == null)
 			throw new TailException(Consts.Messages.OUT_STR_NOT_NULL);

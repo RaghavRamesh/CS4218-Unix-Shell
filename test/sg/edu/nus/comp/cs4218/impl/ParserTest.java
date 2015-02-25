@@ -31,8 +31,8 @@ public class ParserTest {
 		try {
 			List<String> tokens = Parser
 					.parseCommandLine("I eat 'Apple' with 'Orange'");
-			List<String> expected = Arrays.asList("I", "eat", "'Apple'", "with",
-					"'Orange'");
+			List<String> expected = Arrays.asList("I", "eat", "'Apple'",
+					"with", "'Orange'");
 			assertEquals(expected, tokens);
 		} catch (Exception e) {
 			fail(SHOULD_NOT_THROW);

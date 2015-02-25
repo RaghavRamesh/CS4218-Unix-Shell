@@ -26,7 +26,8 @@ public class EchoAppTest {
 			cmdApp.run(null, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "echo: " + Consts.Messages.ARG_NOT_NULL);
+			assertEquals(e.getMessage(), "echo: "
+					+ Consts.Messages.ARG_NOT_NULL);
 		}
 	}
 
@@ -41,7 +42,8 @@ public class EchoAppTest {
 			cmdApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), "echo: " + Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), "echo: "
+					+ Consts.Messages.OUT_STR_NOT_NULL);
 		}
 	}
 
@@ -57,7 +59,8 @@ public class EchoAppTest {
 			OutputStream fileOutStream = new FileOutputStream(temp);
 			cmdApp.run(args, null, fileOutStream);
 
-			BufferedReader buffReader = new BufferedReader(new InputStreamReader(new FileInputStream(temp)));
+			BufferedReader buffReader = new BufferedReader(
+					new InputStreamReader(new FileInputStream(temp)));
 			assertEquals("hello", buffReader.readLine());
 			buffReader.close();
 
@@ -101,7 +104,8 @@ public class EchoAppTest {
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
-			assertEquals(System.getProperty("line.separator"), testOutputStream.toString());
+			assertEquals(System.getProperty("line.separator"),
+					testOutputStream.toString());
 		} catch (AbstractApplicationException e) {
 			fail();
 		} catch (IOException e) {
