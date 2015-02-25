@@ -109,7 +109,10 @@ public class CallCommand implements Command {
 			throws AbstractApplicationException, ShellException, IOException {
 		ArrayList<String> result = new ArrayList<String>();
 		for (String token : tokens) {
-			if (Parser.containsBackQuote(token)) {
+			if (Parser.isSingleQuoted(token)) {
+				token = token.substring(1, token.length() - 1);
+				result.add(token);
+			} else if (Parser.containsBackQuote(token)) {
 				result.add(substitute(token));
 			} else {
 				result.add(token);
