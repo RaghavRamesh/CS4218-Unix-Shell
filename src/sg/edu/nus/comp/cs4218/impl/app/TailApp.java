@@ -97,9 +97,19 @@ public class TailApp implements Application {
 
 	}
 
+	/**
+	 * Writes to the PrintWriter object while reading from the BufferedReader object from the end upto a limited number of lines specified
+	 * 
+	 * @param writer
+	 *            : a PrintWriter object to write to
+	 * @param numOfLines
+	 *            : number of lines to limit writing to
+	 * @param reader
+	 *            : BufferedReader object to read from
+	 * @throws AbstractApplicationException
+	 */
 	private void writeToPrintStream(PrintWriter writer, int numOfLinesToRead, final BufferedReader reader) throws AbstractApplicationException {
 
-		// TODO: see if double checking needed
 		if (writer == null)
 			throw new TailException(Consts.Messages.OUT_STR_NOT_NULL);
 		if (reader == null)

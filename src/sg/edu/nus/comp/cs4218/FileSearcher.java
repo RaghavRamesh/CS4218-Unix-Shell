@@ -11,6 +11,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
+/**
+ * @author shubhamkaushal
+ *         A FileSearcher used by FindApp
+ *         Writes the relative paths of successful matches to a PrintWriter object
+ */
 public class FileSearcher extends SimpleFileVisitor<Path> {
 	private final PathMatcher matcher;
 	private final String rootDirectory;
@@ -30,6 +35,9 @@ public class FileSearcher extends SimpleFileVisitor<Path> {
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+		if (writer == null)
+			return FileVisitResult.CONTINUE;
+
 		Path pathName = file.getFileName();
 		if (pathName != null && matcher.matches(pathName)) {
 			writer.write(Environment.calculateRelativePath(rootDirectory, file.toAbsolutePath().toString()));

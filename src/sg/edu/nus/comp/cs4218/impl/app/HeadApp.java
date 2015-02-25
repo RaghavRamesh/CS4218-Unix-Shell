@@ -95,9 +95,19 @@ public class HeadApp implements Application {
 
 	}
 
+	/**
+	 * Writes to the PrintWriter object while reading from the BufferedReader object from the top upto a limited number of lines specified
+	 * 
+	 * @param writer
+	 *            : a PrintWriter object to write to
+	 * @param numOfLines
+	 *            : number of lines to limit writing to
+	 * @param reader
+	 *            : BufferedReader object to read from
+	 * @throws AbstractApplicationException
+	 */
 	protected void writeToPrintStream(PrintWriter writer, int numOfLines, final BufferedReader reader) throws AbstractApplicationException {
 
-		// TODO: see if double checking needed
 		if (writer == null)
 			throw new HeadException(Consts.Messages.OUT_STR_NOT_NULL);
 		if (reader == null)
