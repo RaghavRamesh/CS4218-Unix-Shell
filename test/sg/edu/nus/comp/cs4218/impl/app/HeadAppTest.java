@@ -21,7 +21,7 @@ public class HeadAppTest {
 	private static final String LINE_SEPARATOR = "line.separator";
 
 	@Test
-	public void testNullArgument() {
+	public void testNullArgumentsArray() {
 		HeadApp cmdApp = new HeadApp();
 		try {
 			cmdApp.run(null, null, System.out);
@@ -43,6 +43,91 @@ public class HeadAppTest {
 			fail();
 		} catch (AbstractApplicationException e) {
 			assertEquals(e.getMessage(), HEAD + Consts.Messages.OUT_STR_NOT_NULL);
+		}
+	}
+
+	@Test
+	public void testNullArguments() {
+		HeadApp cmdApp = new HeadApp();
+
+		String[] args = new String[1];
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_NULL);
+		}
+
+		args = new String[2];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_NULL);
+		}
+
+		args = new String[3];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_NULL);
+		}
+
+	}
+
+	@Test
+	public void testEmptyArguments() {
+		HeadApp cmdApp = new HeadApp();
+
+		String[] args = new String[1];
+		args[0] = "";
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+		args = new String[2];
+		args[0] = "";
+		args[1] = "";
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+		args = new String[3];
+		args[0] = "";
+		args[1] = "";
+		args[2] = "";
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+	}
+
+	@Test
+	public void testReadWithInvalidOptions() {
+		HeadApp cmdApp = new HeadApp();
+
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		String[] args = new String[2];
+		args[0] = "-N"; // capital N as line number is not acceptable
+		args[1] = "15";
+
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), HEAD + Consts.Messages.INVALID_OPTION);
 		}
 	}
 
@@ -98,14 +183,15 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		String[] args = new String[1];
-		args[0] = "15"; // n=15
+		String[] args = new String[2];
+		args[0] = "-n";
+		args[1] = "15";
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			String lessThanNlinesContent = "";
-			for (int i = 0; i < Integer.parseInt(args[0]) - 1; i++) {
+			for (int i = 0; i < Integer.parseInt(args[1]) - 1; i++) {
 				lessThanNlinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream.write(lessThanNlinesContent.getBytes());
@@ -120,7 +206,7 @@ public class HeadAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of n lines
-			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[0]) + System.getProperty(LINE_SEPARATOR);
+			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[1]) + System.getProperty(LINE_SEPARATOR);
 			testInpFileOutStream = new FileOutputStream(tempInpFile, false);
 			testInpFileOutStream.write(nLinesOfContent.getBytes());
 			testInpFileOutStream.close();
@@ -132,7 +218,7 @@ public class HeadAppTest {
 
 			// testing for an input of more than n lines
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write((LINE + (Integer.parseInt(args[0]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
+			testInpFileOutStream.write((LINE + (Integer.parseInt(args[1]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
 			testInpFileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -205,8 +291,7 @@ public class HeadAppTest {
 
 		try {
 
-			args[0] = TEMP_INPUT_FILE; // this filename does not exist
-
+			args[0] = TEMP_INPUT_FILE; // this filename does not exist yet
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals("", testOutputStream.toString());
@@ -222,7 +307,7 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		String[] args = new String[1];
+		String[] args = new String[2];
 		FileInputStream testInputStream = null;
 
 		try {
@@ -231,10 +316,10 @@ public class HeadAppTest {
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
-			// testing for alphabets instead of number
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
-			args[0] = "-1"; // n<0
+			args[0] = "-n";
+			args[1] = "-1";
 			cmdApp.run(args, testInputStream, testOutputStream);
 
 		} catch (AbstractApplicationException e) {
@@ -255,7 +340,7 @@ public class HeadAppTest {
 		HeadApp cmdApp = new HeadApp();
 
 		File tempInpFile = null;
-		String[] args = new String[1];
+		String[] args = new String[2];
 		FileInputStream testInputStream = null;
 
 		try {
@@ -269,7 +354,8 @@ public class HeadAppTest {
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
-			args[0] = "abcd"; // n=?
+			args[0] = "-n";
+			args[1] = "-1";
 			cmdApp.run(args, testInputStream, testOutputStream);
 			fail();
 
@@ -290,10 +376,11 @@ public class HeadAppTest {
 	public void testTooManyArguments() {
 		HeadApp cmdApp = new HeadApp();
 
-		String[] args = new String[3];
+		String[] args = new String[4];
 		args[0] = "abc";
 		args[1] = "bcd";
 		args[2] = "cde";
+		args[2] = "def";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
