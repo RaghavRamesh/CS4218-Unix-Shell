@@ -24,11 +24,11 @@ public class HeadApp implements Application {
 		// 4 different cases:
 		// --1-- head "sdfsdf" -- only stdin needed
 		// --2-- head filename.sdfs -- only arg[0] needed
-		// --3-- head -n 15 "afsdfsd" -- arg[0] and stdin needed
-		// --4-- head -n 23 filename.sdfsdf -- arg[0] and arg[1] needed
+		// --3-- head -n 15 "afsdfsd" -- arg[0], arg[1] and stdin needed
+		// --4-- head -n 23 filename.sdfsdf -- arg[0], arg[1] and arg[2] needed
 
 		if (args == null) {
-			throw new HeadException(Consts.Messages.ARG_NOT_NULL);// TODO: check if this is needed
+			throw new HeadException(Consts.Messages.ARG_NOT_NULL);
 		}
 
 		if (stdout == null) {
@@ -39,39 +39,39 @@ public class HeadApp implements Application {
 		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
 		int numOfLines = 10; // by default, read only 10 lines
 
-		if (args.length == 0) { // --1--
+		if (args.length == 0) { // case 1
 
 			if (stdin == null) {
-				throw new HeadException(Consts.Messages.NO_INP_FOUND);
+				throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 			writeToPrintStream(writer, numOfLines, reader);
 
-		} else if (args.length == 1) {
+		} else if (args.length == 1) {// case 2
 
-			try {
-				if (stdin == null) { // --2--
-					reader = new BufferedReader(new FileReader(args[0]));
-				} else { // --3--
-					numOfLines = Integer.parseInt(args[0]);
-					reader = new BufferedReader(new InputStreamReader(stdin));
-				}
+			if (stdin == null) {
+				throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
+			} else {
+				reader = new BufferedReader(new InputStreamReader(stdin));
 				writeToPrintStream(writer, numOfLines, reader);
-			} catch (FileNotFoundException e) {
-				throw new HeadException(e);
-			} catch (NumberFormatException e) {
-				throw new HeadException(e);
 			}
 
-		} else if (args.length == 2) { // --4--
-			try {
-				numOfLines = Integer.parseInt(args[0]);
-				reader = new BufferedReader(new FileReader(args[1]));
-				writeToPrintStream(writer, numOfLines, reader);
-			} catch (NumberFormatException e) {
-				throw new HeadException(e);
-			} catch (FileNotFoundException e) {
-				throw new HeadException(e);
+		} else if (args.length == 2 || args.length == 3) { // case 3 or 4
+			if (args[0].equals("-n")) {
+				try {
+					numOfLines = Integer.parseInt(args[0]);
+					if (args.length == 2)
+						reader = new BufferedReader(new InputStreamReader(stdin));// case 3
+					else
+						reader = new BufferedReader(new FileReader(args[2]));// case 4
+					writeToPrintStream(writer, numOfLines, reader);
+				} catch (NumberFormatException e) {
+					throw new HeadException(e);
+				} catch (FileNotFoundException e) {
+					throw new HeadException(e);
+				}
+			} else {
+				throw new HeadException(Consts.Messages.INVALID_OPTION);
 			}
 		} else {
 			throw new HeadException(Consts.Messages.TOO_MANY_ARGS);
