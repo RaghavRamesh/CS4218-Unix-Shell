@@ -179,6 +179,44 @@ public class HeadAppTest {
 	}
 
 	@Test
+	public void testReadFromInputStreamWith0Lines() {
+		HeadApp cmdApp = new HeadApp();
+
+		File tempInpFile = null;
+		String[] args = new String[2];
+		args[0] = "-n";
+		args[1] = "0";
+
+		try {
+			tempInpFile = new File(TEMP_INPUT_FILE);
+			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
+			String arbitraryContent = "";
+			for (int i = 0; i < 10; i++) {
+				arbitraryContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
+			}
+			testInpFileOutStream.write(arbitraryContent.getBytes());
+			testInpFileOutStream.close();
+
+			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
+			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+			cmdApp.run(args, testInputStream, testOutputStream);
+			assertEquals("", testOutputStream.toString());
+			testInputStream.close();
+			testOutputStream.reset();
+
+		} catch (AbstractApplicationException e) {
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (tempInpFile != null) {
+				tempInpFile.delete();
+			}
+		}
+	}
+
+	@Test
 	public void testReadFromInputStreamWithNLines() {
 		HeadApp cmdApp = new HeadApp();
 
