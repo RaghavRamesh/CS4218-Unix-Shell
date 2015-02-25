@@ -125,7 +125,7 @@ public class CallCommandTest {
 	@Test
 	public void testSubstituteWithSingleQuoteAndBackQuote() throws AbstractApplicationException, ShellException, IOException {
 		String cmdLine = "echo 'hello `echo world`'";
-		assertEquals("echo hello world", CallCommand.substitute(cmdLine));
+		assertEquals("echo 'hello `echo world`'", CallCommand.substitute(cmdLine));
 	}
 	
 	@Test
@@ -138,7 +138,7 @@ public class CallCommandTest {
 	@Test
 	public void testSubstituteWithMultipleEchoStatements() throws AbstractApplicationException, ShellException, IOException {
 		String cmdLine = "echo 'echo hello `echo world`'";
-		assertEquals("echo echo hello world", CallCommand.substitute(cmdLine));
+		assertEquals("echo 'echo hello `echo world`'", CallCommand.substitute(cmdLine));
 	}
 	
 	@Test
