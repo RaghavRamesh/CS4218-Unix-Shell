@@ -82,7 +82,7 @@ public class HeadApp implements Application {
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
-					throw new HeadException(e);
+					throw new HeadException(Consts.Messages.ILLEGAL_LINE_CNT);
 				} catch (FileNotFoundException e) {
 					throw new HeadException(e);
 				}
@@ -104,7 +104,6 @@ public class HeadApp implements Application {
 			throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
 		if (numOfLines < 0)
 			throw new HeadException(Consts.Messages.ILLEGAL_LINE_CNT);
-		;
 
 		String line = null;
 		try {
