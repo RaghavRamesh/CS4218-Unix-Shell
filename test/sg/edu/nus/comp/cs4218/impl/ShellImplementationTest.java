@@ -10,7 +10,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
 
 public class ShellImplementationTest {
-	ShellImplementation si;
+	ShellImplementation shell;
 
 	@Test
 	public void testGetSeqCommand() {

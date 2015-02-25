@@ -17,7 +17,7 @@ public class ParserTest {
 	public void testParseWithDoubleQuoteOnly() {
 		try {
 			List<String> tokens = Parser
-					.parseCommandLine("I hate \"Java\" and \"S c a l a\"");
+					.parseCommandLine("I hat \"Java\" and \"S c a l a\"");
 			List<String> expected = Arrays.asList("I", "hate", "\"Java\"",
 					"and", "\"S c a l a\"");
 			assertEquals(expected, tokens);
@@ -30,9 +30,9 @@ public class ParserTest {
 	public void testParseWithSingleQuoteOnly() {
 		try {
 			List<String> tokens = Parser
-					.parseCommandLine("I hate 'Java' and 'S c a l a'");
-			List<String> expected = Arrays.asList("I", "hate", "'Java'", "and",
-					"'S c a l a'");
+					.parseCommandLine("I eat 'Apple' with 'Orange'");
+			List<String> expected = Arrays.asList("I", "eat", "'Apple'", "with",
+					"'Orange'");
 			assertEquals(expected, tokens);
 		} catch (Exception e) {
 			fail(SHOULD_NOT_THROW);

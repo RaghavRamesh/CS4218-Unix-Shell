@@ -8,10 +8,10 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class PipeCommand implements Command {
-	private String mCommandLine;
-
-	public PipeCommand(String commandLine) {
-		this.mCommandLine = commandLine;
+  private final String commandLine;
+  
+	public PipeCommand(String cmdLine) {
+	  commandLine = cmdLine;
 	}
 
 	@Override

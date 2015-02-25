@@ -23,6 +23,10 @@ public final class Parser {
 	static final Character OUT_STREAM = '>';
 
 	static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, PIPE, IN_STREAM, OUT_STREAM);
+	
+	private Parser() {
+	  
+	}
 
 	/**
 	 * Split an input string into tokens based on quotes and some special characters.
@@ -51,14 +55,14 @@ public final class Parser {
 				  addNonEmptyToList(tokens, currentToken.substring(0, currentToken.length() - 1));
 				  currentToken = new StringBuilder(currentChar.toString());
 				  quoteStack.push(new CharacterPosition(currentChar, i));
-				} else if (!quoteStack.peek().getCharacter().equals(currentChar)) {
-					quoteStack.push(new CharacterPosition(currentChar, i));
+				} else if (quoteStack.peek().getCharacter().equals(currentChar)) {
+				  quoteStack.pop();
+          if (quoteStack.isEmpty()) {
+            addNonEmptyToList(tokens, currentToken.toString());
+            currentToken = new StringBuilder();
+          }
 				} else {
-					quoteStack.pop();
-					if (quoteStack.isEmpty()) {
-						addNonEmptyToList(tokens, currentToken.toString());
-						currentToken = new StringBuilder();
-					}
+					quoteStack.push(new CharacterPosition(currentChar, i));
 				}
 			} else if (quoteStack.isEmpty() && SPECIALS.contains(currentChar)) {
 				// Add the current token without the last character

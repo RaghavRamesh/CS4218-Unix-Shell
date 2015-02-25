@@ -25,28 +25,26 @@ import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 
-// TODO: Create thead for applications
+// TODO: Create thread for applications
 public class CallCommand implements Command {
-	private final String mCommandLine;
-	private final List<String> mTokens;
-	private final List<String> mSubstitutedTokens;
+	private final String commandLine;
+	private final List<String> substitutedTokens;
 
-	public CallCommand(String commandLine) throws ShellException,
+	public CallCommand(String cmdLine) throws ShellException,
 			AbstractApplicationException {
 		try {
-			mCommandLine = commandLine;
-			List<String> tokens = Parser.parseCommandLine(commandLine);
-			mTokens = new ArrayList<String>();
-			for (String token : tokens) {
+			commandLine = cmdLine;
+			List<String> tokens = new ArrayList<String>();
+			for (String token : Parser.parseCommandLine(commandLine)) {
 				// Remove the outer double quotes
 				if (Parser.isDoubleQuoted(token)) {
 					token = token.substring(1, token.length() - 1);
 				}
 				if (!token.isEmpty()) {
-					mTokens.add(token);
+					tokens.add(token);
 				}
 			}
-			mSubstitutedTokens = substituteAll(mTokens);
+			substitutedTokens = substituteAll(tokens);
 		} catch (IOException e) {
 			throw new ShellException(e);
 		}
@@ -55,7 +53,7 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		if (mSubstitutedTokens.isEmpty()) {
+		if (substitutedTokens.isEmpty()) {
 			return;
 		}
 		InputStream inStream = null;
@@ -73,10 +71,10 @@ public class CallCommand implements Command {
 			outStream = (outFile == null) ? stdout : new FileOutputStream(
 					Environment.createFile(outFile));
 			Application app = getApplication(argsList.get(0));
-			List<String> argumentsWithoutApp = argsList.subList(1,
+			List<String> argsWithoutApp = argsList.subList(1,
 					argsList.size());
-			String[] args = argumentsWithoutApp
-					.toArray(new String[argumentsWithoutApp.size()]);
+			String[] args = argsWithoutApp
+					.toArray(new String[argsWithoutApp.size()]);
 			app.run(args, inStream, outStream);
 		} catch (InvalidFileException e) {
 			throw new ShellException(e);
@@ -124,43 +122,43 @@ public class CallCommand implements Command {
 	public static String substitute(String input)
 			throws AbstractApplicationException, ShellException, IOException {
 		List<String> tokens = Parser.parseCommandLine(input);
-		List<String> tokensWithoutQuotes = new ArrayList<String>();
+		List<String> withoutQuotes = new ArrayList<String>();
 		for (int i = 0; i < tokens.size(); i++) {
 			String token = tokens.get(i);
 			if (Parser.isDoubleQuoted(token)) {
 				token = token.substring(1, token.length() - 1);
-				tokensWithoutQuotes.addAll(Parser.parseCommandLine(token));
+				withoutQuotes.addAll(Parser.parseCommandLine(token));
 			} else {
-				tokensWithoutQuotes.add(token);
+				withoutQuotes.add(token);
 			}
 		}
 
-		for (int i = 0; i < tokensWithoutQuotes.size(); i++) {
-			String token = tokensWithoutQuotes.get(i);
+		for (int i = 0; i < withoutQuotes.size(); i++) {
+			String token = withoutQuotes.get(i);
 
 			if (Parser.isBackQuoted(token)) {
 				// Remove back quotes
 				token = token.substring(1, token.length() - 1);
 				Command command = ShellImplementation.getCommand(token);
 //				System.out.println("Command: " + command.getClass());
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				command.evaluate(null, byteArrayOutputStream);
-				byte[] bytes = byteArrayOutputStream.toByteArray();
-				ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+				ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+				command.evaluate(null, byteOutStream);
+				byte[] bytes = byteOutStream.toByteArray();
+				ByteArrayInputStream byteInStream = new ByteArrayInputStream(
 						bytes);
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						byteArrayInputStream));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(
+				    byteInStream));
 				String result = "";
 		        String line;
-		        while ((line = br.readLine()) != null) {
+		        while ((line = reader.readLine()) != null) {
 		        	result += line + "\n" ;
 		        }
-				tokensWithoutQuotes.set(i, result);
+				withoutQuotes.set(i, result);
 			}
 		}
 		// TODO: toString trims spaces
 		String result = "";
-		for (String token : tokensWithoutQuotes) {
+		for (String token : withoutQuotes) {
 			if (token == null) {
 				continue;
 			}
@@ -182,20 +180,20 @@ public class CallCommand implements Command {
 	public String findInput() throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < mSubstitutedTokens.size()) {
-			String token = mSubstitutedTokens.get(currentIndex++);
+		while (currentIndex < substitutedTokens.size()) {
+			String token = substitutedTokens.get(currentIndex++);
 			if (Parser.isInStream(token)) {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_INPUT
-							+ mCommandLine);
+							+ commandLine);
 				}
-				if (currentIndex == mSubstitutedTokens.size()
-						|| Parser.isSpecialCharacter(mSubstitutedTokens
+				if (currentIndex == substitutedTokens.size()
+						|| Parser.isSpecialCharacter(substitutedTokens
 								.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_INPUT
-							+ mCommandLine);
+							+ commandLine);
 				}
-				result = mSubstitutedTokens.get(currentIndex++);
+				result = substitutedTokens.get(currentIndex++);
 			}
 		}
 		return result;
@@ -213,20 +211,20 @@ public class CallCommand implements Command {
 	public String findOutput() throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < mSubstitutedTokens.size()) {
-			String token = mSubstitutedTokens.get(currentIndex++);
+		while (currentIndex < substitutedTokens.size()) {
+			String token = substitutedTokens.get(currentIndex++);
 			if (Parser.isOutStream(token)) {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT
-							+ mCommandLine);
+							+ commandLine);
 				}
-				if (currentIndex == mSubstitutedTokens.size()
-						|| Parser.isSpecialCharacter(mSubstitutedTokens
+				if (currentIndex == substitutedTokens.size()
+						|| Parser.isSpecialCharacter(substitutedTokens
 								.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_OUTPUT
-							+ mCommandLine);
+							+ commandLine);
 				}
-				result = mSubstitutedTokens.get(currentIndex++);
+				result = substitutedTokens.get(currentIndex++);
 			}
 		}
 		return result;
@@ -241,8 +239,8 @@ public class CallCommand implements Command {
 	public List<String> findArguments() {
 		ArrayList<String> result = new ArrayList<String>();
 		int currentIndex = 0;
-		while (currentIndex < mSubstitutedTokens.size()) {
-			String token = mSubstitutedTokens.get(currentIndex++);
+		while (currentIndex < substitutedTokens.size()) {
+			String token = substitutedTokens.get(currentIndex++);
 			if (Parser.isOutStream(token) || Parser.isInStream(token)) {
 				// Ignore the next token (possibly file name)
 				currentIndex++;

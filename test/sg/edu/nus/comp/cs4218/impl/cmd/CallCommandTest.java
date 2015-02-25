@@ -16,14 +16,18 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class CallCommandTest {
+  private static final String WRONG_EXCEPTION = "Wrong exception thrown";
+  private static final String SHELL_STR = "shell: ";
+  private static final String SHOULD_THROW = "Exception should be thrown";
+  
 	@Before
 	public void setUp() {
-
+	  // In case of creating new files, need to clean and setup again 
 	}
 
 	@After
 	public void tearDown() {
-
+	  // In case of creating new files, need to clean and setup again
 	}
 
 	@Test
@@ -31,13 +35,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test > a.txt >b.txt";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.TOO_MANY_OUTPUT
+			String expected = SHELL_STR + Consts.Messages.TOO_MANY_OUTPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 
@@ -46,13 +50,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test >";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.INVALID_OUTPUT
+			String expected = SHELL_STR + Consts.Messages.INVALID_OUTPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 
@@ -61,13 +65,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test > < a.txt";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.INVALID_OUTPUT
+			String expected = SHELL_STR + Consts.Messages.INVALID_OUTPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 
@@ -76,13 +80,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test < a.txt <b.txt";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.TOO_MANY_INPUT
+			String expected = SHELL_STR + Consts.Messages.TOO_MANY_INPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 
@@ -91,13 +95,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test <";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.INVALID_INPUT
+			String expected = SHELL_STR + Consts.Messages.INVALID_INPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 
@@ -106,13 +110,13 @@ public class CallCommandTest {
 		String cmdLine = "pwd test < <";
 		try {
 			new CallCommand(cmdLine).evaluate(System.in, System.out);
-			fail("Exception should be thrown");
+			fail(SHOULD_THROW);
 		} catch (ShellException e) {
-			String expected = "shell: " + Consts.Messages.INVALID_INPUT
+			String expected = SHELL_STR + Consts.Messages.INVALID_INPUT
 					+ cmdLine;
 			assertEquals(e.getMessage(), expected);
 		} catch (Exception e) {
-			fail("Wrong exception thrown");
+			fail(WRONG_EXCEPTION);
 		}
 	}
 	
