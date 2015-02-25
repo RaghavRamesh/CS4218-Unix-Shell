@@ -82,7 +82,7 @@ public class HeadApp implements Application {
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
-					throw new HeadException(Consts.Messages.ILLEGAL_LINE_CNT);
+					throw new HeadException(e);
 				} catch (FileNotFoundException e) {
 					throw new HeadException(e);
 				}
@@ -118,10 +118,10 @@ public class HeadApp implements Application {
 		String line = null;
 		try {
 			for (int i = 0; i < numOfLines; i++) {
-				if ((line = reader.readLine()) != null) {
-					writer.write(line);
-				} else {
+				if ((line = reader.readLine()) == null) {
 					break;
+				} else {
+					writer.write(line);
 				}
 
 				writer.write(System.getProperty("line.separator"));

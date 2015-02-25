@@ -140,13 +140,13 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
 			String tenLinesContent = "";
 			for (int i = 0; i < 10; i++) {
 				tenLinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
-			testInpFileOutStream.write(tenLinesContent.getBytes());
-			testInpFileOutStream.close();
+			fileOutStream.write(tenLinesContent.getBytes());
+			fileOutStream.close();
 
 			// testing for an input of 10 lines or less
 			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
@@ -157,9 +157,9 @@ public class HeadAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of more than 10
-			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
-			testInpFileOutStream.close();
+			fileOutStream = new FileOutputStream(tempInpFile, true);
+			fileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
+			fileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
@@ -189,13 +189,13 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
 			String arbitraryContent = "";
 			for (int i = 0; i < 10; i++) {
 				arbitraryContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
-			testInpFileOutStream.write(arbitraryContent.getBytes());
-			testInpFileOutStream.close();
+			fileOutStream.write(arbitraryContent.getBytes());
+			fileOutStream.close();
 
 			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -227,27 +227,27 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
-			String lessThanNlinesContent = "";
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
+			String lessThanNlines = "";
 			for (int i = 0; i < Integer.parseInt(args[1]) - 1; i++) {
-				lessThanNlinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
+				lessThanNlines += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
-			testInpFileOutStream.write(lessThanNlinesContent.getBytes());
-			testInpFileOutStream.close();
+			fileOutStream.write(lessThanNlines.getBytes());
+			fileOutStream.close();
 
 			// testing for an input of less than n lines
 			FileInputStream testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			cmdApp.run(args, testInputStream, testOutputStream);
-			assertEquals(lessThanNlinesContent, testOutputStream.toString());
+			assertEquals(lessThanNlines, testOutputStream.toString());
 			testInputStream.close();
 			testOutputStream.reset();
 
 			// testing for an input of n lines
-			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[1]) + System.getProperty(LINE_SEPARATOR);
-			testInpFileOutStream = new FileOutputStream(tempInpFile, false);
-			testInpFileOutStream.write(nLinesOfContent.getBytes());
-			testInpFileOutStream.close();
+			String nLinesOfContent = lessThanNlines + LINE + Integer.parseInt(args[1]) + System.getProperty(LINE_SEPARATOR);
+			fileOutStream = new FileOutputStream(tempInpFile, false);
+			fileOutStream.write(nLinesOfContent.getBytes());
+			fileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(nLinesOfContent, testOutputStream.toString());
@@ -255,9 +255,9 @@ public class HeadAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of more than n lines
-			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write((LINE + (Integer.parseInt(args[1]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
-			testInpFileOutStream.close();
+			fileOutStream = new FileOutputStream(tempInpFile, true);
+			fileOutStream.write((LINE + (Integer.parseInt(args[1]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
+			fileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INPUT_FILE);
 			cmdApp.run(args, testInputStream, testOutputStream);
 			assertEquals(nLinesOfContent, testOutputStream.toString());
@@ -285,13 +285,13 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
 			String tenLinesContent = "";
 			for (int i = 0; i < 10; i++) {
 				tenLinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
-			testInpFileOutStream.write(tenLinesContent.getBytes());
-			testInpFileOutStream.close();
+			fileOutStream.write(tenLinesContent.getBytes());
+			fileOutStream.close();
 
 			args[0] = TEMP_INPUT_FILE;
 
@@ -302,9 +302,9 @@ public class HeadAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of more than 10
-			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
-			testInpFileOutStream.close();
+			fileOutStream = new FileOutputStream(tempInpFile, true);
+			fileOutStream.write(("line11" + System.getProperty(LINE_SEPARATOR)).getBytes());
+			fileOutStream.close();
 			cmdApp.run(args, null, testOutputStream);
 			assertEquals(tenLinesContent, testOutputStream.toString());
 			testOutputStream.reset();
@@ -350,9 +350,9 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
-			testInpFileOutStream.write("randomData".getBytes());
-			testInpFileOutStream.close();
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
+			fileOutStream.write("randomData".getBytes());
+			fileOutStream.close();
 
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -383,9 +383,9 @@ public class HeadAppTest {
 
 		try {
 			tempInpFile = new File(TEMP_INPUT_FILE);
-			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
-			testInpFileOutStream.write("randomData".getBytes());
-			testInpFileOutStream.close();
+			FileOutputStream fileOutStream = new FileOutputStream(tempInpFile);
+			fileOutStream.write("randomData".getBytes());
+			fileOutStream.close();
 
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();

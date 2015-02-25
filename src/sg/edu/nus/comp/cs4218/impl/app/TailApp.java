@@ -84,7 +84,7 @@ public class TailApp implements Application {
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
-					throw new TailException(Consts.Messages.ILLEGAL_LINE_CNT);
+					throw new TailException(e);
 				} catch (FileNotFoundException e) {
 					throw new TailException(e);
 				}
