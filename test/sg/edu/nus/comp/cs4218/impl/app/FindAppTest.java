@@ -110,7 +110,28 @@ public class FindAppTest {
 		}
 	}
 
-	// TODO: test null/empty individual arguments
+	@Test
+	public void testNullArguments() {
+		FindApp cmdApp = new FindApp();
+
+		String[] args = new String[1];
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), FIND + Consts.Messages.ARG_NOT_NULL);
+		}
+
+		args = new String[2];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), FIND + Consts.Messages.ARG_NOT_NULL);
+		}
+
+	}
 
 	@Test
 	public void testNullOutputStream() {
@@ -174,9 +195,9 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
 			assertEquals(expectedOutput, testOutputStream.toString());
-
-		} catch (AbstractApplicationException e) {
 			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), FIND + Consts.Messages.ARG_NOT_EMPTY);
 		}
 	}
 
@@ -192,8 +213,8 @@ public class FindAppTest {
 			findApp.run(args, null, testOutputStream);
 			String expectedOutput = "";
 
-			expectedOutput += "temp1/"  + "tempFileName1.tmp" + System.getProperty("line.separator");
-			expectedOutput += "temp2/"   + "tempFileName2.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp1/" + "tempFileName1.tmp" + System.getProperty("line.separator");
+			expectedOutput += "temp2/" + "tempFileName2.tmp" + System.getProperty("line.separator");
 			expectedOutput += "tempFileInRoot.tmp" + System.getProperty("line.separator");
 			assertEquals(expectedOutput, testOutputStream.toString());
 
