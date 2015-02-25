@@ -119,9 +119,11 @@ public class TailApp implements Application {
 				}
 			}
 
-			while ((line = reader.readLine()) != null) {
-				lines.remove();
-				lines.add(line);
+			if (!lines.isEmpty()) {
+				while ((line = reader.readLine()) != null) {
+					lines.remove();
+					lines.add(line);
+				}
 			}
 
 			while (!lines.isEmpty()) {
