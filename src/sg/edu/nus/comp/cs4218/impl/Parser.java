@@ -46,9 +46,12 @@ public final class Parser {
 			}
 			currentToken.append(currentChar);
 			if (isQuote(currentChar)) {
-				if (quoteStack.isEmpty()
-						|| !quoteStack.peek().getCharacter()
-								.equals(currentChar)) {
+				if (quoteStack.isEmpty()) {
+				  // Add the previous part excluding the quote character
+				  addNonEmptyToList(tokens, currentToken.substring(0, currentToken.length() - 1));
+				  currentToken = new StringBuilder(currentChar.toString());
+				  quoteStack.push(new CharacterPosition(currentChar, i));
+				} else if (!quoteStack.peek().getCharacter().equals(currentChar)) {
 					quoteStack.push(new CharacterPosition(currentChar, i));
 				} else {
 					quoteStack.pop();
