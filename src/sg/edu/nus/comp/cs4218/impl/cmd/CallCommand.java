@@ -38,8 +38,6 @@ public class CallCommand implements Command {
       List<String> tokens = Parser.parseCommandLine(commandLine);
       mTokens = new ArrayList<String>();
       for (String token : tokens) {
-        // Remove the outer double/single quotes
-        if (Parser.isDoubleQuoted(token) || Parser.isSingleQuoted(token)) {
           token = token.substring(1, token.length() - 1);
         }
         if (!token.isEmpty()) {
@@ -51,6 +49,8 @@ public class CallCommand implements Command {
       throw new ShellException(e);
     }
   }
+				// Remove the outer double quotes
+				if (Parser.isDoubleQuoted(token)) {
 
   @Override
   public void evaluate(InputStream stdin, OutputStream stdout)
