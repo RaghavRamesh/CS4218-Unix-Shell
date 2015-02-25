@@ -1,7 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,28 +32,38 @@ public class FindApp implements Application {
 		if (args.length == 0) {
 			throw new FindException(Consts.Messages.NO_INP_FOUND);
 		} else if (args.length == 1) {
+			if (args[0] == null)
+				throw new FindException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0)
+				throw new FindException(Consts.Messages.ARG_NOT_EMPTY);
+
 			try {
-				FileSearcher fileSearcher = new FileSearcher(args[0], Environment.getCurrentDirectory());
-				Files.walkFileTree(Paths.get(Environment.getCurrentDirectory()), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
-				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
+				FileSearcher fileSearcher = new FileSearcher(args[0], Environment.getCurrentDirectory(), writer);
+				Files.walkFileTree(Paths.get(Environment.getCurrentDirectory()), fileSearcher);
+				writer.flush();
 			} catch (InvalidDirectoryException e) {
 				throw new FindException(e);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else if (args.length == 2) {
+
+			if (args[0] == null || args[1] == null)
+				throw new FindException(Consts.Messages.ARG_NOT_NULL);
+			if (args[0].length() == 0 || args[1].length() == 0)
+				throw new FindException(Consts.Messages.ARG_NOT_EMPTY);
+
 			try {
 				String pathArgument = args[0];
-
-				String dirToSearchIn = Environment.checkIsDirectory(pathArgument);
-				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn);
-				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
 				PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
-				writeStringArrToPrintStream(writer, fileSearcher.getFilePaths());
+				String dirToSearchIn = Environment.checkIsDirectory(pathArgument);
+				FileSearcher fileSearcher = new FileSearcher(args[1], dirToSearchIn, writer);
+				Files.walkFileTree(Paths.get(dirToSearchIn), fileSearcher);
+				writer.flush();
 			} catch (IOException e) {
 				throw new FindException(e);
-			} catch(InvalidDirectoryException e){
+			} catch (InvalidDirectoryException e) {
 				throw new FindException(e);
 			}
 		} else {
@@ -63,11 +72,4 @@ public class FindApp implements Application {
 
 	}
 
-	private void writeStringArrToPrintStream(PrintWriter writer, String... stringsArr) {
-		for (int i = 0; i < stringsArr.length; i++) {
-			writer.write(stringsArr[i]);
-			writer.write(System.getProperty("line.separator"));
-		}
-		writer.flush();
-	}
 }

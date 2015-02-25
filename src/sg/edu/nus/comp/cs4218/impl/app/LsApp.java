@@ -48,7 +48,8 @@ public class LsApp implements Application {
 	}
 
 	/**
-	 * Parses the argument and returns the name of the directory that has to be displayed
+	 * Parses the argument and returns the name of the directory that has to be
+	 * displayed
 	 * 
 	 * @param args
 	 * @return name of the directory that has to be displayed
@@ -73,10 +74,12 @@ public class LsApp implements Application {
 	}
 
 	/**
-	 * Displays the contents of the directory 
+	 * Displays the contents of the directory
 	 * 
-	 * @param stdout	Output stream to which the contents have to be written
-	 * @param requiredDirectory	directory whose content has to be displayed
+	 * @param stdout
+	 *            Output stream to which the contents have to be written to
+	 * @param requiredDirectory
+	 *            directory whose content has to be displayed
 	 * @throws InvalidDirectoryException
 	 */
 	private void displayContentsInDirectory(OutputStream stdout,

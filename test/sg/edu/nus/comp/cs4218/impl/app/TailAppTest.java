@@ -21,7 +21,7 @@ public class TailAppTest {
 	private static final String TEMP_INP_FILE_NAME = "temp-input-file-name.tmp";
 
 	@Test
-	public void testNullArgument() {
+	public void testNullArgumentsArray() {
 		TailApp cmdApp = new TailApp();
 		try {
 			cmdApp.run(null, null, System.out);
@@ -43,6 +43,91 @@ public class TailAppTest {
 			fail();
 		} catch (AbstractApplicationException e) {
 			assertEquals(e.getMessage(), TAIL + Consts.Messages.OUT_STR_NOT_NULL);
+		}
+	}
+
+	@Test
+	public void testNullArguments() {
+		TailApp cmdApp = new TailApp();
+
+		String[] args = new String[1];
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_NULL);
+		}
+
+		args = new String[2];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_NULL);
+		}
+
+		args = new String[3];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_NULL);
+		}
+
+	}
+
+	@Test
+	public void testEmptyArguments() {
+		TailApp cmdApp = new TailApp();
+
+		String[] args = new String[1];
+		args[0] = "";
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+		args = new String[2];
+		args[0] = "";
+		args[1] = "";
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+		args = new String[3];
+		args[0] = "";
+		args[1] = "";
+		args[2] = "";
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ARG_NOT_EMPTY);
+		}
+
+	}
+
+	@Test
+	public void testReadWithInvalidOptions() {
+		TailApp cmdApp = new TailApp();
+
+		ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+		String[] args = new String[2];
+		args[0] = "-N"; // capital N as line number is not acceptable
+		args[1] = "15";
+
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.INVALID_OPTION);
 		}
 	}
 
@@ -98,18 +183,57 @@ public class TailAppTest {
 	}
 
 	@Test
+	public void testReadFromInputStreamWith0Lines() {
+		TailApp cmdApp = new TailApp();
+
+		File tempInpFile = null;
+		String[] args = new String[2];
+		args[0] = "-n";
+		args[1] = "0";
+
+		try {
+			tempInpFile = new File(TEMP_INP_FILE_NAME);
+			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
+			String arbitraryContent = "";
+			for (int i = 0; i < 10; i++) {
+				arbitraryContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
+			}
+			testInpFileOutStream.write(arbitraryContent.getBytes());
+			testInpFileOutStream.close();
+
+			FileInputStream testInputStream = new FileInputStream(TEMP_INP_FILE_NAME);
+			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+			cmdApp.run(args, testInputStream, testOutputStream);
+			assertEquals("", testOutputStream.toString());
+			testInputStream.close();
+			testOutputStream.reset();
+
+		} catch (AbstractApplicationException e) {
+			fail();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail();
+		} finally {
+			if (tempInpFile != null) {
+				tempInpFile.delete();
+			}
+		}
+	}
+
+	@Test
 	public void testReadFromInputStreamWithNLines() {
 		TailApp cmdApp = new TailApp();
 
 		File tempInpFile = null;
-		String[] args = new String[1];
-		args[0] = "15"; // n=15
+		String[] args = new String[2];
+		args[0] = "-n";
+		args[1] = "15";
 
 		try {
 			tempInpFile = new File(TEMP_INP_FILE_NAME);
 			FileOutputStream testInpFileOutStream = new FileOutputStream(tempInpFile);
 			String lessThanNlinesContent = "";
-			for (int i = 0; i < (Integer.parseInt(args[0]) - 1); i++) {
+			for (int i = 0; i < (Integer.parseInt(args[1]) - 1); i++) {
 				lessThanNlinesContent += LINE + (i + 1) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream.write(lessThanNlinesContent.getBytes());
@@ -124,7 +248,7 @@ public class TailAppTest {
 			testOutputStream.reset();
 
 			// testing for an input of n lines
-			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[0]) + System.getProperty(LINE_SEPARATOR);
+			String nLinesOfContent = lessThanNlinesContent + LINE + Integer.parseInt(args[1]) + System.getProperty(LINE_SEPARATOR);
 			testInpFileOutStream = new FileOutputStream(tempInpFile, false);
 			testInpFileOutStream.write(nLinesOfContent.getBytes());
 			testInpFileOutStream.close();
@@ -136,11 +260,11 @@ public class TailAppTest {
 
 			// testing for an input of more than n lines
 			String expectedOutput = "";
-			for (int i = 0; i < Integer.parseInt(args[0]); i++) {
+			for (int i = 0; i < Integer.parseInt(args[1]); i++) {
 				expectedOutput += LINE + (i + 2) + System.getProperty(LINE_SEPARATOR);
 			}
 			testInpFileOutStream = new FileOutputStream(tempInpFile, true);
-			testInpFileOutStream.write((LINE + (Integer.parseInt(args[0]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
+			testInpFileOutStream.write((LINE + (Integer.parseInt(args[1]) + 1) + System.getProperty(LINE_SEPARATOR)).getBytes());
 			testInpFileOutStream.close();
 			testInputStream = new FileInputStream(TEMP_INP_FILE_NAME);
 			cmdApp.run(args, testInputStream, testOutputStream);
@@ -211,12 +335,31 @@ public class TailAppTest {
 	}
 
 	@Test
+	public void testFileNotFound() {
+		TailApp cmdApp = new TailApp();
+
+		String[] args = new String[1];
+
+		try {
+
+			args[0] = TEMP_INP_FILE_NAME; // this filename does not exist yet
+			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
+			cmdApp.run(args, null, testOutputStream);
+			assertEquals("", testOutputStream.toString());
+			fail();
+
+		} catch (AbstractApplicationException e) {
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.FILE_NOT_EXISTS);
+		}
+	}
+
+	@Test
 	public void testNegativeNumLines() throws IOException {
 		TailApp cmdApp = new TailApp();
 		FileInputStream testInputStream = null;
 
 		File tempInpFile = null;
-		String[] args = new String[1];
+		String[] args = new String[2];
 
 		try {
 			tempInpFile = new File(TEMP_INP_FILE_NAME);
@@ -224,15 +367,15 @@ public class TailAppTest {
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
-			// testing for alphabets instead of number
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
-			args[0] = "-1"; // n<0
+			args[0] = "-n";
+			args[1] = "-1";
 			cmdApp.run(args, testInputStream, testOutputStream);
 
 		} catch (AbstractApplicationException e) {
 			testInputStream.close();
-			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_CNT);
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ILLEGAL_LINE_CNT);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -250,7 +393,7 @@ public class TailAppTest {
 		FileInputStream testInputStream = null;
 
 		File tempInpFile = null;
-		String[] args = new String[1];
+		String[] args = new String[2];
 
 		try {
 			tempInpFile = new File(TEMP_INP_FILE_NAME);
@@ -258,17 +401,16 @@ public class TailAppTest {
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
-			// testing for alphabets instead of number
-
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
-			args[0] = "abcd"; // n=?
+			args[0] = "-n";
+			args[1] = "-1";
 			cmdApp.run(args, testInputStream, testOutputStream);
 			fail();
 
 		} catch (AbstractApplicationException e) {
 			testInputStream.close();
-			assertEquals(e.getMessage(), "tail: " + Consts.Messages.ILLEGAL_LINE_CNT);
+			assertEquals(e.getMessage(), TAIL + Consts.Messages.ILLEGAL_LINE_CNT);
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -283,10 +425,11 @@ public class TailAppTest {
 	public void testTooManyArguments() {
 		TailApp cmdApp = new TailApp();
 
-		String[] args = new String[3];
+		String[] args = new String[4];
 		args[0] = "abc";
 		args[1] = "bcd";
 		args[2] = "cde";
+		args[2] = "def";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();

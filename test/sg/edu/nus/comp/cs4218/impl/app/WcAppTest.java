@@ -35,6 +35,7 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 
 public class WcAppTest {
 
+	private static final String TEMP_FILE_NAME = "temp-file-name";
 	private static final String WCEXP = "wc: ";
 	private static final String TMP = ".tmp";
 	private static final String TEMP_FILE_INPUT = "temp-file-name-input";
@@ -52,17 +53,16 @@ public class WcAppTest {
 
 		tempTestDirectory = new File(currentDirectory + File.separator
 				+ tempFolder);
-		
-		if(tempTestDirectory.exists()){
+
+		if (tempTestDirectory.exists()) {
 			Environment.deleteFolder(tempTestDirectory);
 		}
-		
+
 		boolean status = tempTestDirectory.mkdir();
 		if (!status) {
 			fail();
 		}
-		
-	//	Environment.setCurrentDirectory(tempTestDirectory.getCanonicalPath());
+
 	}
 
 	@After
@@ -134,7 +134,7 @@ public class WcAppTest {
 
 			InputStream fileInputStream = new FileInputStream(tempInput);
 
-			tempOutput = File.createTempFile("temp-file-name", TMP);
+			tempOutput = File.createTempFile(TEMP_FILE_NAME, TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, fileInputStream, fileOutStream);
@@ -161,6 +161,43 @@ public class WcAppTest {
 	}
 
 	@Test
+	public void testWcAppWithInvalidOptions() throws IOException {
+		WcApp cmdApp = new WcApp();
+		String[] args = { "-z" };
+
+		File tempInput = null;
+		File tempOutput = null;
+		OutputStream fileOutStream = null;
+		InputStream fileInputStream = null;
+		try {
+			tempInput = Environment.createFile(TEMP_FILE_INPUT);
+			fileOutStream = new FileOutputStream(tempInput);
+
+			fileInputStream = new FileInputStream(tempInput);
+			tempOutput = File.createTempFile(TEMP_FILE_NAME, TMP);
+			fileOutStream = new FileOutputStream(tempOutput);
+
+			cmdApp.run(args, fileInputStream, fileOutStream);
+		} catch (FileCreateException e) {
+			fail();
+		} catch (FileNotFoundException e) {
+			fail();
+		} catch (IOException e) {
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals("wc: " + Consts.Messages.INVALID_OPTION + "-z",
+					e.getMessage());
+		} finally {
+			if (fileInputStream != null)
+				fileInputStream.close();
+
+			if (fileOutStream != null)
+				fileOutStream.close();
+		}
+
+	}
+
+	@Test
 	public void testWcAppWithOnlyWordCount() {
 		WcApp cmdApp = new WcApp();
 		String[] args = { "-w" };
@@ -180,7 +217,7 @@ public class WcAppTest {
 
 			InputStream fileInputStream = new FileInputStream(tempInput);
 
-			tempOutput = File.createTempFile("temp-file-name", TMP);
+			tempOutput = File.createTempFile(TEMP_FILE_NAME, TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, fileInputStream, fileOutStream);
@@ -226,7 +263,7 @@ public class WcAppTest {
 			writer.close();
 			fileOutStream.close();
 
-			tempOutput = File.createTempFile("temp-file-name", TMP);
+			tempOutput = File.createTempFile(TEMP_FILE_NAME, TMP);
 			fileOutStream = new FileOutputStream(tempOutput);
 
 			cmdApp.run(args, null, fileOutStream);
@@ -254,153 +291,188 @@ public class WcAppTest {
 			}
 		}
 	}
-	
+
+	/*
+	 * Test with file having only one empty line
+	 */
 	@Test
-	public void testReadAndProcessLinesInFileWithEmptyLine() throws IOException{
+	public void testReadAndProcessLinesInFileWithEmptyLine() throws IOException {
 		WcApp cmdApp = new WcApp();
-		
+
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(new BufferedOutputStream(bOutStream));
+		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
+				bOutStream));
 		writer.println();
 		writer.close();
-		
+
 		byte[] byteArray = bOutStream.toByteArray();
-		
+
 		ByteArrayInputStream bInStream = new ByteArrayInputStream(byteArray);
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(bInStream));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				bInStream));
 		cmdApp.readAndProcessLinesInReader(reader);
-		
-		assertEquals(1,cmdApp.bytesLength);
-		assertEquals(0,cmdApp.wordsLength);
-		assertEquals(1,cmdApp.lineLength);
+
+		assertEquals(1, cmdApp.bytesLength);
+		assertEquals(0, cmdApp.wordsLength);
+		assertEquals(1, cmdApp.lineLength);
 	}
-	
+
+	/*
+	 * Test with file having only one line and space between words
+	 */
 	@Test
-	public void testReadAndProcessLinesInFileWithOneLineAndSpaces() throws IOException{
+	public void testReadAndProcessLinesInFileWithOneLineAndSpaces()
+			throws IOException {
 		WcApp cmdApp = new WcApp();
-		
+
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(new BufferedOutputStream(bOutStream));
+		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
+				bOutStream));
 		writer.println(" Hey this is a line with spaces! ");
 		writer.close();
-		
+
 		byte[] byteArray = bOutStream.toByteArray();
-		
+
 		ByteArrayInputStream bInStream = new ByteArrayInputStream(byteArray);
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(bInStream));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				bInStream));
 		cmdApp.readAndProcessLinesInReader(reader);
-		
-		assertEquals(34,cmdApp.bytesLength);
-		assertEquals(7,cmdApp.wordsLength);
-		assertEquals(1,cmdApp.lineLength);
-		
-		assertEquals(34,cmdApp.totalBytes);
-		assertEquals(7,cmdApp.totalWordsLength);
-		assertEquals(1,cmdApp.totalLineLength);
+
+		assertEquals(34, cmdApp.bytesLength);
+		assertEquals(7, cmdApp.wordsLength);
+		assertEquals(1, cmdApp.lineLength);
+
+		assertEquals(34, cmdApp.totalBytes);
+		assertEquals(7, cmdApp.totalWordsLength);
+		assertEquals(1, cmdApp.totalLineLength);
 	}
-	
+
+	/*
+	 * Test with file having only many lines and space between words
+	 */
 	@Test
-	public void testReadAndProcessLinesInFileWithMultiLineAndSpaces() throws IOException{
+	public void testReadAndProcessLinesInFileWithMultiLineAndSpaces()
+			throws IOException {
 		WcApp cmdApp = new WcApp();
-		
+
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
-		PrintWriter writer = new PrintWriter(new BufferedOutputStream(bOutStream));
+		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
+				bOutStream));
 		writer.println(" Hey this is a line with spaces ! ");
 		writer.println(" Mysecond line has special charaters");
 		writer.println();
 		writer.close();
-		
+
 		byte[] byteArray = bOutStream.toByteArray();
-		
+
 		ByteArrayInputStream bInStream = new ByteArrayInputStream(byteArray);
-		
-		BufferedReader reader = new BufferedReader(new InputStreamReader(bInStream));
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				bInStream));
 		cmdApp.readAndProcessLinesInReader(reader);
-		
-		assertEquals(73,cmdApp.bytesLength);
-		assertEquals(13,cmdApp.wordsLength);
-		assertEquals(3,cmdApp.lineLength);
-		
-		assertEquals(73,cmdApp.totalBytes);
-		assertEquals(13,cmdApp.totalWordsLength);
-		assertEquals(3,cmdApp.totalLineLength);
+
+		assertEquals(73, cmdApp.bytesLength);
+		assertEquals(13, cmdApp.wordsLength);
+		assertEquals(3, cmdApp.lineLength);
+
+		assertEquals(73, cmdApp.totalBytes);
+		assertEquals(13, cmdApp.totalWordsLength);
+		assertEquals(3, cmdApp.totalLineLength);
 	}
-	
+
+	/*
+	 * Negative Test with no file names
+	 */
 	@Test
-	public void testProcessCountFromFilesForNoInputFileNames() throws WcException, FileNotFoundException, InvalidDirectoryException, IOException{
+	public void testProcessCountFromFilesForNoInputFileNames()
+			throws WcException, FileNotFoundException,
+			InvalidDirectoryException, IOException {
 		expectedEx.expect(WcException.class);
-		expectedEx.expectMessage(WCEXP + Consts.Messages.ARG_NOT_NULL);
-		
-		ArrayList<String> filePaths = new ArrayList<String>();
-		
-		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(null,filePaths);
-	}
-	
-	@Test(expected = FileNotFoundException.class)
-	public void testProcessCountFromFilesForInvalidFileNames() throws WcException, FileNotFoundException, InvalidDirectoryException, IOException{
-				
+		expectedEx.expectMessage(WCEXP + Consts.Messages.FILE_NOT_VALID);
+
 		ArrayList<String> fileNames = new ArrayList<String>();
 		ArrayList<String> filePaths = new ArrayList<String>();
-		
+
+		WcApp cmdApp = new WcApp();
+		cmdApp.processCountFromFiles(fileNames, filePaths);
+	}
+
+	/*
+	 * Negative test when file is not found
+	 */
+	@Test(expected = FileNotFoundException.class)
+	public void testProcessCountFromFilesForInvalidFileNames()
+			throws WcException, FileNotFoundException,
+			InvalidDirectoryException, IOException {
+
+		ArrayList<String> fileNames = new ArrayList<String>();
+		ArrayList<String> filePaths = new ArrayList<String>();
+
 		fileNames.add("invalidFileName#@#$$%");
 		filePaths.add("/Z:/abcdd");
-		
+
 		File invalidFile = new File("invalidFileName#@#$$%");
-		if(invalidFile.exists())
+		if (invalidFile.exists())
 			invalidFile.delete();
-		
+
 		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(fileNames,filePaths);
+		cmdApp.processCountFromFiles(fileNames, filePaths);
 	}
-	
+
+	/*
+	 * Positive test for processing count from valid files
+	 */
 	@Test
-	public void testProcessCountFromFilesForValidFileNames(){
+	public void testProcessCountFromFilesForValidFileNames() {
 		File newFile1 = null;
-		File newFile2 = null; 
-		
+		File newFile2 = null;
+
 		ArrayList<String> filePaths = new ArrayList<String>();
 		ArrayList<String> fileNames = new ArrayList<String>();
-		
-		try{
-			
-		newFile1 = new File(this.tempTestDirectory.getAbsoluteFile() + File.separator + "TestFile1.txt");
-		newFile2 = new File(this.tempTestDirectory.getAbsoluteFile() + File.separator + "TestFile2.txt");
 
-		filePaths.add(newFile1.getCanonicalPath());
-		filePaths.add(newFile2.getCanonicalPath());
-		
-		newFile1.createNewFile();
-		newFile2.createNewFile();
-		
-		PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(newFile1)));
-		writer.write(" This is test code for file 1");
-		writer.close();
-		
-		writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(newFile2)));
-		writer.write("This is a test code for file 2!");
-		writer .close();
-		
-		fileNames.add("/TempTest/TestFile1.txt");
-		fileNames.add("/TempTest/TestFile2.txt");
-		
-		WcApp cmdApp = new WcApp();
-		cmdApp.processCountFromFiles(fileNames,filePaths);
-		
-		assertEquals(62,cmdApp.totalBytes);
-		assertEquals(2,cmdApp.totalLineLength);
-		assertEquals(15,cmdApp.totalWordsLength);
-		
-		}catch(Exception e){
+		try {
+
+			newFile1 = new File(this.tempTestDirectory.getAbsoluteFile()
+					+ File.separator + "TestFile1.txt");
+			newFile2 = new File(this.tempTestDirectory.getAbsoluteFile()
+					+ File.separator + "TestFile2.txt");
+
+			filePaths.add(newFile1.getCanonicalPath());
+			filePaths.add(newFile2.getCanonicalPath());
+
+			newFile1.createNewFile();
+			newFile2.createNewFile();
+
+			PrintWriter writer = new PrintWriter(new BufferedOutputStream(
+					new FileOutputStream(newFile1)));
+			writer.write(" This is test code for file 1");
+			writer.close();
+
+			writer = new PrintWriter(new BufferedOutputStream(
+					new FileOutputStream(newFile2)));
+			writer.write("This is a test code for file 2!");
+			writer.close();
+
+			fileNames.add("/TempTest/TestFile1.txt");
+			fileNames.add("/TempTest/TestFile2.txt");
+
+			WcApp cmdApp = new WcApp();
+			cmdApp.processCountFromFiles(fileNames, filePaths);
+
+			assertEquals(62, cmdApp.totalBytes);
+			assertEquals(2, cmdApp.totalLineLength);
+			assertEquals(15, cmdApp.totalWordsLength);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
-		}finally{
-			if(newFile1!= null)
+		} finally {
+			if (newFile1 != null)
 				newFile1.delete();
-			
-			if(newFile2 != null)
+
+			if (newFile2 != null)
 				newFile2.delete();
 		}
 	}

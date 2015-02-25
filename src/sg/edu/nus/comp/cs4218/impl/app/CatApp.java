@@ -71,9 +71,13 @@ public class CatApp implements Application {
 	}
 
 	/**
-	 * Reads the contents of files in  the list validFiles and writes it to the writer
-	 * @param writer		The writer to which contents have to be written
-	 * @param validFiles 	The list of files to display
+	 * Reads the contents of files in the list validFiles and writes it to the
+	 * writer
+	 * 
+	 * @param writer
+	 *            The writer to which contents have to be written
+	 * @param validFiles
+	 *            The list of files to display
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
@@ -95,8 +99,11 @@ public class CatApp implements Application {
 
 	/**
 	 * Checks whether the arguments are valid files
-	 * @param args	list of arguments
-	 * @param validFiles	list of valid file path created from args
+	 * 
+	 * @param args
+	 *            list of arguments
+	 * @param validFiles
+	 *            list of valid file path created from args
 	 * @throws InvalidFileException
 	 * @throws IOException
 	 */
