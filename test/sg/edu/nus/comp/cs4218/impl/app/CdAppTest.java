@@ -28,6 +28,10 @@ public class CdAppTest {
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
+	/*
+	 * Create a folder tempTestDirectory so that tests run in an uniform manner
+	 * across machines
+	 */
 	@Before
 	public void setUp() throws Exception {
 		currentDirectory = Environment.getCurrentDirectory();
@@ -53,6 +57,9 @@ public class CdAppTest {
 		Environment.setCurrentDirectory(currentDirectory);
 	}
 
+	/*
+	 * Negative test with null arguments
+	 */
 	@Test
 	public void testCdAppWithNullArgument() throws AbstractApplicationException {
 		expectedEx.expect(CdException.class);
@@ -63,6 +70,9 @@ public class CdAppTest {
 
 	}
 
+	/*
+	 * Negative test with null output stream
+	 */
 	@Test
 	public void testCdAppWithNullOutputStreamArgument()
 			throws AbstractApplicationException {
@@ -76,6 +86,9 @@ public class CdAppTest {
 		cmdApp.run(args, null, null);
 	}
 
+	/*
+	 * Negative test with many arguments for cd
+	 */
 	@Test
 	public void testCdAppWithMultipleArgs() throws AbstractApplicationException {
 		expectedEx.expect(CdException.class);
@@ -89,6 +102,9 @@ public class CdAppTest {
 		cmdApp.run(args, null, System.out);
 	}
 
+	/*
+	 * Empty args for cd
+	 */
 	@Test
 	public void testCdAppWithoutAnyArgument()
 			throws AbstractApplicationException {
@@ -102,6 +118,9 @@ public class CdAppTest {
 
 	}
 
+	/*
+	 * Negative test with invalid directory arguments
+	 */
 	@Test
 	public void testCdWithIncorrectDirectory()
 			throws AbstractApplicationException {
@@ -118,6 +137,9 @@ public class CdAppTest {
 		cmdApp.run(args, null, System.out);
 	}
 
+	/*
+	 * Cd command with positive correct workflow
+	 */
 	@Test
 	public void testCdAppForFolders() throws AbstractApplicationException,
 			InvalidDirectoryException, IOException {

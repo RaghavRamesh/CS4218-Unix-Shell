@@ -26,6 +26,9 @@ public class PwdAppTest {
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
+	/*
+	 * Test for null output stream.
+	 */
 	@Test
 	public void testPwdWithNullOutputStream()
 			throws AbstractApplicationException {
@@ -37,6 +40,10 @@ public class PwdAppTest {
 		pwdApp.run(null, null, null);
 	}
 
+	/*
+	 * We don't test for null input stream because it is okay for it to be null
+	 * and has been clubbed with this positive test
+	 */
 	@Test
 	public void testPwd() {
 		pwdApp = new PwdApp();

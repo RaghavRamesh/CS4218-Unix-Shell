@@ -39,10 +39,14 @@ public class CatAppTest {
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
 
+	/*
+	 * Create a folder tempTestDirectory so that tests run in an uniform manner
+	 * across machines
+	 */
 	@Before
 	public void setUp() throws Exception {
 		currentDirectory = Environment.getCurrentDirectory();
-		// create a folder named TempTest in current
+		// create a folder named TempTest in current directory
 
 		tempTestDirectory = new File(currentDirectory + File.separator
 				+ TEMP_FOLDER);
@@ -64,6 +68,10 @@ public class CatAppTest {
 		Environment.setCurrentDirectory(currentDirectory);
 	}
 
+	/*
+	 * Tests for null output stream
+	 */
+
 	@Test
 	public void testCatAppWithNullArgument()
 			throws AbstractApplicationException {
@@ -75,6 +83,9 @@ public class CatAppTest {
 
 	}
 
+	/*
+	 * Tests for null output stream
+	 */
 	@Test
 	public void testCatAppWithNullOutputStreamArgument()
 			throws AbstractApplicationException {
@@ -90,6 +101,9 @@ public class CatAppTest {
 
 	}
 
+	/*
+	 * Tests for null input stream
+	 */
 	@Test
 	public void testCatAppWithoutAnyArgumentAndNullIputStream()
 			throws AbstractApplicationException {
@@ -103,10 +117,10 @@ public class CatAppTest {
 		cmdApp.run(args, null, System.out);
 	}
 
-	/**
+	/*
 	 * Tests Cat Application with empty argument list. Try..catch is used here
-	 * instead of throwing exception and then catching them because we want to
-	 * clean up the temporary files that were used by the test, even if there is
+	 * instead of throwing exception and then catching them, because we want to
+	 * clean up the temporary files that were used by the test even if there is
 	 * some other exception thrown using the finally block
 	 */
 	@Test
@@ -149,6 +163,7 @@ public class CatAppTest {
 			e.printStackTrace();
 			fail();
 		} finally {
+			// delete the files that were created in the test
 			if (tempInput != null) {
 				tempInput.delete();
 			}
@@ -158,6 +173,9 @@ public class CatAppTest {
 		}
 	}
 
+	/*
+	 * Positive test for the entire ideal workflow
+	 */
 	@Test
 	public void testCatAppForIdealWorkFlow() {
 		CatApp cmdApp = new CatApp();
@@ -212,18 +230,9 @@ public class CatAppTest {
 		}
 	}
 
-	private File createFileWithContents(String fileName, String fileContents)
-			throws IOException {
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-				new FileOutputStream(fileName)));
-		writer.write(fileContents);
-		writer.close();
-
-		File test = new File(fileName);
-		assertTrue(test.exists());
-		return test;
-	}
-
+	/*
+	 * Test for non existent files
+	 */
 	@Test
 	public void testCatAppForNonExistentFile()
 			throws AbstractApplicationException {
@@ -237,6 +246,9 @@ public class CatAppTest {
 
 	}
 
+	/*
+	 * Test for cat provided with directory
+	 */
 	@Test
 	public void testCatAppForReadingDir() throws AbstractApplicationException {
 		CatApp cmdApp = new CatApp();
@@ -260,5 +272,25 @@ public class CatAppTest {
 		} finally {
 			tempDir.delete();
 		}
+	}
+
+	/**
+	 * Helper method for creating files with contents
+	 * 
+	 * @param fileName
+	 * @param fileContents
+	 * @return
+	 * @throws IOException
+	 */
+	private File createFileWithContents(String fileName, String fileContents)
+			throws IOException {
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+				new FileOutputStream(fileName)));
+		writer.write(fileContents);
+		writer.close();
+
+		File test = new File(fileName);
+		assertTrue(test.exists());
+		return test;
 	}
 }

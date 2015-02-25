@@ -64,6 +64,9 @@ public class LsAppTest {
 		Environment.setCurrentDirectory(originalCurrDir);
 	}
 
+	/*
+	 * Test with null output stream
+	 */
 	@Test
 	public void testLsWithNullOutputStream()
 			throws AbstractApplicationException {
@@ -79,6 +82,9 @@ public class LsAppTest {
 
 	}
 
+	/*
+	 * Test with null argument
+	 */
 	@Test
 	public void testLsAppWithNullArgument() throws AbstractApplicationException {
 
@@ -194,6 +200,9 @@ public class LsAppTest {
 		}
 	}
 
+	/*
+	 * Test for current path if arguments not specified
+	 */
 	@Test
 	public void testLsWithoutArgs() throws InvalidDirectoryException,
 			IOException {
@@ -249,35 +258,9 @@ public class LsAppTest {
 		}
 	}
 
-	private void deleteIdealFiles(File temp, File newFile1, File newFile2,
-			File newFile3, File newFile4) {
-		if (temp != null) {
-			temp.delete();
-		}
-
-		if (newFile1 != null) {
-			newFile1.delete();
-		}
-
-		if (newFile2 != null) {
-			newFile2.delete();
-		}
-
-		if (newFile3 != null) {
-			newFile3.delete();
-		}
-
-		if (newFile4 != null) {
-			newFile4.delete();
-		}
-	}
-
-	private void checkAssertionsForIdealFileNamesAndDirs(
-			BufferedReader buffReader) throws IOException {
-		assertEquals("subdir1" + "\t" + "subdir2" + "\t" + "test1.txt" + "\t"
-				+ "test2.xyz" + "\t", buffReader.readLine());
-	}
-
+	/*
+	 * Test for files that start with dot
+	 */
 	@Test
 	public void testLsWithWithDotInFileNamesPath() {
 		lsApp = new LsApp();
@@ -328,4 +311,40 @@ public class LsAppTest {
 			}
 		}
 	}
+
+	/*
+	 * Helper method for deleting files
+	 */
+	private void deleteIdealFiles(File temp, File newFile1, File newFile2,
+			File newFile3, File newFile4) {
+		if (temp != null) {
+			temp.delete();
+		}
+
+		if (newFile1 != null) {
+			newFile1.delete();
+		}
+
+		if (newFile2 != null) {
+			newFile2.delete();
+		}
+
+		if (newFile3 != null) {
+			newFile3.delete();
+		}
+
+		if (newFile4 != null) {
+			newFile4.delete();
+		}
+	}
+
+	/*
+	 * Helper method for checking file names and directory names
+	 */
+	private void checkAssertionsForIdealFileNamesAndDirs(
+			BufferedReader buffReader) throws IOException {
+		assertEquals("subdir1" + "\t" + "subdir2" + "\t" + "test1.txt" + "\t"
+				+ "test2.xyz" + "\t", buffReader.readLine());
+	}
+
 }
