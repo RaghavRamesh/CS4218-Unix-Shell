@@ -349,10 +349,7 @@ public class HeadAppTest {
 			testInpFileOutStream.write("randomData".getBytes());
 			testInpFileOutStream.close();
 
-			// testing for alphabets instead of number
-
 			testInputStream = new FileInputStream("temp-input-file-name.tmp");
-
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
 			args[0] = "-n";
 			args[1] = "-1";
