@@ -148,6 +148,18 @@ public class CallCommandTest {
 	}
 	
 	@Test
+	public void testSubstituteWithSequenceCommand() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo `echo hello; echo world`";
+		assertEquals("echo hello\nworld", CallCommand.substitute(cmdLine));
+	}
+	
+	@Test
+	public void testSubstituteWithBackQuoteEvaluatingToNull() throws AbstractApplicationException, ShellException, IOException {
+		String cmdLine = "echo hello``";
+		assertEquals("echo hello", CallCommand.substitute(cmdLine));
+	}
+	
+	@Test
 	public void testFindInput() throws ShellException, AbstractApplicationException {
 	  String cmdLine = "echo hello < a.txt";
 	  assertEquals("a.txt", new CallCommand(cmdLine).findInput());
