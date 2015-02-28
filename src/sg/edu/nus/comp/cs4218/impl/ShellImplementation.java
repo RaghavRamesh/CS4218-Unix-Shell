@@ -11,8 +11,9 @@ import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class ShellImplementation implements Shell {
 
@@ -32,15 +33,10 @@ public class ShellImplementation implements Shell {
 	 */
 	public static Command getCommand(String cmdline) throws ShellException,
 			AbstractApplicationException {
-		List<String> tokens = Parser.parseCommandLine(cmdline);
-		for (String token : tokens) {
-			if (Parser.isSemicolon(token)) {
+		List<AbstractToken> tokens = Parser.tokenize(cmdline);
+		for (AbstractToken token : tokens) {
+			if (token.getType() == TokenType.SEMICOLON) {
 				return new SeqCommand(cmdline);
-			}
-		}
-		for (String token : tokens) {
-			if (Parser.isPipe(token)) {
-				return new PipeCommand(cmdline);
 			}
 		}
 		return new CallCommand(cmdline);

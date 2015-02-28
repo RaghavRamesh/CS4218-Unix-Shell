@@ -3,10 +3,10 @@ package sg.edu.nus.comp.cs4218.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
-import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.TokenFactory;
 
 /**
  * Utility class to parse a string input into tokens based on quotes and other
@@ -17,17 +17,13 @@ public final class Parser {
 	static final Character DOUBLE_QUOTE = '"';
 	static final Character SINGLE_QUOTE = '\'';
 	static final Character BACK_QUOTE = '`';
-
 	static final Character SEMICOLON = ';';
-	static final Character PIPE = '|';
 	static final Character IN_STREAM = '<';
 	static final Character OUT_STREAM = '>';
 
-	static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, PIPE,
-			IN_STREAM, OUT_STREAM);
+	static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, IN_STREAM, OUT_STREAM);
 
 	private Parser() {
-
 	}
 
 	/**
@@ -39,50 +35,22 @@ public final class Parser {
 	 *            The original string input
 	 * @return A list of tokens
 	 */
-	public static List<String> parseCommandLine(String input)
-			throws ShellException {
-		String trimmedInput = input.trim();
-		StringBuilder currentToken = new StringBuilder();
-		ArrayList<String> tokens = new ArrayList<String>();
-		Stack<CharacterPosition> quoteStack = new Stack<CharacterPosition>();
-		for (int i = 0; i < trimmedInput.length(); i++) {
-			Character currentChar = trimmedInput.charAt(i);
-			if (currentChar.equals(WHITESPACE) && quoteStack.isEmpty()) {
-				addNonEmptyToList(tokens, currentToken.toString());
-				currentToken = new StringBuilder();
-				continue;
-			}
-			currentToken.append(currentChar);
-			if (isQuote(currentChar)) {
-				if (quoteStack.isEmpty()) {
-					// Add the previous part excluding the quote character
-					addNonEmptyToList(tokens, currentToken.substring(0,
-							currentToken.length() - 1));
-					currentToken = new StringBuilder(currentChar.toString());
-					quoteStack.push(new CharacterPosition(currentChar, i));
-				} else if (quoteStack.peek().getCharacter().equals(currentChar)) {
-					quoteStack.pop();
-					if (quoteStack.isEmpty()) {
-						addNonEmptyToList(tokens, currentToken.toString());
-						currentToken = new StringBuilder();
-					}
-				} else {
-					quoteStack.push(new CharacterPosition(currentChar, i));
-				}
-			} else if (quoteStack.isEmpty() && SPECIALS.contains(currentChar)) {
-				// Add the current token without the last character
-				addNonEmptyToList(tokens,
-						currentToken.substring(0, currentToken.length() - 1));
-				// Add the last character
-				addNonEmptyToList(tokens, currentChar.toString());
-				currentToken = new StringBuilder();
-			}
-		}
-		if (!quoteStack.isEmpty()) {
-			throw new ShellException(Consts.Messages.QUOTE_MISMATCH);
-		}
-		addNonEmptyToList(tokens, currentToken.toString());
-		return tokens;
+	public static List<AbstractToken> tokenize(String input) throws ShellException {
+	  String trimmedInput = input.trim();
+	  ArrayList<AbstractToken> tokens = new ArrayList<AbstractToken>();
+	  AbstractToken currentToken = null;
+    for (int i = 0; i < trimmedInput.length(); i++) {
+      if (currentToken == null) {
+        currentToken = TokenFactory.getToken(trimmedInput, i);
+      } else if (!currentToken.appendNext()){
+        tokens.add(currentToken);
+        currentToken = TokenFactory.getToken(trimmedInput, i); 
+      }
+    }
+    if (currentToken != null) {
+      tokens.add(currentToken);
+    }
+    return tokens;
 	}
 
 	/**
@@ -156,16 +124,6 @@ public final class Parser {
 	}
 
 	/**
-	 * Check if a string represents a pipe character
-	 * 
-	 * @param input
-	 *            The original string input to check.
-	 */
-	public static Boolean isPipe(String input) {
-		return input.length() == 1 && input.charAt(0) == PIPE;
-	}
-
-	/**
 	 * Check if a string represents a input redirection character
 	 * 
 	 * @param input
@@ -209,16 +167,15 @@ public final class Parser {
 		return input.contains(BACK_QUOTE.toString());
 	}
 
-	private static Boolean addNonEmptyToList(List<String> list, String str) {
-		if (str.trim().equals("")) {
-			return false;
-		} else {
-			return list.add(str);
-		}
-	}
-
-	private static Boolean isQuote(Character character) {
-		return character.equals(DOUBLE_QUOTE) || character.equals(SINGLE_QUOTE)
+	public static Boolean isQuote(Character character) {
+		return character.equals(DOUBLE_QUOTE) 
+		    || character.equals(SINGLE_QUOTE)
 				|| character.equals(BACK_QUOTE);
 	}
+	
+	public static Boolean isNormalCharacter(Character character) {
+	  return !isQuote(character) 
+	      && !SPECIALS.contains(character) 
+	      && !character.equals(WHITESPACE);
+ 	}
 }

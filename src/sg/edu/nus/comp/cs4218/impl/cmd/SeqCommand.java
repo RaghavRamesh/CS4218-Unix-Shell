@@ -10,6 +10,8 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class SeqCommand implements Command {
 	private final List<Command> mCommands;
@@ -17,22 +19,20 @@ public class SeqCommand implements Command {
 	public SeqCommand(String commandLine) throws ShellException,
 			AbstractApplicationException {
 		this.mCommands = new ArrayList<Command>();
-		List<String> tokens = Parser.parseCommandLine(commandLine);
+		List<AbstractToken> tokens = Parser.tokenize(commandLine);
 
 		String currentCommand = "";
-		for (String token : tokens) {
-			if (Parser.isSemicolon(token)) {
-				Command command = ShellImplementation.getCommand(currentCommand
-						.trim());
+		for (AbstractToken token : tokens) {
+			if (token.getType() == TokenType.SEMICOLON) {
+				Command command = ShellImplementation.getCommand(currentCommand.trim());
 				mCommands.add(command);
 				currentCommand = "";
 			} else {
-				currentCommand += " " + token;
+				currentCommand += " " + token.toString();
 			}
 		}
 		if (!currentCommand.trim().equals("")) {
-			mCommands
-					.add(ShellImplementation.getCommand(currentCommand.trim()));
+			mCommands.add(ShellImplementation.getCommand(currentCommand.trim()));
 		}
 	}
 

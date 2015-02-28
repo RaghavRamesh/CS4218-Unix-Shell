@@ -1,15 +1,10 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,32 +17,22 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
-import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 // TODO: Create thread for applications
 public class CallCommand implements Command {
 	private final String commandLine;
 	private final List<String> substitutedTokens;
 
-	public CallCommand(String cmdLine) throws ShellException,
-			AbstractApplicationException {
-		try {
-			commandLine = cmdLine;
-			List<String> tokens = new ArrayList<String>();
-			for (String token : Parser.parseCommandLine(commandLine)) {
-				// Remove the outer double quotes
-				if (Parser.isDoubleQuoted(token)) {
-					token = token.substring(1, token.length() - 1);
-				}
-				if (!token.isEmpty()) {
-					tokens.add(token);
-				}
-			}
-			substitutedTokens = substituteAll(tokens);
-		} catch (IOException e) {
-			throw new ShellException(e);
-		}
+	public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
+	  try {
+	    this.commandLine = cmdLine;
+	    this.substitutedTokens = substituteAll(Parser.tokenize(cmdLine));
+	  } catch (IOException e) {
+	    throw new ShellException(e);
+	  }
 	}
 
 	@Override
@@ -102,69 +87,24 @@ public class CallCommand implements Command {
 	 *            A list of tokens.
 	 * @return A list of substituted tokens.
 	 */
-	public static List<String> substituteAll(List<String> tokens)
+	public static List<String> substituteAll(List<AbstractToken> tokens)
 			throws AbstractApplicationException, ShellException, IOException {
-		ArrayList<String> result = new ArrayList<String>();
-		for (String token : tokens) {
-			if (Parser.isSingleQuoted(token)) {
-				token = token.substring(1, token.length() - 1);
-				result.add(token);
-			} else if (Parser.containsBackQuote(token)) {
-				result.add(substitute(token));
-			} else {
-				result.add(token);
-			}
-		}
-		return result;
-	}
-
-	public static String substitute(String input)
-			throws AbstractApplicationException, ShellException, IOException {
-		List<String> tokens = Parser.parseCommandLine(input);
-		List<String> withoutQuotes = new ArrayList<String>();
-		for (int i = 0; i < tokens.size(); i++) {
-			String token = tokens.get(i);
-			if (Parser.isDoubleQuoted(token)) {
-				token = token.substring(1, token.length() - 1);
-				withoutQuotes.addAll(Parser.parseCommandLine(token));
-			} else {
-				withoutQuotes.add(token);
-			}
-		}
-
-		for (int i = 0; i < withoutQuotes.size(); i++) {
-			String token = withoutQuotes.get(i);
-
-			if (Parser.isBackQuoted(token)) {
-				// Remove back quotes
-				token = token.substring(1, token.length() - 1);
-				Command command = ShellImplementation.getCommand(token);
-				// System.out.println("Command: " + command.getClass());
-				ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
-				command.evaluate(null, byteOutStream);
-				byte[] bytes = byteOutStream.toByteArray();
-				ByteArrayInputStream byteInStream = new ByteArrayInputStream(
-						bytes);
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(byteInStream));
-				String result = "";
-				String line;
-				while ((line = reader.readLine()) != null) {
-					result += line + "\n";
-				}
-				withoutQuotes.set(i, result);
-			}
-		}
-		// TODO: toString trims spaces
-		String result = "";
-		for (String token : withoutQuotes) {
-			if (token == null) {
-				continue;
-			}
-			result += " " + token;
-		}
-		// System.out.println(result.trim());
-		return result.trim();
+		String current = "";
+    List<String> list = new ArrayList<String>();
+    for (AbstractToken token : tokens) {
+      if (token.getType() == TokenType.SPACES) {
+        if (!current.isEmpty()) {
+          list.add(current);
+          current = "";
+        }
+      } else {
+        current += token.value();
+      }
+    }
+    if (!current.isEmpty()) {
+      list.add(current);
+    }
+    return list;
 	}
 
 	/**
