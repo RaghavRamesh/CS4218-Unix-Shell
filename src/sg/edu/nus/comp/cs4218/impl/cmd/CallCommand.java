@@ -92,11 +92,14 @@ public class CallCommand implements Command {
 		String current = "";
     List<String> list = new ArrayList<String>();
     for (AbstractToken token : tokens) {
-      if (token.getType() == TokenType.SPACES) {
-        if (!current.isEmpty()) {
-          list.add(current);
-          current = "";
-        }
+      TokenType type = token.getType();
+      if (type == TokenType.SPACES) {
+        addNonEmpty(list, current);
+        current = "";
+      } else if (type == TokenType.INPUT || type == TokenType.OUTPUT) {
+        addNonEmpty(list, current);
+        current = "";
+        list.add(token.value());
       } else {
         current += token.value();
       }
@@ -105,6 +108,12 @@ public class CallCommand implements Command {
       list.add(current);
     }
     return list;
+	}
+	
+	private static void addNonEmpty(List<String> list, String str) {
+	  if (!str.isEmpty()) {
+	    list.add(str);
+	  }
 	}
 
 	/**
