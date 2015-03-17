@@ -18,10 +18,11 @@ public final class Parser {
   static final Character SINGLE_QUOTE = '\'';
   static final Character BACK_QUOTE = '`';
   static final Character SEMICOLON = ';';
+  static final Character PIPE = '|';
   static final Character IN_STREAM = '<';
   static final Character OUT_STREAM = '>';
 
-  static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, IN_STREAM,
+  static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, PIPE, IN_STREAM,
       OUT_STREAM);
 
   private Parser() {

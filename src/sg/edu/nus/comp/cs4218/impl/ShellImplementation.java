@@ -11,6 +11,7 @@ import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.cmd.CallCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
@@ -47,6 +48,11 @@ public class ShellImplementation implements Shell {
 				return new SeqCommand(cmdline);
 			}
 		}
+	  for (AbstractToken token : tokens) {
+      if (token.getType() == TokenType.PIPE) {
+        return new PipeCommand(cmdline);
+      }
+    }
 		return new CallCommand(cmdline);
 	}
 	

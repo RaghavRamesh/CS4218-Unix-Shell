@@ -14,33 +14,35 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class SeqCommand implements Command {
-	private final List<Command> mCommands;
+	private final List<Command> commands;
+	private final String commandLine;
 
 	public SeqCommand(String commandLine) throws ShellException,
 			AbstractApplicationException {
-		this.mCommands = new ArrayList<Command>();
+	  this.commandLine = commandLine;
+		this.commands = new ArrayList<Command>();
 		List<AbstractToken> tokens = Parser.tokenize(commandLine);
 
 		String currentCommand = "";
 		for (AbstractToken token : tokens) {
 			if (token.getType() == TokenType.SEMICOLON) {
 				Command command = ShellImplementation.getCommand(currentCommand.trim());
-				mCommands.add(command);
+				commands.add(command);
 				currentCommand = "";
 			} else {
 				currentCommand += " " + token.toString();
 			}
 		}
 		if (!currentCommand.trim().equals("")) {
-			mCommands.add(ShellImplementation.getCommand(currentCommand.trim()));
+			commands.add(ShellImplementation.getCommand(currentCommand.trim()));
 		}
 	}
 
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		for (int i = 0; i < mCommands.size(); i++) {
-			Command command = mCommands.get(i);
+		for (int i = 0; i < commands.size(); i++) {
+			Command command = commands.get(i);
 			InputStream input = i == 0 ? stdin : null;
 			command.evaluate(input, stdout);
 		}
@@ -51,4 +53,8 @@ public class SeqCommand implements Command {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public String toString() {
+	  return commandLine;
+	}
 }

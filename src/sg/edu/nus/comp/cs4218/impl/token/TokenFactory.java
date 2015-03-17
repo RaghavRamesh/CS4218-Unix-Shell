@@ -14,6 +14,8 @@ public final class TokenFactory {
       return new SpaceToken(parent, begin);
     case SEMICOLON:
       return new SemicolonToken(parent, begin);
+    case PIPE:
+      return new PipeToken(parent, begin);
     case INPUT:
       return new InputToken(parent, begin);
     case OUTPUT:

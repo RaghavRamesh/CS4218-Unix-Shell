@@ -8,6 +8,7 @@ public abstract class AbstractToken {
     SPACES,
     NORMAL,
     SEMICOLON,
+    PIPE,
     INPUT,
     OUTPUT,
     SINGLE_QUOTES,
@@ -48,6 +49,8 @@ public abstract class AbstractToken {
         return TokenType.OUTPUT;
       case ';':
         return TokenType.SEMICOLON;
+      case '|':
+        return TokenType.PIPE;
       case '"':
         return TokenType.DOUBLE_QUOTES;
       case '`':
