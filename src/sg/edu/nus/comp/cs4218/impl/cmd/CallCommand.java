@@ -44,8 +44,8 @@ public class CallCommand implements Command {
 		}
 		InputStream inStream = null;
 		OutputStream outStream = null;
-		String inFile = findInput();
-		String outFile = findOutput();
+		String inFile = findInput(substitutedTokens);
+		String outFile = findOutput(substitutedTokens);
 		try {
 			List<String> argsList = findArguments();
 			if (inFile == null) {
@@ -126,23 +126,20 @@ public class CallCommand implements Command {
 	 *             if the input redirection is invalid or there are multiple
 	 *             inputs.
 	 */
-	public String findInput() throws ShellException {
+	public static String findInput(List<String> tokens) throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < substitutedTokens.size()) {
-			String token = substitutedTokens.get(currentIndex++);
+		while (currentIndex < tokens.size()) {
+			String token = tokens.get(currentIndex++);
 			if (Parser.isInStream(token)) {
 				if (result != null) {
-					throw new ShellException(Consts.Messages.TOO_MANY_INPUT
-							+ commandLine);
+					throw new ShellException(Consts.Messages.TOO_MANY_INPUT);
 				}
-				if (currentIndex == substitutedTokens.size()
-						|| Parser.isSpecialCharacter(substitutedTokens
-								.get(currentIndex))) {
-					throw new ShellException(Consts.Messages.INVALID_INPUT
-							+ commandLine);
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+					throw new ShellException(Consts.Messages.INVALID_INPUT);
 				}
-				result = substitutedTokens.get(currentIndex++);
+				result = tokens.get(currentIndex++);
 			}
 		}
 		return result;
@@ -157,23 +154,20 @@ public class CallCommand implements Command {
 	 *             if the output redirection is invalid or there are multiple
 	 *             outputs.
 	 */
-	public String findOutput() throws ShellException {
+	public static String findOutput(List<String> tokens) throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < substitutedTokens.size()) {
-			String token = substitutedTokens.get(currentIndex++);
+		while (currentIndex < tokens.size()) {
+			String token = tokens.get(currentIndex++);
 			if (Parser.isOutStream(token)) {
 				if (result != null) {
-					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT
-							+ commandLine);
+					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT);
 				}
-				if (currentIndex == substitutedTokens.size()
-						|| Parser.isSpecialCharacter(substitutedTokens
-								.get(currentIndex))) {
-					throw new ShellException(Consts.Messages.INVALID_OUTPUT
-							+ commandLine);
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+					throw new ShellException(Consts.Messages.INVALID_OUTPUT);
 				}
-				result = substitutedTokens.get(currentIndex++);
+				result = tokens.get(currentIndex++);
 			}
 		}
 		return result;
