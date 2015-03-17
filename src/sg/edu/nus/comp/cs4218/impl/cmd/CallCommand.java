@@ -38,6 +38,7 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
+	  
 		if (substitutedTokens.isEmpty()) {
 			return;
 		}

@@ -16,12 +16,20 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class ShellImplementation implements Shell {
+  private final BufferedReader reader;
+  private ExecutableThread runningThread;
+  
+  public ShellImplementation(BufferedReader reader) {
+    this.reader = reader;
+    this.runningThread = new ExecutableThread();
+  }
 
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		Command command = getCommand(cmdline);
-		command.evaluate(null, stdout);
+		runningThread = new ExecutableThread(command, null, stdout);
+		runningThread.start();
 	}
 
 	/**
@@ -41,21 +49,24 @@ public class ShellImplementation implements Shell {
 		}
 		return new CallCommand(cmdline);
 	}
+	
+	public void run() {
+	  while (true) {
+	    try {
+	      while (runningThread.isAlive()) {
+	        Thread.sleep(100);
+	      }
+	      System.out.print(Environment.getCurrentDirectory() + " # ");
+	      parseAndEvaluate(reader.readLine(), System.out);
+	    } catch (Exception e) {
+	      System.out.println(e.getMessage());
+	    }
+	  }
+	}
 
 	public static void main(String... args) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				System.in));
-		ShellImplementation shellImpl = new ShellImplementation();
-
-		// "cd src; pwd > a.txt; ls"
-		while (true) {
-			try {
-				System.out.print(Environment.getCurrentDirectory() + " # ");
-
-				shellImpl.parseAndEvaluate(reader.readLine(), System.out);
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		ShellImplementation shellImpl = new ShellImplementation(reader);
+		shellImpl.run();
 	}
 }
