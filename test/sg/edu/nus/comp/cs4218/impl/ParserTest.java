@@ -13,17 +13,6 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class ParserTest {
 	private static final String SHOULD_NOT_THROW = "No exception should be thrown";
-
-	@Test
-	public void testTrimInput() {
-	  try {
-      List<AbstractToken> tokens = Parser.tokenize("   a b ");
-      String expected = "[a,  , b]";
-      assertEquals(expected, tokens.toString());
-    } catch (Exception e) {
-      fail(SHOULD_NOT_THROW);
-    }
-	}
 	
 	@Test
 	public void testParseWithDoubleQuoteOnly() {

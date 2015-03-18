@@ -42,7 +42,7 @@ public class ShellImplementation implements Shell {
 	 */
 	public static Command getCommand(String cmdline) throws ShellException,
 			AbstractApplicationException {
-		List<AbstractToken> tokens = Parser.tokenize(cmdline);
+		List<AbstractToken> tokens = Parser.tokenize(cmdline.trim());
 		for (AbstractToken token : tokens) {
 			if (token.getType() == TokenType.SEMICOLON) {
 				return new SeqCommand(cmdline);

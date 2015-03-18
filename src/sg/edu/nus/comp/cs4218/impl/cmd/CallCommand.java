@@ -21,15 +21,18 @@ import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
-// TODO: Create thread for applications
 public class CallCommand implements Command {
 	private final String commandLine;
 	private final List<String> substitutedTokens;
+	private String inputPath;
+	private String outputPath;
 
 	public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
 	  try {
 	    this.commandLine = cmdLine;
 	    this.substitutedTokens = substituteAll(Parser.tokenize(cmdLine));
+	    this.inputPath = findInput(substitutedTokens);
+	    this.outputPath = findOutput(substitutedTokens);
 	  } catch (IOException e) {
 	    throw new ShellException(e);
 	  }
@@ -44,18 +47,16 @@ public class CallCommand implements Command {
 		}
 		InputStream inStream = null;
 		OutputStream outStream = null;
-		String inFile = findInput(substitutedTokens);
-		String outFile = findOutput(substitutedTokens);
 		try {
 			List<String> argsList = findArguments();
-			if (inFile == null) {
+			if (inputPath == null) {
 				inStream = stdin;
 			} else {
-				inFile = Environment.checkIsFile(inFile);
-				inStream = new FileInputStream(new File(inFile));
+			  inputPath = Environment.checkIsFile(inputPath);
+				inStream = new FileInputStream(new File(inputPath));
 			}
-			outStream = (outFile == null) ? stdout : new FileOutputStream(
-					Environment.createFile(outFile));
+			outStream = (outputPath == null) ? stdout : new FileOutputStream(
+					Environment.createFile(outputPath));
 			Application app = getApplication(argsList.get(0));
 			List<String> argsWithoutApp = argsList.subList(1, argsList.size());
 			String[] args = argsWithoutApp.toArray(new String[argsWithoutApp
@@ -67,10 +68,10 @@ public class CallCommand implements Command {
 			throw new ShellException(e);
 		} finally {
 			try {
-				if (inStream != null && inFile != null) {
+				if (inStream != null && inputPath != null) {
 					inStream.close();
 				}
-				if (outStream != null && outFile != null) {
+				if (outStream != null && outputPath != null) {
 					outStream.close();
 				}
 				System.gc();
