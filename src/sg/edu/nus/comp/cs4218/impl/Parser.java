@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.TokenFactory;
 
@@ -18,10 +17,11 @@ public final class Parser {
   static final Character SINGLE_QUOTE = '\'';
   static final Character BACK_QUOTE = '`';
   static final Character SEMICOLON = ';';
+  static final Character PIPE = '|';
   static final Character IN_STREAM = '<';
   static final Character OUT_STREAM = '>';
 
-  static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, IN_STREAM,
+  static final List<Character> SPECIALS = Arrays.asList(SEMICOLON, PIPE, IN_STREAM,
       OUT_STREAM);
 
   private Parser() {
@@ -29,23 +29,21 @@ public final class Parser {
 
   /**
    * Split an input string into tokens based on quotes and some special
-   * characters. String inside matched quotes are preserved. The white spaces
-   * between tokens are removed.
+   * characters. String inside matched quotes are preserved.
    * 
    * @param input
    *          The original string input
    * @return A list of tokens
    */
   public static List<AbstractToken> tokenize(String input) {
-    String trimmedInput = input.trim();
     ArrayList<AbstractToken> tokens = new ArrayList<AbstractToken>();
     AbstractToken currentToken = null;
-    for (int i = 0; i < trimmedInput.length(); i++) {
+    for (int i = 0; i < input.length(); i++) {
       if (currentToken == null) {
-        currentToken = TokenFactory.getToken(trimmedInput, i);
+        currentToken = TokenFactory.getToken(input, i);
       } else if (!currentToken.appendNext()) {
         tokens.add(currentToken);
-        currentToken = TokenFactory.getToken(trimmedInput, i);
+        currentToken = TokenFactory.getToken(input, i);
       }
     }
     if (currentToken != null) {

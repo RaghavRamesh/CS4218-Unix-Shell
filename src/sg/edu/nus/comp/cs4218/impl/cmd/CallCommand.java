@@ -21,15 +21,18 @@ import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
-// TODO: Create thread for applications
 public class CallCommand implements Command {
 	private final String commandLine;
 	private final List<String> substitutedTokens;
+	private String inputPath;
+	private String outputPath;
 
 	public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
 	  try {
 	    this.commandLine = cmdLine;
 	    this.substitutedTokens = substituteAll(Parser.tokenize(cmdLine));
+	    this.inputPath = findInput(substitutedTokens);
+	    this.outputPath = findOutput(substitutedTokens);
 	  } catch (IOException e) {
 	    throw new ShellException(e);
 	  }
@@ -38,23 +41,22 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
+	  
 		if (substitutedTokens.isEmpty()) {
 			return;
 		}
 		InputStream inStream = null;
 		OutputStream outStream = null;
-		String inFile = findInput();
-		String outFile = findOutput();
 		try {
 			List<String> argsList = findArguments();
-			if (inFile == null) {
+			if (inputPath == null) {
 				inStream = stdin;
 			} else {
-				inFile = Environment.checkIsFile(inFile);
-				inStream = new FileInputStream(new File(inFile));
+			  inputPath = Environment.checkIsFile(inputPath);
+				inStream = new FileInputStream(new File(inputPath));
 			}
-			outStream = (outFile == null) ? stdout : new FileOutputStream(
-					Environment.createFile(outFile));
+			outStream = (outputPath == null) ? stdout : new FileOutputStream(
+					Environment.createFile(outputPath));
 			Application app = getApplication(argsList.get(0));
 			List<String> argsWithoutApp = argsList.subList(1, argsList.size());
 			String[] args = argsWithoutApp.toArray(new String[argsWithoutApp
@@ -66,10 +68,10 @@ public class CallCommand implements Command {
 			throw new ShellException(e);
 		} finally {
 			try {
-				if (inStream != null && inFile != null) {
+				if (inStream != null && inputPath != null) {
 					inStream.close();
 				}
-				if (outStream != null && outFile != null) {
+				if (outStream != null && outputPath != null) {
 					outStream.close();
 				}
 				System.gc();
@@ -125,23 +127,20 @@ public class CallCommand implements Command {
 	 *             if the input redirection is invalid or there are multiple
 	 *             inputs.
 	 */
-	public String findInput() throws ShellException {
+	public static String findInput(List<String> tokens) throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < substitutedTokens.size()) {
-			String token = substitutedTokens.get(currentIndex++);
+		while (currentIndex < tokens.size()) {
+			String token = tokens.get(currentIndex++);
 			if (Parser.isInStream(token)) {
 				if (result != null) {
-					throw new ShellException(Consts.Messages.TOO_MANY_INPUT
-							+ commandLine);
+					throw new ShellException(Consts.Messages.TOO_MANY_INPUT);
 				}
-				if (currentIndex == substitutedTokens.size()
-						|| Parser.isSpecialCharacter(substitutedTokens
-								.get(currentIndex))) {
-					throw new ShellException(Consts.Messages.INVALID_INPUT
-							+ commandLine);
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+					throw new ShellException(Consts.Messages.INVALID_INPUT);
 				}
-				result = substitutedTokens.get(currentIndex++);
+				result = tokens.get(currentIndex++);
 			}
 		}
 		return result;
@@ -156,23 +155,20 @@ public class CallCommand implements Command {
 	 *             if the output redirection is invalid or there are multiple
 	 *             outputs.
 	 */
-	public String findOutput() throws ShellException {
+	public static String findOutput(List<String> tokens) throws ShellException {
 		String result = null;
 		int currentIndex = 0;
-		while (currentIndex < substitutedTokens.size()) {
-			String token = substitutedTokens.get(currentIndex++);
+		while (currentIndex < tokens.size()) {
+			String token = tokens.get(currentIndex++);
 			if (Parser.isOutStream(token)) {
 				if (result != null) {
-					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT
-							+ commandLine);
+					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT);
 				}
-				if (currentIndex == substitutedTokens.size()
-						|| Parser.isSpecialCharacter(substitutedTokens
-								.get(currentIndex))) {
-					throw new ShellException(Consts.Messages.INVALID_OUTPUT
-							+ commandLine);
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+					throw new ShellException(Consts.Messages.INVALID_OUTPUT);
 				}
-				result = substitutedTokens.get(currentIndex++);
+				result = tokens.get(currentIndex++);
 			}
 		}
 		return result;

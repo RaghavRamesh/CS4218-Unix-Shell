@@ -4,7 +4,7 @@ import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class SingleQuoteToken extends AbstractToken {
-
+  
   protected SingleQuoteToken(String parent, int begin) {
     super(parent, begin);
     assert(parent.charAt(begin) == '\'');
