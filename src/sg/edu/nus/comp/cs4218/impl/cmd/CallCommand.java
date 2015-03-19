@@ -15,7 +15,6 @@ import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FileCreateException;
 import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
@@ -28,6 +27,8 @@ public class CallCommand implements Command {
   private final List<String> substitutedTokens;
   private String inputPath;
   private String outputPath;
+  private InputStream inStream;
+  private OutputStream outStream;
 
   public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
     try {
@@ -50,8 +51,7 @@ public class CallCommand implements Command {
     if (substitutedTokens.isEmpty()) {
       return;
     }
-    InputStream inStream = null;
-    OutputStream outStream = null;
+
     try {
       // Priority IO redirection first
       inStream = getInputStreamFromCommand();
@@ -70,17 +70,7 @@ public class CallCommand implements Command {
       String[] args = argsWithoutApp.toArray(new String[numberOfArgs]);
       app.run(args, inStream, outStream);
     } finally {
-      try {
-        if (inStream != null) {
-          inStream.close();
-        }
-        if (outStream != null) {
-          outStream.close();
-        }
-        System.gc();
-      } catch (IOException e) {
-        throw new ShellException(e);
-      }
+      terminate();
     }
   }
 
@@ -200,8 +190,17 @@ public class CallCommand implements Command {
 
   @Override
   public void terminate() {
-    // TODO Auto-generated method stub
-
+    try {
+      if (inStream != null) {
+        inStream.close();
+      }
+      if (outStream != null) {
+        outStream.close();
+      }
+      System.gc();
+    } catch (IOException e) {
+      // Do nothing
+    }
   }
 
   private Application getApplication(String appId) throws ShellException {
