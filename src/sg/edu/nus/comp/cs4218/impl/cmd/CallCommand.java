@@ -29,9 +29,11 @@ public class CallCommand implements Command {
   private String outputPath;
   private InputStream inStream;
   private OutputStream outStream;
+  private Boolean closeOutput;
 
   public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
     try {
+      this.closeOutput = false;
       this.commandLine = cmdLine;
       List<AbstractToken> tokens = Parser.tokenize(cmdLine);
       for (AbstractToken token : tokens) {
@@ -194,7 +196,7 @@ public class CallCommand implements Command {
       if (inStream != null) {
         inStream.close();
       }
-      if (outStream != null) {
+      if (outStream != null && (outputPath != null || closeOutput)) {
         outStream.close();
       }
       System.gc();
@@ -214,6 +216,10 @@ public class CallCommand implements Command {
 
   public String getOutputPath() {
     return outputPath;
+  }
+  
+  public void setCloseOutput(Boolean closeOutput) {
+    this.closeOutput = closeOutput;
   }
   
   public InputStream getInputStreamFromCommand() throws ShellException {

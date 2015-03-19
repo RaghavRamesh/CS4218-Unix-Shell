@@ -51,14 +51,18 @@ public class PipeCommand implements Command {
       InputStream currentInput = stdin;
       OutputStream currentOutput;
       for (int i = 0; i < commands.size(); i++) {
+        CallCommand command = commands.get(i);
         if (i == commands.size() - 1) {
           currentOutput = stdout;
+          command.setCloseOutput(false);
         } else {
           currentOutput = new PipedOutputStream();
+          command.setCloseOutput(true);
         }
-        CallCommand command = commands.get(i);
+       
         ExecutableThread thread = new ExecutableThread(command, currentInput, currentOutput);
         threads.add(thread);
+        
         if (i < commands.size() - 1) {
           currentInput = new PipedInputStream((PipedOutputStream) currentOutput);
         }
@@ -70,13 +74,13 @@ public class PipeCommand implements Command {
       }
 
       // Wait until all threads finished
-      Boolean threadsNotFinished = true;
-      while (threadsNotFinished) {
+      Boolean isRunning = true;
+      while (isRunning) {
         Thread.sleep(100);
-        threadsNotFinished = false;
+        isRunning = false;
         for (Thread thread : threads) {
           if (thread.isAlive()) {
-            threadsNotFinished = true;
+            isRunning = true;
             break;
           }
         }
