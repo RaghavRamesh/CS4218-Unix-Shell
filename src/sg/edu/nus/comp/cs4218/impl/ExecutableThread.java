@@ -10,12 +10,13 @@ public class ExecutableThread extends Thread {
   private Command command;
   private InputStream inputStream;
   private OutputStream outputStream;
-  
+
   public ExecutableThread() {
     super();
   }
-  
-  public ExecutableThread(Command command, InputStream inputStream, OutputStream outputStream) {
+
+  public ExecutableThread(Command command, InputStream inputStream,
+      OutputStream outputStream) {
     super();
     this.command = command;
     this.inputStream = inputStream;

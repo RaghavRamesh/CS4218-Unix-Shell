@@ -59,8 +59,10 @@ public class ShellImplementation implements Shell {
 	
 	public void run() {
 	  while (true) {
+	    System.out.println("Here");
 	    try {
 	      while (runningThread.isAlive()) {
+	        System.out.println("Waiting");
 	        Thread.sleep(100);
 	      }
 	      System.out.print(Environment.getCurrentDirectory() + " # ");
