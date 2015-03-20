@@ -28,8 +28,7 @@ public class ExecutableThread extends Thread {
     try {
       command.evaluate(inputStream, outputStream);
     } catch (Exception e) {
-      PrintStream printStream = new PrintStream(outputStream);
-      printStream.println(e.getMessage());
+      System.out.println(e.getMessage());
     }
   }
 }
