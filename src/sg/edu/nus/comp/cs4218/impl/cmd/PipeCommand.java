@@ -2,12 +2,15 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
+import sg.edu.nus.comp.cs4218.impl.ExecutableThread;
 import sg.edu.nus.comp.cs4218.impl.Parser;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
@@ -43,7 +46,48 @@ public class PipeCommand implements Command {
   @Override
   public void evaluate(InputStream stdin, OutputStream stdout)
       throws AbstractApplicationException, ShellException {
-    
+    try {
+      List<ExecutableThread> threads = new ArrayList<ExecutableThread>();
+      InputStream currentInput = stdin;
+      OutputStream currentOutput;
+      for (int i = 0; i < commands.size(); i++) {
+        CallCommand command = commands.get(i);
+        if (i == commands.size() - 1) {
+          currentOutput = stdout;
+          command.setCloseOutput(false);
+        } else {
+          currentOutput = new PipedOutputStream();
+          command.setCloseOutput(true);
+        }
+       
+        ExecutableThread thread = new ExecutableThread(command, currentInput, currentOutput);
+        threads.add(thread);
+        
+        if (i < commands.size() - 1) {
+          currentInput = new PipedInputStream((PipedOutputStream) currentOutput);
+        }
+      }
+      
+      // Start all commands
+      for (Thread thread : threads) {
+        thread.start();
+      }
+
+      // Wait until all threads finished
+      Boolean isRunning = true;
+      while (isRunning) {
+        Thread.sleep(100);
+        isRunning = false;
+        for (Thread thread : threads) {
+          if (thread.isAlive()) {
+            isRunning = true;
+            break;
+          }
+        }
+      }
+    } catch (Exception e) {
+      throw new ShellException(e.getMessage());
+    }
   }
 
   @Override
