@@ -86,7 +86,7 @@ public class SedTest {
         stdout = new ByteArrayOutputStream();
         
         app.run(args, stdin, stdout);
-        Assert.assertEquals(expected, stdout.toString());
+        Assert.assertEquals(expected + System.lineSeparator(), stdout.toString());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class SedTest {
 
         stdout = new ByteArrayOutputStream();
         app.run(args, stdin, stdout);
-        Assert.assertEquals(expected, stdout.toString());
+        Assert.assertEquals(expected + System.lineSeparator(), stdout.toString());
     }
 
     @Test(expected = SedException.class)
