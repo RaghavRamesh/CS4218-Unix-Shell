@@ -1,10 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.token;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
@@ -46,23 +42,7 @@ public class BackQuoteToken extends AbstractToken {
     Command command = ShellImplementation.getCommand(cmd);
     ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
     command.evaluate(null, byteOutStream);
-    BufferedReader reader = streamReader(byteOutStream);
-    String result = "";
-    String line;
-    try {
-      while ((line = reader.readLine()) != null) {
-        result += line + "\n";
-      }
-    } catch (IOException e) {
-      throw new ShellException(e);
-    }
-    return result;
-  }
-  
-  private BufferedReader streamReader(ByteArrayOutputStream outStream) {
-    byte[] bytes = outStream.toByteArray();
-    ByteArrayInputStream byteInStream = new ByteArrayInputStream(bytes);
-    return new BufferedReader(new InputStreamReader(byteInStream));
+    return byteOutStream.toString();
   }
 
   @Override

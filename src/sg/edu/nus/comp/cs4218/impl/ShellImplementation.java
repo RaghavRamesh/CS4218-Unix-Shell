@@ -31,6 +31,13 @@ public class ShellImplementation implements Shell {
 		Command command = getCommand(cmdline);
 		runningThread = new ExecutableThread(command, null, stdout);
 		runningThread.start();
+    while (runningThread.isAlive()) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        throw new ShellException(e);
+      }
+    }
 	}
 
 	/**
@@ -60,9 +67,6 @@ public class ShellImplementation implements Shell {
 	public void run() {
 	  while (true) {
 	    try {
-	      while (runningThread.isAlive()) {
-	        Thread.sleep(100);
-	      }
 	      System.out.print(Environment.getCurrentDirectory() + " # ");
 	      parseAndEvaluate(reader.readLine(), System.out);
 	    } catch (Exception e) {
