@@ -97,6 +97,10 @@ public class CallCommand implements Command {
         addNonEmpty(list, current);
         current = "";
         list.add(token.value());
+      } else if (type == TokenType.BACK_QUOTES) {
+        addNonEmpty(list, current);
+        current = "";
+        addNonEmpty(list, normalize(token.value()));
       } else {
         current += token.value();
       }
@@ -105,6 +109,10 @@ public class CallCommand implements Command {
       list.add(current);
     }
     return list;
+  }
+  
+  private static String normalize(String input) {
+    return input.replaceAll("\\s+", " ").trim();
   }
 
   private static void addNonEmpty(List<String> list, String str) {
