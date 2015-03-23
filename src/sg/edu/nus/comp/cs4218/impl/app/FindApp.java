@@ -45,7 +45,7 @@ public class FindApp implements Application {
 			} catch (InvalidDirectoryException e) {
 				throw new FindException(e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new FindException(e);
 			}
 		} else if (args.length == 2) {
 
