@@ -18,6 +18,7 @@ public class ApplicationFactory {
 		maps.put("wc", new WcApp());
 		maps.put("find", new FindApp());
 		maps.put("tail", new TailApp());
+		maps.put("grep", new GrepApp());
 	}
 
 	public Application getApplication(String appId) throws AppNotFoundException {

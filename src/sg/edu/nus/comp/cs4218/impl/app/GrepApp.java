@@ -17,7 +17,6 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.HeadException;
 
 public class GrepApp implements Application {
 
@@ -47,7 +46,7 @@ public class GrepApp implements Application {
 
 		if (args.length == 1) { // only REGEX string provided, take input from stdin
 			if (stdin == null) {
-				throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);
+				throw new GrepException(Consts.Messages.IN_STR_NOT_NULL);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 
@@ -88,7 +87,7 @@ public class GrepApp implements Application {
 			}
 		}
 
-		writer.close();
+		writer.flush();
 	}
 
 }
