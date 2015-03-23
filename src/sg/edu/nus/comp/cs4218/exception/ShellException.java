@@ -10,4 +10,8 @@ public class ShellException extends Exception {
 	public ShellException(IOException exception) {
 		super("shell: " + exception.getMessage());
 	}
+	
+	public ShellException(InvalidFileException exception) {
+	  super("shell: " + exception.getMessage());
+	}
 }

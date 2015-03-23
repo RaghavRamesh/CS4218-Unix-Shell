@@ -19,7 +19,8 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
 public class HeadApp implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 
 		// 4 different cases:
 		// --1-- head "sdfsdf" -- only stdin needed
@@ -36,7 +37,8 @@ public class HeadApp implements Application {
 		}
 
 		BufferedReader reader = null;
-		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
+		PrintWriter writer = new PrintWriter(new BufferedWriter(
+				new OutputStreamWriter(stdout)));
 		int numOfLines = 10; // by default, read only 10 lines
 
 		if (args.length == 0) { // case 1
@@ -72,17 +74,21 @@ public class HeadApp implements Application {
 				try {
 					numOfLines = Integer.parseInt(args[1]);
 					if (args.length == 2)
-						reader = new BufferedReader(new InputStreamReader(stdin));// case 3
+						reader = new BufferedReader(
+								new InputStreamReader(stdin));// case 3
 					else {
 						if (args[2] == null)
-							throw new HeadException(Consts.Messages.ARG_NOT_NULL);
+							throw new HeadException(
+									Consts.Messages.ARG_NOT_NULL);
 						if (args[2].length() == 0)
-							throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
-						reader = new BufferedReader(new FileReader(args[2]));// case 4
+							throw new HeadException(
+									Consts.Messages.ARG_NOT_EMPTY);
+						reader = new BufferedReader(new FileReader(args[2]));// case
+																				// 4
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
-					throw new HeadException(Consts.Messages.ILLEGAL_LINE_CNT);
+					throw new HeadException(e);
 				} catch (FileNotFoundException e) {
 					throw new HeadException(e);
 				}
@@ -95,9 +101,21 @@ public class HeadApp implements Application {
 
 	}
 
-	protected void writeToPrintStream(PrintWriter writer, int numOfLines, final BufferedReader reader) throws AbstractApplicationException {
+	/**
+	 * Writes to the PrintWriter object while reading from the BufferedReader
+	 * object from the top upto a limited number of lines specified
+	 * 
+	 * @param writer
+	 *            : a PrintWriter object to write to
+	 * @param numOfLines
+	 *            : number of lines to limit writing to
+	 * @param reader
+	 *            : BufferedReader object to read from
+	 * @throws AbstractApplicationException
+	 */
+	protected void writeToPrintStream(PrintWriter writer, int numOfLines,
+			final BufferedReader reader) throws AbstractApplicationException {
 
-		// TODO: see if double checking needed
 		if (writer == null)
 			throw new HeadException(Consts.Messages.OUT_STR_NOT_NULL);
 		if (reader == null)
@@ -108,10 +126,10 @@ public class HeadApp implements Application {
 		String line = null;
 		try {
 			for (int i = 0; i < numOfLines; i++) {
-				if ((line = reader.readLine()) != null) {
-					writer.write(line);
-				} else {
+				if ((line = reader.readLine()) == null) {
 					break;
+				} else {
+					writer.write(line);
 				}
 
 				writer.write(System.getProperty("line.separator"));

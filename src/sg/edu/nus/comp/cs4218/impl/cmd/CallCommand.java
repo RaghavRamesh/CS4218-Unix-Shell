@@ -1,14 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,33 +15,33 @@ import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.Parser;
-import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 import sg.edu.nus.comp.cs4218.impl.app.ApplicationFactory;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
-// TODO: Create thead for applications
 public class CallCommand implements Command {
-  private final String mCommandLine;
-  private final List<String> mTokens;
-  private final List<String> mSubstitutedTokens;
+  private final String commandLine;
+  private final List<String> substitutedTokens;
+  private String inputPath;
+  private String outputPath;
+  private InputStream inStream;
+  private OutputStream outStream;
+  private Boolean closeOutput;
 
-  public CallCommand(String commandLine) throws ShellException,
-      AbstractApplicationException {
+  public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
     try {
-      mCommandLine = commandLine;
-      List<String> tokens = Parser.parseCommandLine(commandLine);
-      mTokens = new ArrayList<String>();
-      for (String token : tokens) {
-        // Remove the outer double/single quotes
-        if (Parser.isDoubleQuoted(token) || Parser.isSingleQuoted(token)) {
-          token = token.substring(1, token.length() - 1);
-        }
-        if (!token.isEmpty()) {
-          mTokens.add(token);
-        }
+      this.closeOutput = false;
+      this.commandLine = cmdLine;
+      List<AbstractToken> tokens = Parser.tokenize(cmdLine);
+      for (AbstractToken token : tokens) {
+        token.checkValid();
       }
-      mSubstitutedTokens = substituteAll(mTokens);
+      this.substitutedTokens = substituteAll(tokens);
+      this.inputPath = findInput(substitutedTokens);
+      this.outputPath = findOutput(substitutedTokens);
     } catch (IOException e) {
       throw new ShellException(e);
     }
@@ -53,38 +50,29 @@ public class CallCommand implements Command {
   @Override
   public void evaluate(InputStream stdin, OutputStream stdout)
       throws AbstractApplicationException, ShellException {
-    if (mSubstitutedTokens.isEmpty()) {
+    if (substitutedTokens.isEmpty()) {
       return;
     }
-    InputStream inStream = null;
-    OutputStream outStream = null;
-    String inFile = findInput();
-    String outFile = findOutput();
+
     try {
-      List<String> argsList = findArguments();
-      inStream = (inFile == null) ? stdin : new FileInputStream(
-          Environment.createFile(inFile));
-      outStream = (outFile == null) ? stdout : new FileOutputStream(
-          Environment.createFile(outFile));
-      Application app = getApplication(argsList.get(0));
-      List<String> argumentsWithoutApp = argsList.subList(1, argsList.size());
-      String[] args = argumentsWithoutApp
-          .toArray(new String[argumentsWithoutApp.size()]);
-      app.run(args, inStream, outStream);
-    } catch (FileNotFoundException e) {
-      throw new ShellException(e);
-    } finally {
-      try {
-        if (inStream != null && inFile != null) {
-          inStream.close();
-        }
-        if (outStream != null && outFile != null) {
-          outStream.close();
-        }
-        System.gc();
-      } catch (IOException e) {
-        throw new ShellException(e);
+      // Priority IO redirection first
+      inStream = getInputStreamFromCommand();
+      if (inStream == null) {
+        inStream = stdin;
       }
+      outStream = getOutputStreamFromCommand();
+      if (outStream == null) {
+        outStream = stdout;
+      }
+      // Generate application and arguments
+      List<String> argsList = findArguments();
+      Application app = getApplication(argsList.get(0));
+      List<String> argsWithoutApp = argsList.subList(1, argsList.size());
+      int numberOfArgs = argsWithoutApp.size();
+      String[] args = argsWithoutApp.toArray(new String[numberOfArgs]);
+      app.run(args, inStream, outStream);
+    } finally {
+      terminate();
     }
   }
 
@@ -93,85 +81,61 @@ public class CallCommand implements Command {
    * substitution if necessary.
    * 
    * @param tokens
-   *          A list of tokens.
+   *            A list of tokens.
    * @return A list of substituted tokens.
    */
-  public static List<String> substituteAll(List<String> tokens)
+  public static List<String> substituteAll(List<AbstractToken> tokens)
       throws AbstractApplicationException, ShellException, IOException {
-    ArrayList<String> result = new ArrayList<String>();
-    for (String token : tokens) {
-      if (Parser.containsBackQuote(token)) {
-        result.add(substitute(token));
+    String current = "";
+    List<String> list = new ArrayList<String>();
+    for (AbstractToken token : tokens) {
+      TokenType type = token.getType();
+      if (type == TokenType.SPACES) {
+        addNonEmpty(list, current);
+        current = "";
+      } else if (type == TokenType.INPUT || type == TokenType.OUTPUT) {
+        addNonEmpty(list, current);
+        current = "";
+        list.add(token.value());
       } else {
-        result.add(token);
+        current += token.value();
       }
     }
-    return result;
+    if (!current.isEmpty()) {
+      list.add(current);
+    }
+    return list;
   }
 
-  public static String substitute(String input)
-      throws AbstractApplicationException, ShellException, IOException {
-    List<String> tokens = Parser.parseCommandLine(input);
-    List<String> tokensWithoutQuotes = new ArrayList<String>();
-    for (int i = 0; i < tokens.size(); i++) {
-      String token = tokens.get(i);
-      if (Parser.isSingleQuoted(token) || Parser.isDoubleQuoted(token)) {
-        token = token.substring(1, token.length() - 1);
-        tokensWithoutQuotes.addAll(Parser.parseCommandLine(token));
-      } else {
-        tokensWithoutQuotes.add(token);
-      }
+  private static void addNonEmpty(List<String> list, String str) {
+    if (!str.isEmpty()) {
+      list.add(str);
     }
-
-    for (int i = 0; i < tokensWithoutQuotes.size(); i++) {
-      String token = tokensWithoutQuotes.get(i);
-
-      if (Parser.isBackQuoted(token)) {
-        // Remove back quotes
-        token = token.substring(1, token.length() - 1);
-        Command command = ShellImplementation.getCommand(token);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        command.evaluate(null, byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-            bytes);
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-            byteArrayInputStream));
-        tokensWithoutQuotes.set(i, br.readLine());
-      }
-    }
-    // TODO: toString trims spaces
-    String result = "";
-    for (String token : tokensWithoutQuotes) {
-      result += " " + token;
-    }
-    // System.out.println(result.trim());
-    return result.trim();
   }
 
   /**
    * Find the input redirection from the command.
    * 
-   * @return A string which represents the input path, null if the command does
-   *         not have any input redirection.
+   * @return A string which represents the input path, null if the command
+   *         does not have any input redirection.
    * @throws ShellException
-   *           if the input redirection is invalid or there are multiple inputs.
+   *             if the input redirection is invalid or there are multiple
+   *             inputs.
    */
-  public String findInput() throws ShellException {
+  public static String findInput(List<String> tokens) throws ShellException {
     String result = null;
     int currentIndex = 0;
-    while (currentIndex < mSubstitutedTokens.size()) {
-      String token = mSubstitutedTokens.get(currentIndex++);
+    while (currentIndex < tokens.size()) {
+      String token = tokens.get(currentIndex++);
       if (Parser.isInStream(token)) {
         if (result != null) {
-          throw new ShellException(Consts.Messages.TOO_MANY_INPUT
-              + mCommandLine);
+          throw new ShellException(Consts.Messages.TOO_MANY_INPUT);
         }
-        if (currentIndex == mSubstitutedTokens.size()
-            || Parser.isSpecialCharacter(mSubstitutedTokens.get(currentIndex))) {
-          throw new ShellException(Consts.Messages.INVALID_INPUT + mCommandLine);
+        if (currentIndex == tokens.size()
+            || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+          throw new ShellException(Consts.Messages.INVALID_INPUT);
         }
-        result = mSubstitutedTokens.get(currentIndex++);
+        result = tokens.get(currentIndex++);
       }
     }
     return result;
@@ -180,43 +144,42 @@ public class CallCommand implements Command {
   /**
    * Find the output redirection from the command.
    * 
-   * @return A string which represents the output path, null if the command does
-   *         not have any output redirection.
+   * @return A string which represents the output path, null if the command
+   *         does not have any output redirection.
    * @throws ShellException
-   *           if the output redirection is invalid or there are multiple
-   *           outputs.
+   *             if the output redirection is invalid or there are multiple
+   *             outputs.
    */
-  public String findOutput() throws ShellException {
+  public static String findOutput(List<String> tokens) throws ShellException {
     String result = null;
     int currentIndex = 0;
-    while (currentIndex < mSubstitutedTokens.size()) {
-      String token = mSubstitutedTokens.get(currentIndex++);
+    while (currentIndex < tokens.size()) {
+      String token = tokens.get(currentIndex++);
       if (Parser.isOutStream(token)) {
         if (result != null) {
-          throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT
-              + mCommandLine);
+          throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT);
         }
-        if (currentIndex == mSubstitutedTokens.size()
-            || Parser.isSpecialCharacter(mSubstitutedTokens.get(currentIndex))) {
-          throw new ShellException(Consts.Messages.INVALID_OUTPUT
-              + mCommandLine);
+        if (currentIndex == tokens.size()
+            || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+          throw new ShellException(Consts.Messages.INVALID_OUTPUT);
         }
-        result = mSubstitutedTokens.get(currentIndex++);
+        result = tokens.get(currentIndex++);
       }
     }
     return result;
   }
 
   /**
-   * Find the arguments from the command which does not include IO redirections.
+   * Find the arguments from the command which does not include IO
+   * redirections.
    * 
    * @return A list of string that represents arguments.
    */
   public List<String> findArguments() {
     ArrayList<String> result = new ArrayList<String>();
     int currentIndex = 0;
-    while (currentIndex < mSubstitutedTokens.size()) {
-      String token = mSubstitutedTokens.get(currentIndex++);
+    while (currentIndex < substitutedTokens.size()) {
+      String token = substitutedTokens.get(currentIndex++);
       if (Parser.isOutStream(token) || Parser.isInStream(token)) {
         // Ignore the next token (possibly file name)
         currentIndex++;
@@ -229,12 +192,57 @@ public class CallCommand implements Command {
 
   @Override
   public void terminate() {
-    // TODO Auto-generated method stub
-
+    try {
+      if (inStream != null) {
+        inStream.close();
+      }
+      if (outStream != null && (outputPath != null || closeOutput)) {
+        outStream.close();
+      }
+      System.gc();
+    } catch (IOException e) {
+      // Do nothing
+    }
   }
 
   private Application getApplication(String appId) throws ShellException {
     ApplicationFactory factory = new ApplicationFactory();
     return factory.getApplication(appId);
+  }
+
+  public String getInputPath() {
+    return inputPath;
+  }
+
+  public String getOutputPath() {
+    return outputPath;
+  }
+  
+  public void setCloseOutput(Boolean closeOutput) {
+    this.closeOutput = closeOutput;
+  }
+  
+  public InputStream getInputStreamFromCommand() throws ShellException {
+    if (inputPath == null) {
+      return null;
+    } else {
+      try {
+        inputPath = Environment.checkIsFile(inputPath);
+        return new FileInputStream(new File(inputPath));
+      } catch (InvalidFileException e) {
+        throw new ShellException(e);
+      } catch (IOException e) {
+        throw new ShellException(e);
+      }
+    }
+  }
+  
+  public OutputStream getOutputStreamFromCommand() throws ShellException {
+    try {
+      return (outputPath == null) ? null : new FileOutputStream(
+          Environment.createFile(outputPath));
+    } catch (FileNotFoundException e) {
+      throw new ShellException(e);
+    }
   }
 }

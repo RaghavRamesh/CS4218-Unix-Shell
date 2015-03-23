@@ -43,7 +43,7 @@ public class CdApp implements Application {
 
 			String requiredDirectory = currentDirectory + File.separator
 					+ folderName;
-			
+
 			Environment.setCurrentDirectory(requiredDirectory);
 		} catch (InvalidDirectoryException e) {
 

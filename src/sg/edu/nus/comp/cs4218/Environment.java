@@ -14,19 +14,22 @@ public final class Environment {
 	 * Java VM does not support changing the current working directory. For this
 	 * reason, we use Environment.currentDirectory instead.
 	 */
-	public static volatile String currentDirectory = System.getProperty("user.dir");
+	public static volatile String currentDirectory = System
+			.getProperty("user.dir");
 
 	private Environment() {
 	};
 
-	public static String getCurrentDirectory() throws InvalidDirectoryException, IOException {
+	public static String getCurrentDirectory()
+			throws InvalidDirectoryException, IOException {
 
 		// check if current directory information is not corrupted one
 		checkIsDirectory(currentDirectory);
 		return currentDirectory;
 	}
 
-	public static void setCurrentDirectory(String directoryToChange) throws InvalidDirectoryException, IOException {
+	public static void setCurrentDirectory(String directoryToChange)
+			throws InvalidDirectoryException, IOException {
 
 		currentDirectory = checkIsDirectory(directoryToChange);
 	}
@@ -39,13 +42,15 @@ public final class Environment {
 	 * @throws InvalidDirectoryException
 	 * @throws IOException
 	 */
-	public static String checkIsDirectory(String directoryToCheck) throws InvalidDirectoryException, IOException {
+	public static String checkIsDirectory(String directoryToCheck)
+			throws InvalidDirectoryException, IOException {
 		File reqdPathAsFile = new File(directoryToCheck);
 
-		if(!reqdPathAsFile.isAbsolute()){
-			reqdPathAsFile =  new File(Environment.currentDirectory, directoryToCheck);
+		if (!reqdPathAsFile.isAbsolute()) {
+			reqdPathAsFile = new File(Environment.currentDirectory,
+					directoryToCheck);
 		}
-		
+
 		if (!reqdPathAsFile.exists()) {
 			throw new InvalidDirectoryException(Consts.Messages.PATH_NOT_FOUND);
 		}
@@ -65,12 +70,13 @@ public final class Environment {
 	 * @throws InvalidFileException
 	 * @throws IOException
 	 */
-	public static String checkIsFile(String fileName) throws InvalidFileException, IOException {
-		
+	public static String checkIsFile(String fileName)
+			throws InvalidFileException, IOException {
+
 		File reqdPathAsFile;
-		
+
 		reqdPathAsFile = new File(fileName);
-		
+
 		if (!reqdPathAsFile.isAbsolute()) {
 			reqdPathAsFile = new File(Environment.currentDirectory, fileName);
 		}
@@ -79,20 +85,31 @@ public final class Environment {
 		boolean pathIsFile = reqdPathAsFile.isFile();
 
 		if (!pathExists) {
-			throw new InvalidFileException("can't open '" + fileName + "'. " + Consts.Messages.FILE_NOT_FOUND);
+			throw new InvalidFileException("can't open '" + fileName + "'. "
+					+ Consts.Messages.FILE_NOT_FOUND);
 		}
 
 		if (!pathIsFile) {
-			throw new InvalidFileException("can't open '" + fileName + "'. " + Consts.Messages.FILE_NOT_VALID);
+			throw new InvalidFileException("can't open '" + fileName + "'. "
+					+ Consts.Messages.FILE_NOT_VALID);
 		}
 
 		return reqdPathAsFile.getCanonicalPath();
 	}
 
-	public static File[] getContentsInDirectory(String requiredDirectory) throws InvalidDirectoryException {
+	/**
+	 * Gets the list of files in the directory
+	 * 
+	 * @param requiredDirectory
+	 *            Required directory as relative or absolute path
+	 * @return list of files in the directory
+	 * @throws InvalidDirectoryException
+	 */
+	public static File[] getContentsInDirectory(String requiredDirectory)
+			throws InvalidDirectoryException {
 		File reqdDir = new File(requiredDirectory);
-		
-		if(!reqdDir.isAbsolute()){
+
+		if (!reqdDir.isAbsolute()) {
 			reqdDir = new File(Environment.currentDirectory, requiredDirectory);
 		}
 
@@ -112,7 +129,8 @@ public final class Environment {
 			throw new FileNotFoundException("Failed to delete file: " + folder);
 	}
 
-	public static File createFile(String relativePath) throws FileCreateException {
+	public static File createFile(String relativePath)
+			throws FileCreateException {
 		try {
 			String currentDirectory = getCurrentDirectory();
 			File file = new File(currentDirectory, relativePath);
@@ -121,13 +139,16 @@ public final class Environment {
 			}
 			return file;
 		} catch (Exception e) {
-			throw new FileCreateException(Consts.Messages.CANNOT_CRT_FILE + " " + relativePath);
+			throw new FileCreateException(Consts.Messages.CANNOT_CRT_FILE + " "
+					+ relativePath);
 		}
 	}
-	
-	public static String calculateRelativePath(String base, String basePlusExtraPath) {
+
+	public static String calculateRelativePath(String base,
+			String basePlusExtraPath) {
 		if (base == null || basePlusExtraPath == null)
 			return null;
-		return new File(base).toURI().relativize(new File(basePlusExtraPath).toURI()).getPath();
+		return new File(base).toURI()
+				.relativize(new File(basePlusExtraPath).toURI()).getPath();
 	}
 }

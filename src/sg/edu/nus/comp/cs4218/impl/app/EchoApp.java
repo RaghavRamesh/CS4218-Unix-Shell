@@ -12,7 +12,8 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
 public class EchoApp implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 		if (stdout == null)
 			throw new EchoException(Consts.Messages.OUT_STR_NOT_NULL);
 
