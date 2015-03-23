@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +16,10 @@ import java.util.regex.PatternSyntaxException;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
+import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class GrepApp implements Application {
 
@@ -30,6 +33,9 @@ public class GrepApp implements Application {
 		}
 		if (args.length == 0) {
 			throw new GrepException(Consts.Messages.NO_INP_FOUND);
+		}
+		if (args[0].length() == 0) {
+			throw new GrepException(Consts.Messages.EMPTY_PATTERN);
 		}
 
 		Pattern pattern = null;
@@ -66,10 +72,10 @@ public class GrepApp implements Application {
 
 		} else { // the first argument will be REGEX string, the rest will be filenames
 			for (int i = 1; i < args.length; i++) {
-				String file = args[i];
+				String fileName = args[i];
 
 				try {
-					reader = new BufferedReader(new FileReader(file));
+					reader = new BufferedReader(new FileReader(Environment.getCurrentDirectory() + File.separator + fileName));
 					while ((line = reader.readLine()) != null) {
 						matcher.reset(line);
 
@@ -81,6 +87,8 @@ public class GrepApp implements Application {
 					reader.close();
 
 				} catch (IOException e) {
+					throw new GrepException(e.getMessage());
+				} catch (InvalidDirectoryException e) {
 					throw new GrepException(e.getMessage());
 				}
 
