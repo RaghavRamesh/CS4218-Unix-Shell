@@ -98,9 +98,7 @@ public class CallCommand implements Command {
         current = "";
         list.add(token.value());
       } else if (type == TokenType.BACK_QUOTES) {
-        addNonEmpty(list, current);
-        current = "";
-        addNonEmpty(list, normalize(token.value()));
+        current += normalize(token.value());
       } else {
         current += token.value();
       }
