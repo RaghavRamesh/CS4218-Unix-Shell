@@ -16,7 +16,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.PwdException;
 
 public class PwdAppTest {
@@ -45,7 +47,7 @@ public class PwdAppTest {
 	 * and has been clubbed with this positive test
 	 */
 	@Test
-	public void testPwd() {
+	public void testPwd() throws InvalidDirectoryException {
 		pwdApp = new PwdApp();
 		File temp = null;
 		try {
@@ -53,8 +55,7 @@ public class PwdAppTest {
 			temp = File.createTempFile("temp-file-name", ".tmp");
 			OutputStream fileOutStream = new FileOutputStream(temp);
 
-			String presentWorkingDir = System
-					.getProperty(Consts.Keywords.USER_DIR);
+			String presentWorkingDir = Environment.getCurrentDirectory();
 
 			pwdApp.run(null, null, fileOutStream);
 
