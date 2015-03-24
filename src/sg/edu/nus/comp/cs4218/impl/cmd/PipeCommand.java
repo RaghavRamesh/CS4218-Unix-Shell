@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -18,6 +19,7 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class PipeCommand implements Command {
   private final List<CallCommand> commands;
+  private List<ExecutableThread> threads;
   private final String commandLine;
   
   public PipeCommand(String commandLine) throws ShellException,
@@ -47,7 +49,9 @@ public class PipeCommand implements Command {
   public void evaluate(InputStream stdin, OutputStream stdout)
       throws AbstractApplicationException, ShellException {
     try {
-      List<ExecutableThread> threads = new ArrayList<ExecutableThread>();
+      threads = new ArrayList<ExecutableThread>();
+      
+      // Setup streams for each commands
       InputStream currentInput = stdin;
       OutputStream currentOutput;
       for (int i = 0; i < commands.size(); i++) {
@@ -73,26 +77,42 @@ public class PipeCommand implements Command {
         thread.start();
       }
 
-      // Wait until all threads finished
-      Boolean isRunning = true;
-      while (isRunning) {
+      waitAllThreads();
+    } catch (IOException e) {
+      throw new ShellException(e);
+    } finally {
+      terminate();
+    }
+  }
+  
+  // Wait until all the threads to finish or one thread gets interrupted with error.
+  private void waitAllThreads() throws ShellException, AbstractApplicationException {
+    Boolean isRunning = true;
+    while (isRunning) {
+      try {
         Thread.sleep(100);
-        isRunning = false;
-        for (Thread thread : threads) {
-          if (thread.isAlive()) {
-            isRunning = true;
-            break;
-          }
+      } catch (InterruptedException e) {
+        throw new ShellException(e);
+      }
+      isRunning = false;
+      for (ExecutableThread thread : threads) {
+        if (thread.isAlive()) {
+          isRunning = true;
+          break;
+        } else if (thread.getShellException() != null) {
+          throw thread.getShellException();
+        } else if (thread.getApplicationException() != null) {
+          throw thread.getApplicationException();
         }
       }
-    } catch (Exception e) {
-      throw new ShellException(e.getMessage());
     }
   }
 
   @Override
   public void terminate() {
-    // Auto generated
+    for (ExecutableThread thread : threads) {
+      thread.interrupt();
+    }
   }
 
   @Override
