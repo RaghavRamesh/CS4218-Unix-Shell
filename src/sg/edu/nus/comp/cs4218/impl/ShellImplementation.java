@@ -18,26 +18,16 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class ShellImplementation implements Shell {
   private final BufferedReader reader;
-  private ExecutableThread runningThread;
   
   public ShellImplementation(BufferedReader reader) {
     this.reader = reader;
-    this.runningThread = new ExecutableThread();
   }
 
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		Command command = getCommand(cmdline);
-		runningThread = new ExecutableThread(command, null, stdout);
-		runningThread.start();
-    while (runningThread.isAlive()) {
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        throw new ShellException(e);
-      }
-    }
+		command.evaluate(null, stdout);
 	}
 
 	/**
