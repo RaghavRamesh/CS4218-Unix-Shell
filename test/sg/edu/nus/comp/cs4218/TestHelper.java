@@ -27,6 +27,7 @@ public final class TestHelper {
     }
   }
   
+  // Delete folder and all sub folders and files within
   public static void purgeDirectory(File dir) {
     for (File file : dir.listFiles()) {
       if (file.isDirectory()) {
@@ -34,5 +35,6 @@ public final class TestHelper {
       }
       file.delete();
     }
+    dir.delete();
   }
 }
