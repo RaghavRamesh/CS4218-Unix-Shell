@@ -86,26 +86,26 @@ public class CallCommand implements Command {
    */
   public static List<String> substituteAll(List<AbstractToken> tokens)
       throws AbstractApplicationException, ShellException, IOException {
-    String current = "";
+    String current = null;
     List<String> list = new ArrayList<String>();
     for (AbstractToken token : tokens) {
       TokenType type = token.getType();
+      String val = token.value();
       if (type == TokenType.SPACES) {
-        addNonEmpty(list, current);
-        current = "";
+        addNonNull(list, current);
+        current = null;
       } else if (type == TokenType.INPUT || type == TokenType.OUTPUT) {
-        addNonEmpty(list, current);
-        current = "";
-        list.add(token.value());
+        addNonNull(list, current);
+        current = null;
+        list.add(val);
       } else if (type == TokenType.BACK_QUOTES) {
-        current += normalize(token.value());
+        val = normalize(val);
+        current = current == null ? val : current + val;
       } else {
-        current += token.value();
+        current = current == null ? val : current + val;
       }
     }
-    if (!current.isEmpty()) {
-      list.add(current);
-    }
+    addNonNull(list, current);
     return list;
   }
   
@@ -113,8 +113,8 @@ public class CallCommand implements Command {
     return input.replaceAll("\\s+", " ").trim();
   }
 
-  private static void addNonEmpty(List<String> list, String str) {
-    if (!str.isEmpty()) {
+  private static void addNonNull(List<String> list, String str) {
+    if (str != null) {
       list.add(str);
     }
   }

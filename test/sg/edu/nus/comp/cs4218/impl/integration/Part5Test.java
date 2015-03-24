@@ -27,6 +27,7 @@ public class Part5Test {
   @Before
   public void setUp() throws Exception {
     Environment.currentDirectory = folderPath;
+    (new File(tmpFolderPath)).mkdir();
     shell = new ShellImplementation(null);
   }
 
@@ -34,13 +35,14 @@ public class Part5Test {
   public void tearDown() throws Exception {
     File tmpFolder = new File(tmpFolderPath);
     TestHelper.purgeDirectory(tmpFolder);
+    tmpFolder.delete();
   }
 
   void cdTempFolder() {
     Environment.currentDirectory = tmpFolderPath;
   }
 
-  // Successful tests
+  // Positive tests
 
   @Test
   public void outputRedirectionToFile() throws AbstractApplicationException,
@@ -62,6 +64,15 @@ public class Part5Test {
   }
 
   @Test
+  public void changeDirAndFind() throws AbstractApplicationException,
+      ShellException {
+    ByteArrayOutputStream bao = new ByteArrayOutputStream();
+    shell.parseAndEvaluate("cd tmp; cd ..; find sam*.txt", bao);
+    String expected = "sample.txt" + System.lineSeparator();
+    assertEquals(expected, bao.toString());
+  }
+
+  @Test
   public void writeToFileThenReadFile() throws IOException,
       AbstractApplicationException, ShellException {
     cdTempFolder();
@@ -70,4 +81,31 @@ public class Part5Test {
     String expected = "apple" + System.lineSeparator();
     assertEquals(expected, bao.toString());
   }
+
+  @Test
+  public void writeToFileThenOverwrite() throws AbstractApplicationException,
+      ShellException, IOException {
+    cdTempFolder();
+    shell.parseAndEvaluate("echo apple > file.txt; echo banana > file.txt",
+        System.out);
+    String val = TestHelper.readFile(tmpFolderPath + "/file.txt");
+    String expected = "banana" + System.lineSeparator();
+    assertEquals(expected, val);
+  }
+
+  @Test
+  public void writeToFileThenFind() throws AbstractApplicationException,
+      ShellException {
+    cdTempFolder();
+    ByteArrayOutputStream bao = new ByteArrayOutputStream();
+    shell.parseAndEvaluate(
+        "echo apple > a.txt; echo banana > b.txt; find *.txt", bao);
+    String expected = "a.txt" + System.lineSeparator() + "b.txt"
+        + System.lineSeparator();
+    assertEquals(expected, bao.toString());
+  }
+  
+  // Negative tests
+  
+  
 }
