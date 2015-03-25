@@ -89,6 +89,8 @@ public class SedApp implements Application {
 				indicesOfSymbol.get(1) + 1, indicesOfSymbol.get(2));
 
 		InputStream streamToRead = null;
+		
+		boolean isStdinInput = false;
 
 		if (args.length > 1) {
 			String fileName = args[1];
@@ -102,6 +104,7 @@ public class SedApp implements Application {
 			if (stdin == null) {
 				throw new SedException(Consts.Messages.INP_STR_NOT_NULL);
 			}
+			isStdinInput = true;
 			streamToRead = stdin;
 		}
 
@@ -127,7 +130,10 @@ public class SedApp implements Application {
 		} catch (IOException e) {
 			throw new SedException(e);
 		} finally {
-			writer.close();
+			writer.flush();
+			if (!isStdinInput) {
+				writer.close();
+			}
 		}
 	}
 

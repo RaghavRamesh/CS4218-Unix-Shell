@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -27,6 +29,16 @@ public class PwdAppTest {
 
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
+	
+	@Before
+	public void setUp(){
+		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+	}
+	
+	@After
+	public void tearDown(){
+		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+	}
 
 	/*
 	 * Test for null output stream.

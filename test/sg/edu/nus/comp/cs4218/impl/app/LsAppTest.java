@@ -39,9 +39,10 @@ public class LsAppTest {
 	@Before
 	public void setUp() throws Exception {
 
-		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
+		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 		// create a folder named TempTest in current
 
+		 originalCurrDir = Environment.getCurrentDirectory(); 
 		tempTestDirectory = new File(originalCurrDir + File.separator
 				+ tempFolder);
 
