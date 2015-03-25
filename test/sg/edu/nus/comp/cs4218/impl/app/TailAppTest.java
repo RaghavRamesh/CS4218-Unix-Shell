@@ -366,7 +366,8 @@ public class TailAppTest {
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), TAIL + Consts.Messages.FILE_NOT_EXISTS);
+			String expected = "tail: can't open 'temp-input-file-name.tmp'. The file could not be found";
+			assertEquals(expected,e.getMessage());
 		}
 	}
 

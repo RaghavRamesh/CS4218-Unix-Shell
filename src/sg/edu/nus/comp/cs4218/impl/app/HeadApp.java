@@ -13,8 +13,10 @@ import java.io.PrintWriter;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
+import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
 
 public class HeadApp implements Application {
 
@@ -57,10 +59,11 @@ public class HeadApp implements Application {
 				throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
 
 			try {
-				reader = new BufferedReader(new FileReader(args[0]));
-			} catch (FileNotFoundException e) {
+				reader = new BufferedReader(new FileReader(Environment.checkIsFile(args[0])));
+			} catch (InvalidFileException | IOException e) {
 				throw new HeadException(e);
 			}
+		
 			writeToPrintStream(writer, numOfLines, reader);
 
 		} else if (args.length == 2 || args.length == 3) { // case 3 or 4
@@ -83,13 +86,17 @@ public class HeadApp implements Application {
 						if (args[2].length() == 0)
 							throw new HeadException(
 									Consts.Messages.ARG_NOT_EMPTY);
-						reader = new BufferedReader(new FileReader(args[2]));// case
+						reader = new BufferedReader(new FileReader(Environment.checkIsFile((args[2]))));// case
 																				// 4
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {
 					throw new HeadException(e);
 				} catch (FileNotFoundException e) {
+					throw new HeadException(e);
+				} catch (InvalidFileException e) {
+					throw new HeadException(e);
+				} catch (IOException e) {
 					throw new HeadException(e);
 				}
 			} else {
