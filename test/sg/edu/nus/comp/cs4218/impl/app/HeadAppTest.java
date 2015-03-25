@@ -9,9 +9,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 
 public class HeadAppTest {
@@ -19,6 +21,11 @@ public class HeadAppTest {
 	private static final String HEAD = "head: ";
 	private static final String TEMP_INPUT_FILE = "temp-input-file-name.tmp";
 	private static final String LINE_SEPARATOR = "line.separator";
+	
+  @Before
+  public void setUp() throws Exception {
+    Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+  }
 
 	@Test
 	public void testNullArgumentsArray() {
