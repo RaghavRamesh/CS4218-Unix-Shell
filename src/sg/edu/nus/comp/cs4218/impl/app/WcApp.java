@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
@@ -141,7 +140,7 @@ public class WcApp implements Application {
 
 		displayCount(writer, bytesLength, wordsLength, lineLength);
 
-		writer.write("\n");
+		writer.write(System.lineSeparator());
 	}
 
 	/**
@@ -191,7 +190,7 @@ public class WcApp implements Application {
 
 			if (writer != null) {
 				writer.write(" "+ fileNames.get(k));
-				writer.write("\n");
+				writer.write(System.lineSeparator());
 			}
 		}
 
