@@ -19,6 +19,7 @@ public class ApplicationFactory {
 		maps.put("find", new FindApp());
 		maps.put("tail", new TailApp());
 		maps.put("grep", new GrepApp());
+		maps.put("sed", new SedApp());
 	}
 
 	public Application getApplication(String appId) throws AppNotFoundException {

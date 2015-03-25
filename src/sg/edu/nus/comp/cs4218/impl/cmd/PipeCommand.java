@@ -115,8 +115,8 @@ public class PipeCommand implements Command {
     }
   }
 
-  @Override
-  public String toString() {
-    return commandLine;
-  }
+//  @Override
+//  public String toString() {
+//    return commandLine;
+//  }
 }

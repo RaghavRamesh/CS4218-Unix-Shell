@@ -225,13 +225,13 @@ public class CallCommand implements Command {
     return factory.getApplication(appId);
   }
 
-  public String getInputPath() {
-    return inputPath;
-  }
-
-  public String getOutputPath() {
-    return outputPath;
-  }
+//  public String getInputPath() {
+//    return inputPath;
+//  }
+//
+//  public String getOutputPath() {
+//    return outputPath;
+//  }
   
   public void setCloseOutput(Boolean closeOutput) {
     this.closeOutput = closeOutput;

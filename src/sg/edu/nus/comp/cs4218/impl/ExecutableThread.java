@@ -14,11 +14,11 @@ public class ExecutableThread extends Thread {
   private ShellException shellException;
   private AbstractApplicationException appException;
 
-  public ExecutableThread() {
-    super();
-    shellException = null;
-    appException = null;
-  }
+//  public ExecutableThread() {
+//    super();
+//    shellException = null;
+//    appException = null;
+//  }
 
   public ExecutableThread(Command command, InputStream inputStream,
       OutputStream outputStream) {
