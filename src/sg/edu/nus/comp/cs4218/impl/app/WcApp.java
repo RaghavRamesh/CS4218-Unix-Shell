@@ -190,7 +190,7 @@ public class WcApp implements Application {
 			reader.close();
 
 			if (writer != null) {
-				writer.write(fileNames.get(k));
+				writer.write(" "+ fileNames.get(k));
 				writer.write("\n");
 			}
 		}
@@ -326,6 +326,8 @@ public class WcApp implements Application {
 	private void displayCount(PrintWriter writer, int bytesLength,
 			int wordsLength, int lineLength) {
 
+		String result = "";
+		
 		if (writer == null)
 			return;
 
@@ -337,17 +339,19 @@ public class WcApp implements Application {
 		}
 
 		if (displayLineLength) {
-			writer.write(lineLength + " ");
+			result = result + lineLength + " ";
 		}
 		
 		if (displayWords) {
-			writer.write(wordsLength + " ");
+			result = result + wordsLength + " ";
 		}
 		
 		if (displayBytes) {
-			writer.write(bytesLength + " ");
+			result = result + bytesLength + " ";
 		}
 
+		result = result.trim();
+		writer.write(result);		
 	}
 
 }

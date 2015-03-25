@@ -141,7 +141,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("1 14 67 ", buffReader.readLine());
+			assertEquals("1 14 67", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -224,7 +224,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("14 ", buffReader.readLine());
+			assertEquals("14", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
