@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
@@ -135,7 +136,7 @@ public class WcApp implements Application {
 		}
 
 		reader = new BufferedReader(new InputStreamReader(stdin));
-
+		
 		readAndProcessLinesInReader(reader);
 
 		displayCount(writer, bytesLength, wordsLength, lineLength);
@@ -211,30 +212,77 @@ public class WcApp implements Application {
 	 * @param reader
 	 *            reader from which contents have to be read
 	 * @throws IOException
+	 * @throws WcException 
 	 */
 	// made protected to test the method
 	protected void readAndProcessLinesInReader(BufferedReader reader)
-			throws IOException {
+			throws IOException, WcException {
+		
+		String fileContents = readAndConvertToString(reader);
+		bytesLength = getByteCount(fileContents);
+		wordsLength = getWordsLength(fileContents);
+		lineLength = getLineLength(fileContents);
+		
 		// read line by line
-		String fileSentence = reader.readLine();
-		String words[];
-
-		while (fileSentence != null) {
-			// +1 to account for new line character
-			bytesLength += fileSentence.getBytes().length + 1;
-			words = fileSentence.split(" ");
-			for (String word : words) {
-				if (word.length() > 0) {
-					wordsLength = wordsLength + 1;
-				}
-			}
-			lineLength += 1;
-			fileSentence = reader.readLine();
-		}
-
 		totalBytes = totalBytes + bytesLength;
 		totalWordsLength = totalWordsLength + wordsLength;
 		totalLineLength = totalLineLength + lineLength;
+	}
+
+	private int getLineLength(String fileContents) throws WcException {
+		int count = 0;
+		if(fileContents == null){
+			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
+		}
+		
+		for(int i=0; i< fileContents.length(); i++){
+			if(fileContents.charAt(i) == '\n'){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+
+	private int getWordsLength(String fileContents) throws WcException {
+		int count = 0;
+		if(fileContents == null){
+			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
+		}
+		
+		if(fileContents.length() == 0)
+			return 0;
+		
+		String[] tokenList = fileContents.trim().split("\\s+");
+		for(String token:tokenList){
+			if(token.length() > 0){
+				count++;
+			}
+		}
+		
+		return count;
+	}
+
+	private int getByteCount(String fileContents) throws WcException {
+		if(fileContents == null){
+			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
+		}
+		
+		return fileContents.length();
+	}
+
+	private String readAndConvertToString(BufferedReader reader)
+			throws IOException {
+		StringBuilder builder = new StringBuilder();
+		int currentChar =  reader.read();
+		while(currentChar != -1){
+			builder.append((char)currentChar);
+			currentChar = reader.read();
+		}
+		
+		reader.close();
+		
+		return  builder.toString();
 	}
 
 	/**
@@ -288,16 +336,16 @@ public class WcApp implements Application {
 			displayLineLength = true;
 		}
 
-		if (displayBytes) {
-			writer.write(bytesLength + " ");
+		if (displayLineLength) {
+			writer.write(lineLength + " ");
 		}
-
+		
 		if (displayWords) {
 			writer.write(wordsLength + " ");
 		}
-
-		if (displayLineLength) {
-			writer.write(lineLength + " ");
+		
+		if (displayBytes) {
+			writer.write(bytesLength + " ");
 		}
 
 	}
