@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Application;
@@ -99,8 +100,15 @@ public class CallCommand implements Command {
         current = null;
         list.add(val);
       } else if (type == TokenType.BACK_QUOTES) {
-        val = normalize(val);
-        current = current == null ? val : current + val;
+        // Split the strings inside into multiple args
+        List<String> strList = normalize(val);
+        if (!strList.isEmpty()) {
+          current = current == null ? strList.get(0) : current + strList.get(0);
+          for (int i = 1; i < strList.size(); i++) {
+            list.add(current);
+            current = strList.get(i);
+          }
+        }
       } else {
         current = current == null ? val : current + val;
       }
@@ -109,8 +117,9 @@ public class CallCommand implements Command {
     return list;
   }
   
-  private static String normalize(String input) {
-    return input.replaceAll("\\s+", " ").trim();
+  private static List<String> normalize(String input) {
+    String str = input.replaceAll("\\s+", " ").trim();
+    return Arrays.asList(str.split("\\s"));
   }
 
   private static void addNonNull(List<String> list, String str) {
