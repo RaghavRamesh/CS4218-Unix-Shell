@@ -350,7 +350,8 @@ public class HeadAppTest {
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), HEAD + Consts.Messages.FILE_NOT_EXISTS);
+			String expected = "head: can't open 'temp-input-file-name.tmp'. The file could not be found";
+			assertEquals(expected,e.getMessage());
 		}
 	}
 
