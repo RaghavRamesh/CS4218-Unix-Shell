@@ -1,6 +1,6 @@
 package substitute_command_tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,13 +13,13 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
+import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
-import sg.edu.nus.comp.cs4218.impl.app.FindApp;
+import sg.edu.nus.comp.cs4218.impl.app.EchoApp;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApp;
 
-public class GrepWithFindCommandTest {
+public class GrepWithEchoCommandTest {
 
 	Application app1;
 	Application app2;
@@ -27,8 +27,9 @@ public class GrepWithFindCommandTest {
 	String[] app2Args;
 
 	/*
-	 * Command under test: grep 'usage' `find GrepWithSubComman*`
+	 *  Command Under Test: "grep 'usage' `echo GrepWithSubCommand.txt`"
 	 */
+	
 	@Before
 	public void setUp() throws Exception {
 
@@ -40,7 +41,7 @@ public class GrepWithFindCommandTest {
 				+ "SubstituteCommandTestFiles";
 
 		app1 = new GrepApp();
-		app2 = new FindApp();
+		app2 = new EchoApp();
 	}
 
 	@After
@@ -53,19 +54,14 @@ public class GrepWithFindCommandTest {
 	 * This test considers the applications atomically
 	 */
 	@Test
-	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithSubComman*" };
+	public void testGrepWithEchoDirectly() throws AbstractApplicationException {
+		app2Args = new String[] { "GrepWithSubCommand.txt" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-		FindApp findApp = new FindApp();
-		findApp.run(app2Args, null, outStream);
-		String fileNamesResult = new String(outStream.toString().trim());
-		String[] fileNames = fileNamesResult.split(System.lineSeparator());
-		app1Args = new String[fileNames.length + 1];
-		app1Args[0] = "usage";
-		for (int i = 1; i < fileNames.length + 1; i++) {
-			app1Args[i] = fileNames[i - 1].replace(System.lineSeparator(), "");
-		}
+		EchoApp echoApp = new EchoApp();
+		echoApp.run(app2Args, null, outStream);
+		app1Args = new String[] { "usage",
+				outStream.toString().replace(System.lineSeparator(), "") };
 
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
@@ -74,8 +70,6 @@ public class GrepWithFindCommandTest {
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
-				+ System.lineSeparator()
-				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
@@ -84,31 +78,30 @@ public class GrepWithFindCommandTest {
 	 * This test integrates the parsing component as well
 	 */
 	@Test
-	public void testGrepWithFindAlongWithParser()
+	public void testGrepWithEchoAlongWithParser()
 			throws AbstractApplicationException, ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find GrepWithSubComman*`",
+		shImpl.parseAndEvaluate("grep 'usage' `echo GrepWithSubCommand.txt`",
 				outStream);
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
-				+ System.lineSeparator()
-				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
 	/*
-	 * Negative test: Find application throws exception
+	 * Negative test: Grep application throws exception because echo returns
+	 * empty string
 	 */
-	@Test(expected = FindException.class)
-	public void testGrepWithFindFailing() throws AbstractApplicationException,
+	@Test(expected = GrepException.class)
+	public void testGrepWithEchoFailing() throws AbstractApplicationException,
 			ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find`", outStream);
+		shImpl.parseAndEvaluate("grep 'usage' `echo`", outStream);
 	}
 }

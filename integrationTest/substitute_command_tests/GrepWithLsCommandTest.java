@@ -1,6 +1,6 @@
 package substitute_command_tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -13,13 +13,13 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
+import sg.edu.nus.comp.cs4218.exception.LsException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
-import sg.edu.nus.comp.cs4218.impl.app.FindApp;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApp;
+import sg.edu.nus.comp.cs4218.impl.app.LsApp;
 
-public class GrepWithFindCommandTest {
+public class GrepWithLsCommandTest {
 
 	Application app1;
 	Application app2;
@@ -27,8 +27,9 @@ public class GrepWithFindCommandTest {
 	String[] app2Args;
 
 	/*
-	 * Command under test: grep 'usage' `find GrepWithSubComman*`
+	 * Command under test: grep 'usage' `ls`
 	 */
+	
 	@Before
 	public void setUp() throws Exception {
 
@@ -40,7 +41,7 @@ public class GrepWithFindCommandTest {
 				+ "SubstituteCommandTestFiles";
 
 		app1 = new GrepApp();
-		app2 = new FindApp();
+		app2 = new LsApp();
 	}
 
 	@After
@@ -53,14 +54,15 @@ public class GrepWithFindCommandTest {
 	 * This test considers the applications atomically
 	 */
 	@Test
-	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithSubComman*" };
+	public void testGrepWithLsDirectly() throws AbstractApplicationException {
+		app2Args = new String[] {};
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-		FindApp findApp = new FindApp();
-		findApp.run(app2Args, null, outStream);
+		LsApp lsApp = new LsApp();
+		lsApp.run(app2Args, null, outStream);
+
 		String fileNamesResult = new String(outStream.toString().trim());
-		String[] fileNames = fileNamesResult.split(System.lineSeparator());
+		String[] fileNames = fileNamesResult.split("\t");
 		app1Args = new String[fileNames.length + 1];
 		app1Args[0] = "usage";
 		for (int i = 1; i < fileNames.length + 1; i++) {
@@ -84,31 +86,30 @@ public class GrepWithFindCommandTest {
 	 * This test integrates the parsing component as well
 	 */
 	@Test
-	public void testGrepWithFindAlongWithParser()
+	public void testGrepWithLsAlongWithParser()
 			throws AbstractApplicationException, ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find GrepWithSubComman*`",
-				outStream);
+		shImpl.parseAndEvaluate("grep 'usage' `ls`", outStream);
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
 				+ System.lineSeparator()
 				+ "Its tests the usage of various commands."
-				+ System.lineSeparator();
+				+ System.lineSeparator(); 
 		assertEquals(expected, outStream.toString());
 	}
 
 	/*
-	 * Negative test: Find application throws exception
+	 * Negative test: Ls application throws exception
 	 */
-	@Test(expected = FindException.class)
-	public void testGrepWithFindFailing() throws AbstractApplicationException,
+	@Test(expected = LsException.class)
+	public void testGrepWithLsFailing() throws AbstractApplicationException,
 			ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find`", outStream);
+		shImpl.parseAndEvaluate("grep 'usage' `ls abcdRandome`", outStream);
 	}
 }

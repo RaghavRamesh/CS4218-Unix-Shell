@@ -104,7 +104,7 @@ public class WcApp implements Application {
 			wordsLength = 0;
 			lineLength = 0;
 
-			if (args[i].length() <= 0) {
+			if (args[i] == null ||args[i].length() <= 0) {
 				throw new WcException(Consts.Messages.FILE_NOT_VALID);
 			}
 
