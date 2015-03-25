@@ -10,25 +10,23 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
+import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
-import sg.edu.nus.comp.cs4218.impl.app.FindApp;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApp;
+import sg.edu.nus.comp.cs4218.impl.app.PwdApp;
 
-public class GrepWithFindCommandTest {
+public class PwdWithGrepCommandTest {
 
-	Application app1;
-	Application app2;
-	String[] app1Args;
-	String[] app2Args;
-	
-	// Command under test: find "GrepWithPipeComman*" | grep "Pipe"
-	
+	String[] grepArgs;
+
+	/*
+	 * Command under test: pwd | grep 'usage'
+	 */
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -38,9 +36,6 @@ public class GrepWithFindCommandTest {
 				+ "test-files-integration"
 				+ File.separator
 				+ "PipeCommandTestFiles";
-
-		app1 = new GrepApp();
-		app2 = new FindApp();
 	}
 
 	@After
@@ -49,30 +44,25 @@ public class GrepWithFindCommandTest {
 				.getProperty(Consts.Keywords.USER_DIR);
 	}
 
-	/*
-	 * This test considers the applications atomically
-	 */
 	@Test
-	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithPipeComman*" };
+	public void testPwdWithGrepDirectly() throws AbstractApplicationException {
+
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		// Run pwd
+		PwdApp pwdApp = new PwdApp();
+		pwdApp.run(null, null, outStream);
 
-		FindApp findApp = new FindApp();
-		findApp.run(app2Args, null, outStream);
-
-		byte[] app2Results = outStream.toByteArray();
-		app1Args = new String[] { "Pipe" };
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(app2Results);
-
+		// Convert pwd output to byte array
+		byte[] pwdOutput = outStream.toByteArray();
 		outStream.reset();
+		
+		// Run Grep
+		ByteArrayInputStream inStream = new ByteArrayInputStream(pwdOutput);
+		grepArgs = new String[] { "Pipe" };
 		GrepApp grepApp = new GrepApp();
-		grepApp.run(app1Args, inputStream, outStream);
-
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
+		grepApp.run(grepArgs, inStream, outStream);
+		String expected = "/Users/raghav/Dropbox/NUS/SEM 8/CS4218 - Software Testing And Debugging/CS4218-Shell/test-files-integration/PipeCommandTestFiles"
 				+ System.lineSeparator();
-
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -80,29 +70,27 @@ public class GrepWithFindCommandTest {
 	 * This test integrates the parsing component as well
 	 */
 	@Test
-	public void testGrepWithFindAlongWithParser()
+	public void testPwdWithGrepAlongWithParser()
 			throws AbstractApplicationException, ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("find GrepWithPipeComman* | grep 'Pipe'",
-				outStream);
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
+		shImpl.parseAndEvaluate("pwd | grep 'Pipe'", outStream);
+		String expected = "/Users/raghav/Dropbox/NUS/SEM 8/CS4218 - Software Testing And Debugging/CS4218-Shell/test-files-integration/PipeCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
 	/*
-	 * Negative test: Find application throws exception
+	 * Negative test: Grep application throws exception because there is no
+	 * input was given
 	 */
-	@Test(expected = FindException.class)
-	public void testGrepWithFindFailing() throws AbstractApplicationException,
+	@Test(expected = GrepException.class)
+	public void testPwdWithGrepFailing() throws AbstractApplicationException,
 			ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("find | grep 'Pipe'", outStream);
+		shImpl.parseAndEvaluate("pwd | grep ", outStream);
 	}
 }

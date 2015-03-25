@@ -14,33 +14,31 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.exception.FindException;
+import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
-import sg.edu.nus.comp.cs4218.impl.app.FindApp;
+import sg.edu.nus.comp.cs4218.impl.app.CatApp;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApp;
 
-public class GrepWithFindCommandTest {
+public class GrepWithCatCommandTest {
 
-	Application app1;
-	Application app2;
-	String[] app1Args;
-	String[] app2Args;
-	
-	// Command under test: find "GrepWithPipeComman*" | grep "Pipe"
-	
+	Application grepApp;
+	Application catApp;
+	String[] catArgs;
+	String[] grepArgs;
+
+	// Command under test: cat PipeCommandTestFiles/* | grep "usage"
+
 	@Before
 	public void setUp() throws Exception {
 
 		Environment.currentDirectory = System
 				.getProperty(Consts.Keywords.USER_DIR)
 				+ File.separator
-				+ "test-files-integration"
-				+ File.separator
-				+ "PipeCommandTestFiles";
+				+ "test-files-integration";
 
-		app1 = new GrepApp();
-		app2 = new FindApp();
+		grepApp = new GrepApp();
+		catApp = new CatApp();
 	}
 
 	@After
@@ -53,26 +51,30 @@ public class GrepWithFindCommandTest {
 	 * This test considers the applications atomically
 	 */
 	@Test
-	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithPipeComman*" };
+	public void testGrepWithCatDirectly() throws AbstractApplicationException {
+		// Build arguments for cat
+		catArgs = new String[] { "PipeCommandTestFiles/*" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-		FindApp findApp = new FindApp();
-		findApp.run(app2Args, null, outStream);
+		// Run
+		catApp = new CatApp();
+		catApp.run(catArgs, null, outStream);
 
-		byte[] app2Results = outStream.toByteArray();
-		app1Args = new String[] { "Pipe" };
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(app2Results);
-
+		// Convert cat output to byte array
+		byte[] catOutput = outStream.toByteArray();
 		outStream.reset();
-		GrepApp grepApp = new GrepApp();
-		grepApp.run(app1Args, inputStream, outStream);
 
-		String expected = "GrepWithPipeCommand.txt"
+		// Run Grep
+		ByteArrayInputStream inStream = new ByteArrayInputStream(catOutput);
+		grepArgs = new String[] { "usage" };
+		grepApp = new GrepApp();
+		grepApp.run(grepArgs, inStream, outStream);
+		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
+				+ "This is the second usage of the word."
+				+ System.lineSeparator()
+				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
-
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -80,29 +82,30 @@ public class GrepWithFindCommandTest {
 	 * This test integrates the parsing component as well
 	 */
 	@Test
-	public void testGrepWithFindAlongWithParser()
+	public void testGrepWithCatAlongWithParser()
 			throws AbstractApplicationException, ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("find GrepWithPipeComman* | grep 'Pipe'",
+		shImpl.parseAndEvaluate("cat PipeCommandTestFiles/* | grep 'usage'",
 				outStream);
-		String expected = "GrepWithPipeCommand.txt"
+		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
+				+ "This is the second usage of the word."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
 	/*
-	 * Negative test: Find application throws exception
+	 * Negative test: Cat application throws exception when file does not exist
 	 */
-	@Test(expected = FindException.class)
-	public void testGrepWithFindFailing() throws AbstractApplicationException,
+	@Test(expected = CatException.class)
+	public void testGrepWithCatFailing() throws AbstractApplicationException,
 			ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("find | grep 'Pipe'", outStream);
+		shImpl.parseAndEvaluate("cat a.txt | grep 'usage'", outStream);
 	}
+
 }
