@@ -7,15 +7,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.GlobFileSearcher;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
@@ -34,30 +35,30 @@ public class CallCommand implements Command {
 	private OutputStream outStream;
 	private Boolean closeOutput;
 
-	public CallCommand(String cmdLine) throws ShellException,
-			AbstractApplicationException {
+	public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
 		try {
 			this.closeOutput = false;
 			this.commandLine = cmdLine;
-//			System.out.println("[CallCommand] cmdLine: " + cmdLine);
+			// System.out.println("[CallCommand] cmdLine: " + cmdLine);
 			List<AbstractToken> tokens = Parser.tokenize(cmdLine);
 			for (AbstractToken token : tokens) {
 				token.checkValid();
 			}
 			this.substitutedTokens = substituteAll(tokens);
 			this.inputPath = findInput(substitutedTokens);
-//			System.out.println("[CallCommand] inputPath: " + this.inputPath);
+			// System.out.println("[CallCommand] inputPath: " + this.inputPath);
 			this.outputPath = findOutput(substitutedTokens);
-//			System.out.println("[CallCommand] outputPath: " + this.outputPath);
+			// System.out.println("[CallCommand] outputPath: " + this.outputPath);
 			this.findGlobbing(substitutedTokens);
 		} catch (IOException e) {
 			throw new ShellException(e);
+		} catch (InvalidDirectoryException e) {
+			throw new ShellException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void evaluate(InputStream stdin, OutputStream stdout)
-			throws AbstractApplicationException, ShellException {
+	public void evaluate(InputStream stdin, OutputStream stdout) throws AbstractApplicationException, ShellException {
 		if (substitutedTokens.isEmpty()) {
 			return;
 		}
@@ -92,13 +93,12 @@ public class CallCommand implements Command {
 	 *            A list of tokens.
 	 * @return A list of substituted tokens.
 	 */
-	public static List<String> substituteAll(List<AbstractToken> tokens)
-			throws AbstractApplicationException, ShellException, IOException {
+	public static List<String> substituteAll(List<AbstractToken> tokens) throws AbstractApplicationException, ShellException, IOException {
 		String current = "";
 		List<String> list = new ArrayList<String>();
 		for (AbstractToken token : tokens) {
 			TokenType type = token.getType();
-//			System.out.println("[CallCommand] type: " + type);
+			// System.out.println("[CallCommand] type: " + type);
 			if (type == TokenType.SPACES) {
 				addNonEmpty(list, current);
 				current = "";
@@ -140,8 +140,7 @@ public class CallCommand implements Command {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_INPUT);
 				}
-				if (currentIndex == tokens.size()
-						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+				if (currentIndex == tokens.size() || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_INPUT);
 				}
 				result = tokens.get(currentIndex++);
@@ -168,8 +167,7 @@ public class CallCommand implements Command {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT);
 				}
-				if (currentIndex == tokens.size()
-						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+				if (currentIndex == tokens.size() || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_OUTPUT);
 				}
 				result = tokens.get(currentIndex++);
@@ -177,63 +175,50 @@ public class CallCommand implements Command {
 		}
 		return result;
 	}
-	
-	public static String findGlobbing(List<String> tokens) throws ShellException {
-		String result = "";
-		int currentIndex = 0;
-		while (currentIndex < tokens.size()) {
-			String token = tokens.get(currentIndex++);
-			if (token.contains(String.valueOf('*'))) {
-				if (token.matches("\\*")) {
-					// If only *, return all contents
-					try {
-						File[] files = Environment.getContentsInDirectory(Environment.getCurrentDirectory());
-						for (File file : files) 
-							result += file.getName() + " ";
-					} catch (InvalidDirectoryException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-//					System.out.println(result);
-				} else if (token.matches("[a-z|A-Z|0-9]+\\/\\*\\/[a-z|A-Z|0-9]+")) {
-					// if it is between slashes do nothing
-					result = token;
-					// System.out.println("[findGlobbing]: " + result);
-				} else if (token.matches("([(a-z|A-Z|0-9|\\*)]?)+\\*([(a-z|A-Z|0-9|\\*)]?)+")) {
-					// if there is a match print only those that matched
-					// Get contents, filter according to token
-					// 3 cases; 1. * before; 2. * after; 3. * before and after
-					String strippedToken = token.replace("*", "");
-					try {
-						File[] files = Environment.getContentsInDirectory(Environment.getCurrentDirectory());
-						for (File file : files) {
-							if ((file.getName().matches("(([a-z|A-Z|0-9|.]))+" + strippedToken + "\\b")) 
-									&& (token.matches("(([a-z|A-Z|0-9|.|\\*]))+" + strippedToken + "\\b"))) {
-								System.out.println("[findGlobbing] 1st case: " + file.getName());
-								result+=file.getName() + " ";
-							} else if ((file.getName().matches("\\b" + strippedToken + "(([a-z|A-Z|0-9|.]))+\\b"))
-									&& (token.matches("\\b" + strippedToken + "(([a-z|A-Z|0-9|.|*]))+"))) {
-								System.out.println("[findGlobbing] 2nd case: " + file.getName());
-								result += file.getName() + " ";
-							} else if ((file.getName().matches("(([a-z|A-Z|0-9|.]))+" + strippedToken + "(([a-z|A-Z|0-9|.]))+")) 
-									&& (token.matches("(([a-z|A-Z|0-9|.|\\*]))+" + strippedToken + "(([a-z|A-Z|0-9|.|\\*]))+"))){
-								System.out.println("[findGlobbing] 3rd case: " + file.getName());
-								result += file.getName() + " ";
-							}
-						}
-					} catch (InvalidDirectoryException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				} 
+
+	public static List<String> findGlobbing(List<String> tokens) throws ShellException, IOException, InvalidDirectoryException {
+
+		// find the token with *
+		// if not found a token with *, return as is
+		// if found, replace that token with several tokens that were returned while searching
+
+		String relevantToken = null;
+		int relevantTokenIdx = 0;
+		for (int idx = 0; idx < tokens.size(); idx++) {
+			if (tokens.get(idx).contains("*")) {
+				relevantToken = tokens.get(idx);
+				relevantTokenIdx = idx;
+				break;
 			}
 		}
-		System.out.println("Result: " + result);
-		return result;
+
+		if (relevantToken == null)
+			return tokens;
+
+		int indexOfFirstAsterisk = relevantToken.indexOf('*');
+		int indexOfLastFileSeparator = relevantToken.lastIndexOf(File.separator);
+
+		if (indexOfLastFileSeparator > indexOfFirstAsterisk) {
+			// TODO: throw exception
+		}
+
+		String directoryToLookIn = relevantToken.substring(0, indexOfLastFileSeparator); // do not include the file separator
+		String globPattern = relevantToken.substring(indexOfFirstAsterisk);
+
+		String absolutePathOfDirToLookIn = Environment.checkIsDirectory(directoryToLookIn);
+		GlobFileSearcher fileSearcher = new GlobFileSearcher(globPattern, directoryToLookIn);
+		Files.walkFileTree(Paths.get(absolutePathOfDirToLookIn), fileSearcher);
+		List<String> fileAndDirNames = fileSearcher.getResultList();
+
+		List<String> newTokensList = new ArrayList<String>(tokens);
+		newTokensList.remove(relevantTokenIdx);
+		for (int idx = 0; idx < fileAndDirNames.size(); idx++) {
+			newTokensList.add(relevantTokenIdx + idx, fileAndDirNames.get(idx));
+		}
+
+		return newTokensList;
 	}
-	
+
 	/**
 	 * Find the arguments from the command which does not include IO
 	 * redirections.
@@ -304,8 +289,7 @@ public class CallCommand implements Command {
 
 	public OutputStream getOutputStreamFromCommand() throws ShellException {
 		try {
-			return (outputPath == null) ? null : new FileOutputStream(
-					Environment.createFile(outputPath));
+			return (outputPath == null) ? null : new FileOutputStream(Environment.createFile(outputPath));
 		} catch (FileNotFoundException e) {
 			throw new ShellException(e);
 		}
