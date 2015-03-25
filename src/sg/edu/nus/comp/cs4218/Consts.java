@@ -34,6 +34,7 @@ public class Consts {
 		public static final String INVALID_SYMBOL = "Invalid symbol";
 		public static final String UNTERMINATED_SYMBOL = "Unterminated symbol ";
 		public static final String BAD_OPTION_IN_SUB = "Bad Option in Substitution Expression";
+		public static final String CONTENTS_NOT_NULL = "Contents cannot be null";
 	}
 
 	public class Keywords {
