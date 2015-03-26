@@ -198,9 +198,9 @@ public class CallCommand implements Command {
 		int indexOfFirstAsterisk = relevantToken.indexOf('*');
 		int indexOfLastFileSeparator = relevantToken.lastIndexOf(File.separator);
 
-		if (indexOfLastFileSeparator != -1 && indexOfLastFileSeparator > indexOfFirstAsterisk) {
-			throw new ShellException(Consts.Messages.FILE_SEPARATOR_AFTER_ASTERISK);
-		}
+		// if there is file seperator after *
+		if (indexOfLastFileSeparator != -1 && indexOfLastFileSeparator > indexOfFirstAsterisk)
+			return tokens;
 
 		String directoryPrefix = "";
 		String globPattern = null;
@@ -217,6 +217,9 @@ public class CallCommand implements Command {
 		GlobFileSearcher fileSearcher = new GlobFileSearcher(globPattern);
 		Files.walkFileTree(Paths.get(absolutePathOfDirToLookIn), fileSearcher);
 		List<String> fileAndDirNames = fileSearcher.getResultList();
+
+		if (fileAndDirNames.isEmpty())
+			return tokens;
 
 		List<String> newTokensList = new ArrayList<String>(tokens);
 		newTokensList.remove(relevantTokenIdx);
