@@ -24,7 +24,7 @@ public class PwdWithGrepCommandTest {
 	String[] grepArgs;
 
 	/*
-	 * Command under test: pwd | grep 'usage'
+	 * Command under test: pwd | grep 'Pipe'
 	 */
 
 	@Before

@@ -27,7 +27,7 @@ public class GrepWithFindCommandTest {
 	String[] app1Args;
 	String[] app2Args;
 	
-	// Command under test: find "GrepWithPipeComman*" | grep "Pipe"
+	// Command under test: find -name GrepWithPipeComman* | grep 'Pipe'
 	
 	@Before
 	public void setUp() throws Exception {

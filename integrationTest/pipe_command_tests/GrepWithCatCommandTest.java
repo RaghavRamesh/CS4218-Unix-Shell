@@ -27,7 +27,7 @@ public class GrepWithCatCommandTest {
 	String[] catArgs;
 	String[] grepArgs;
 
-	// Command under test: cat PipeCommandTestFiles/GrepWithPipeCommand.txt | grep "usage"
+	// Command under test: cat PipeCommandTestFiles/GrepWithPipeCommand.txt | grep 'usage'
 
 	@Before
 	public void setUp() throws Exception {

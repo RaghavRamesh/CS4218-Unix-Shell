@@ -28,7 +28,7 @@ public class LsWithGrepCommandTest {
 	String[] grepArgs;
 
 	/*
-	 * Command under test: ls PipeCommandTestFiles | grep 'usage'
+	 * Command under test: ls PipeCommandTestFiles | grep 'Pipe'
 	 */
 	
 	@Before

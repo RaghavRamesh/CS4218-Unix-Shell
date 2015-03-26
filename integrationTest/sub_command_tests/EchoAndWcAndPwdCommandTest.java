@@ -29,7 +29,7 @@ public class EchoAndWcAndPwdCommandTest {
 	String[] wcArgs;
 	String[] pwdArgs;
 
-	// Command under test: echo `wc *.txt` `pwd`
+	// Command under test: echo `wc SubCommand.txt` `pwd`
 
 	@Before
 	public void setUp() throws Exception {

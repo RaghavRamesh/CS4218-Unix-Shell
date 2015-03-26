@@ -27,6 +27,8 @@ public class EchoWithGrepCommandTest {
 	String[] echoArgs;
 	String[] grepArgs;
 	
+	// Command under test: echo PipeCommandTestFiles | grep 'Pipe'
+	
 	@Before
 	public void setUp() throws Exception {
 
