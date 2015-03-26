@@ -45,7 +45,7 @@ public class CatAppTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = Environment.getCurrentDirectory();
+		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 		// create a folder named TempTest in current directory
 
 		tempTestDirectory = new File(currentDirectory + File.separator

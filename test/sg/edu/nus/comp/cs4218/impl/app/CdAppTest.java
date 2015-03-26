@@ -34,7 +34,7 @@ public class CdAppTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = Environment.getCurrentDirectory();
+		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator

@@ -60,9 +60,28 @@ public class DoubleQuoteToken extends AbstractToken {
     List<AbstractToken> tokens = Parser.tokenize(content);
     String result = "";
     for (AbstractToken token : tokens) {
-      result += token.value();
+      result += chomp(token.value());
     }
     return result;
+  }
+  
+  // Remove newline characters at the end of the string
+  public static String chomp(String input) {
+    int lastIndex = input.length() - 1;
+    while (lastIndex >= 0) {
+      Character lastChar = input.charAt(lastIndex);
+      if (String.valueOf(lastChar).equals(System.lineSeparator())) {
+        lastIndex--;
+      } else {
+        break;
+      }
+    }
+    
+    if (lastIndex < 0) {
+      return "";
+    } else {
+      return input.substring(0, lastIndex + 1);
+    }
   }
 
   @Override

@@ -48,7 +48,7 @@ public class WcAppTest {
 
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = Environment.getCurrentDirectory();
+		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);;
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator
@@ -128,7 +128,7 @@ public class WcAppTest {
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 					fileOutStream));
-			writer.write("Hi, This is a string to test input from input stream reader for Wc");
+			writer.write("Hi, This is a string to test input from input stream reader for Wc\n");
 			writer.close();
 			fileOutStream.close();
 
@@ -141,7 +141,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("67 14 1 ", buffReader.readLine());
+			assertEquals("1 14 67", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -224,7 +224,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("14 ", buffReader.readLine());
+			assertEquals("14", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -259,7 +259,7 @@ public class WcAppTest {
 
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
 					fileOutStream));
-			writer.write("Hi, This is a string to test input from input stream reader for Wc");
+			writer.write("Hi, This is a string to test input from input stream reader for Wc\n");
 			writer.close();
 			fileOutStream.close();
 
@@ -270,7 +270,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("14 1 temp-file-name-input", buffReader.readLine());
+			assertEquals("1 14 temp-file-name-input", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -296,13 +296,13 @@ public class WcAppTest {
 	 * Test with file having only one empty line
 	 */
 	@Test
-	public void testReadAndProcessLinesInFileWithEmptyLine() throws IOException {
+	public void testReadAndProcessLinesInFileWithEmptyLine() throws IOException, WcException {
 		WcApp cmdApp = new WcApp();
 
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
 				bOutStream));
-		writer.println();
+		writer.write("\n");
 		writer.close();
 
 		byte[] byteArray = bOutStream.toByteArray();
@@ -323,13 +323,13 @@ public class WcAppTest {
 	 */
 	@Test
 	public void testReadAndProcessLinesInFileWithOneLineAndSpaces()
-			throws IOException {
+			throws IOException, WcException {
 		WcApp cmdApp = new WcApp();
 
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
 				bOutStream));
-		writer.println(" Hey this is a line with spaces! ");
+		writer.write(" Hey this is a line with spaces! \n");
 		writer.close();
 
 		byte[] byteArray = bOutStream.toByteArray();
@@ -354,15 +354,15 @@ public class WcAppTest {
 	 */
 	@Test
 	public void testReadAndProcessLinesInFileWithMultiLineAndSpaces()
-			throws IOException {
+			throws IOException, WcException {
 		WcApp cmdApp = new WcApp();
 
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
 				bOutStream));
-		writer.println(" Hey this is a line with spaces ! ");
-		writer.println(" Mysecond line has special charaters");
-		writer.println();
+		writer.write(" Hey this is a line with spaces ! \n");
+		writer.write(" Mysecond line has special charaters\n");
+		writer.write("\n");
 		writer.close();
 
 		byte[] byteArray = bOutStream.toByteArray();
@@ -461,8 +461,8 @@ public class WcAppTest {
 			WcApp cmdApp = new WcApp();
 			cmdApp.processCountFromFiles(fileNames, filePaths);
 
-			assertEquals(62, cmdApp.totalBytes);
-			assertEquals(2, cmdApp.totalLineLength);
+			assertEquals(60, cmdApp.totalBytes);
+			assertEquals(0, cmdApp.totalLineLength);
 			assertEquals(15, cmdApp.totalWordsLength);
 
 		} catch (Exception e) {

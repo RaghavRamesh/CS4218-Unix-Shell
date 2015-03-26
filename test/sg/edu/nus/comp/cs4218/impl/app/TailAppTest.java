@@ -9,16 +9,24 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Consts;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class TailAppTest {
 	private static final String LINE_SEPARATOR = "line.separator";
 	private static final String LINE = "line";
 	private static final String TAIL = "tail: ";
 	private static final String TEMP_FILE_NAME = "temp-input-file-name.tmp";
+	
+  @Before
+  public void setUp() throws Exception {
+    Environment.currentDirectory = System.getProperty("user.dir");
+  }
 
 	@Test
 	public void testNullArgumentsArray() {
@@ -366,7 +374,8 @@ public class TailAppTest {
 			fail();
 
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), TAIL + Consts.Messages.FILE_NOT_EXISTS);
+			String expected = "tail: can't open 'temp-input-file-name.tmp'. The file could not be found";
+			assertEquals(expected,e.getMessage());
 		}
 	}
 

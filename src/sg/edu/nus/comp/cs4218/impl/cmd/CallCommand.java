@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Application;
@@ -27,8 +28,9 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class CallCommand implements Command {
+
 	private final String commandLine;
-	private final List<String> substitutedTokens;
+	private List<String> substitutedTokens;
 	private String inputPath;
 	private String outputPath;
 	private InputStream inStream;
@@ -39,21 +41,21 @@ public class CallCommand implements Command {
 		try {
 			this.closeOutput = false;
 			this.commandLine = cmdLine;
-			// System.out.println("[CallCommand] cmdLine: " + cmdLine);
 			List<AbstractToken> tokens = Parser.tokenize(cmdLine);
 			for (AbstractToken token : tokens) {
 				token.checkValid();
 			}
 			this.substitutedTokens = substituteAll(tokens);
 			this.inputPath = findInput(substitutedTokens);
-			// System.out.println("[CallCommand] inputPath: " + this.inputPath);
 			this.outputPath = findOutput(substitutedTokens);
-			// System.out.println("[CallCommand] outputPath: " + this.outputPath);
-			findGlobbing(substitutedTokens);
+			try {
+				this.substitutedTokens = findGlobbing(substitutedTokens);
+			} catch (InvalidDirectoryException e) {
+				throw new ShellException(e.getMessage());
+			}
+
 		} catch (IOException e) {
 			throw new ShellException(e);
-		} catch (InvalidDirectoryException e) {
-			throw new ShellException(e.getMessage());
 		}
 	}
 
@@ -94,30 +96,43 @@ public class CallCommand implements Command {
 	 * @return A list of substituted tokens.
 	 */
 	public static List<String> substituteAll(List<AbstractToken> tokens) throws AbstractApplicationException, ShellException, IOException {
-		String current = "";
+		String current = null;
 		List<String> list = new ArrayList<String>();
 		for (AbstractToken token : tokens) {
 			TokenType type = token.getType();
-			// System.out.println("[CallCommand] type: " + type);
+			String val = token.value();
 			if (type == TokenType.SPACES) {
-				addNonEmpty(list, current);
-				current = "";
+				addNonNull(list, current);
+				current = null;
 			} else if (type == TokenType.INPUT || type == TokenType.OUTPUT) {
-				addNonEmpty(list, current);
-				current = "";
-				list.add(token.value());
+				addNonNull(list, current);
+				current = null;
+				list.add(val);
+			} else if (type == TokenType.BACK_QUOTES) {
+				// Split the strings inside into multiple args
+				List<String> strList = normalize(val);
+				if (!strList.isEmpty()) {
+					current = current == null ? strList.get(0) : current + strList.get(0);
+					for (int i = 1; i < strList.size(); i++) {
+						list.add(current);
+						current = strList.get(i);
+					}
+				}
 			} else {
-				current += token.value();
+				current = current == null ? val : current + val;
 			}
 		}
-		if (!current.isEmpty()) {
-			list.add(current);
-		}
+		addNonNull(list, current);
 		return list;
 	}
 
-	private static void addNonEmpty(List<String> list, String str) {
-		if (!str.isEmpty()) {
+	private static List<String> normalize(String input) {
+		String str = input.replaceAll("\\s+", " ").trim();
+		return Arrays.asList(str.split("\\s"));
+	}
+
+	private static void addNonNull(List<String> list, String str) {
+		if (str != null) {
 			list.add(str);
 		}
 	}
@@ -271,13 +286,13 @@ public class CallCommand implements Command {
 		return factory.getApplication(appId);
 	}
 
-	public String getInputPath() {
-		return inputPath;
-	}
-
-	public String getOutputPath() {
-		return outputPath;
-	}
+	// public String getInputPath() {
+	// return inputPath;
+	// }
+	//
+	// public String getOutputPath() {
+	// return outputPath;
+	// }
 
 	public void setCloseOutput(Boolean closeOutput) {
 		this.closeOutput = closeOutput;

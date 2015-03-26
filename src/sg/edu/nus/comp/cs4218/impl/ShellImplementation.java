@@ -18,19 +18,16 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class ShellImplementation implements Shell {
   private final BufferedReader reader;
-  private ExecutableThread runningThread;
   
   public ShellImplementation(BufferedReader reader) {
     this.reader = reader;
-    this.runningThread = new ExecutableThread();
   }
 
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		Command command = getCommand(cmdline);
-		runningThread = new ExecutableThread(command, null, stdout);
-		runningThread.start();
+		command.evaluate(null, stdout);
 	}
 
 	/**
@@ -60,9 +57,6 @@ public class ShellImplementation implements Shell {
 	public void run() {
 	  while (true) {
 	    try {
-	      while (runningThread.isAlive()) {
-	        Thread.sleep(100);
-	      }
 	      System.out.print(Environment.getCurrentDirectory() + " # ");
 	      parseAndEvaluate(reader.readLine(), System.out);
 	    } catch (Exception e) {
