@@ -110,9 +110,11 @@ public class PipeCommand implements Command {
 
   @Override
   public void terminate() {
-    for (ExecutableThread thread : threads) {
-      thread.interrupt();
-    }
+		if (threads != null) {
+			for (ExecutableThread thread : threads) {
+				thread.interrupt();
+			}
+		}
   }
 
 //  @Override
