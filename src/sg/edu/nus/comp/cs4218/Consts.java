@@ -28,11 +28,11 @@ public class Consts {
 		public static final String ILLEGAL_LINE_CNT = "Illegal line count";
 		public static final String TOO_MANY_ARGS = "Too many arguments";
 		public static final String FILE_NOT_EXISTS = "File does not exist";
-		public static final String EXPECT_MIN_ONE_ARG = "Expected atleast one argument";
+		public static final String EXT_MIN_ONE_ARG = "Expected atleast one argument";
 		public static final String INVALID_REGEX = "Invalid regular expression";
 		public static final String CANNOT_FIND_S = "Unsupported format. Expected s";
 		public static final String INVALID_SYMBOL = "Invalid symbol";
-		public static final String UNTERMINATED_SYMBOL = "Unterminated symbol ";
+		public static final String UNTERMINATED_SYM = "Unterminated symbol ";
 		public static final String BAD_OPTION_IN_SUB = "Bad Option in Substitution Expression";
 		public static final String CONTENTS_NOT_NULL = "Contents cannot be null";
 	}
