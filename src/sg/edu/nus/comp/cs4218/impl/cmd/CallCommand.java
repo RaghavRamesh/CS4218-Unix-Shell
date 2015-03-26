@@ -48,12 +48,6 @@ public class CallCommand implements Command {
 			this.substitutedTokens = substituteAll(tokens);
 			this.inputPath = findInput(substitutedTokens);
 			this.outputPath = findOutput(substitutedTokens);
-			try {
-				this.substitutedTokens = findGlobbing(substitutedTokens);
-			} catch (InvalidDirectoryException e) {
-				throw new ShellException(e.getMessage());
-			}
-
 		} catch (IOException e) {
 			throw new ShellException(e);
 		}
@@ -66,6 +60,8 @@ public class CallCommand implements Command {
 		}
 
 		try {
+		  substitutedTokens = findGlobbing(substitutedTokens);
+		  
 			// Priority IO redirection first
 			inStream = getInputStreamFromCommand();
 			if (inStream == null) {
@@ -82,7 +78,11 @@ public class CallCommand implements Command {
 			int numberOfArgs = argsWithoutApp.size();
 			String[] args = argsWithoutApp.toArray(new String[numberOfArgs]);
 			app.run(args, inStream, outStream);
-		} finally {
+		} catch (IOException e) {
+      throw new ShellException(e);
+    } catch (InvalidDirectoryException e) {
+      throw new ShellException(e);
+    } finally {
 			terminate();
 		}
 	}
