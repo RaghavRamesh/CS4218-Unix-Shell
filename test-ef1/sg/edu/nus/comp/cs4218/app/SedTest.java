@@ -20,7 +20,10 @@ import java.io.ByteArrayOutputStream;
 
 public class SedTest {
 
-    private static Application app;
+    private static final String BANANA = "banana";
+	private static final String APPLE = "apple";
+	private static final String SED = "sed: ";
+	private static Application app;
     private static ByteArrayOutputStream stdout;
     private static ByteArrayInputStream stdin;
     String[] args;
@@ -42,8 +45,8 @@ public class SedTest {
     @Test(expected = SedException.class)
     public void testSedUnterminatedReplacement()
             throws AbstractApplicationException {
-        String replacement = "s" + "/" + "apple"
-                + "/" + "banana";
+        String replacement = "s" + "/" + APPLE
+                + "/" + BANANA;
         args = new String[] { replacement };
         app.run(args, stdin, stdout);
     }
@@ -51,8 +54,8 @@ public class SedTest {
     @Test(expected = SedException.class)
     public void testSedFileDoesNotExist() throws AbstractApplicationException {
         String fileNonExistent = "foo.txt";
-        String replacement = "s" + "/" + "apple"
-                + "/" + "banana" + "/";
+        String replacement = "s" + "/" + APPLE
+                + "/" + BANANA + "/";
         args = new String[] { replacement, fileNonExistent };
         app.run(args, stdin, stdout);
     }
@@ -60,8 +63,8 @@ public class SedTest {
     @Test
     public void testSedMultipleWordsReplaceOne()
             throws AbstractApplicationException {
-        String replacement = "s" + "/" + "apple"
-                + "/" + "banana" + "/";
+        String replacement = "s" + "/" + APPLE
+                + "/" + BANANA + "/";
         args = new String[] { replacement };
         stdin = new ByteArrayInputStream("apple apple apple".getBytes());
         stdout = new ByteArrayOutputStream();
@@ -73,8 +76,8 @@ public class SedTest {
     @Test
     public void testSedMultipleWordsReplaceAll()
             throws AbstractApplicationException {
-        String replacement = "s" + "/" + "apple"
-                + "/" + "banana" + "/" + "g";
+        String replacement = "s" + "/" + APPLE
+                + "/" + BANANA + "/" + "g";
         args = new String[] { replacement };
         stdin = new ByteArrayInputStream("apple apple apple".getBytes());
         stdout = new ByteArrayOutputStream();
@@ -132,12 +135,12 @@ public class SedTest {
 	public void testSedAppWithNullOutputStreamArgument()
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
-		expectedEx.expectMessage("sed: " 
+		expectedEx.expectMessage(SED 
 				+ Consts.Messages.OUT_STR_NOT_NULL);
 
 		SedApp cmdApp = new SedApp();
 		String[] args = new String[] { "s/[0-9]/2/g" };
-		String pipeInputArg = "Oysters are a family of bivalves with rough, thick shells." + System.lineSeparator();
+		String pipeInputArg = "Oysters are a family of bivalves with thick shells." + System.lineSeparator();
 		stdin = new ByteArrayInputStream(pipeInputArg.getBytes());
 		cmdApp.run(args, stdin, null);
 	}
@@ -146,12 +149,12 @@ public class SedTest {
 	public void testSedAppWithZeroArgument()
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
-		expectedEx.expectMessage("sed: " 
+		expectedEx.expectMessage(SED 
 				+ Consts.Messages.EXT_MIN_ONE_ARG);
 
 		SedApp cmdApp = new SedApp();
 		String[] args = new String[] {};
-		String pipeInputArg = "Oysters are a family of bivalves with rough, thick shells." + System.lineSeparator();
+		String pipeInputArg = "Oysters are a family of bivalves thick shells." + System.lineSeparator();
 		stdin = new ByteArrayInputStream(pipeInputArg.getBytes());
 		cmdApp.run(args, stdin, null);
 	}
@@ -160,12 +163,12 @@ public class SedTest {
 	public void testSedAppWithInvalidStartForRegexExp()
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
-		expectedEx.expectMessage("sed: " 
+		expectedEx.expectMessage(SED 
 				+ Consts.Messages.CANNOT_FIND_S);
 
 		SedApp cmdApp = new SedApp();
 		String[] args = new String[] { "a/[0-9]/2/g" }; // Regular expression should start with s
-		String pipeInputArg = "Oysters are a family of bivalves with rough, thick shells." + System.lineSeparator();
+		String pipeInputArg = "Oysters are a family of bivalves." + System.lineSeparator();
 		stdin = new ByteArrayInputStream(pipeInputArg.getBytes());
 		stdout = new ByteArrayOutputStream();
 		cmdApp.run(args, stdin,stdout );
@@ -175,7 +178,7 @@ public class SedTest {
 	public void testSedAppWithInvalidEndForRegexExp()
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
-		expectedEx.expectMessage("sed: " 
+		expectedEx.expectMessage(SED 
 				+ Consts.Messages.BAD_OPTION_IN_SUB);
 
 		SedApp cmdApp = new SedApp();
@@ -190,7 +193,7 @@ public class SedTest {
 	public void testSedAppWithInvalidRegexExp()
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
-		expectedEx.expectMessage("sed: " 
+		expectedEx.expectMessage(SED 
 				+ Consts.Messages.INVALID_SYMBOL);
 
 		SedApp cmdApp = new SedApp();
