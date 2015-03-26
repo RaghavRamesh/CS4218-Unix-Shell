@@ -37,7 +37,9 @@ public class EchoAndWcAndPwdCommandTest {
 		Environment.currentDirectory = System
 				.getProperty(Consts.Keywords.USER_DIR)
 				+ File.separator
-				+ "test-files-integration";
+				+ "test-files-integration"
+				+ File.separator
+				+ "SubCommandTestFiles";
 	}
 
 	@After
@@ -62,7 +64,7 @@ public class EchoAndWcAndPwdCommandTest {
 		outStream.reset();
 		
 		// Run wc
-		wcArgs = new String[] { "sample.txt" };
+		wcArgs = new String[] { "SubCommand.txt" };
 		wcApp = new WcApp();
 		wcApp.run(wcArgs, null, outStream);
 
@@ -75,8 +77,8 @@ public class EchoAndWcAndPwdCommandTest {
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
 
-		String expected = "1 6 25 sample.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 "
-				+ "- Software Testing And Debugging/CS4218-Shell/test-files-integration"
+		String expected = "2 19 96 SubCommand.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 - "
+				+ "Software Testing And Debugging/CS4218-Shell/test-files-integration/SubCommandTestFiles"
 				+ System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
@@ -91,9 +93,9 @@ public class EchoAndWcAndPwdCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("echo `wc sample.txt` `pwd`", outStream);
-		String expected = "1 6 25 sample.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 "
-				+ "- Software Testing And Debugging/CS4218-Shell/test-files-integration"
+		shImpl.parseAndEvaluate("echo `wc SubCommand.txt` `pwd`", outStream);
+		String expected = "2 19 96 SubCommand.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 - "
+				+ "Software Testing And Debugging/CS4218-Shell/test-files-integration/SubCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}

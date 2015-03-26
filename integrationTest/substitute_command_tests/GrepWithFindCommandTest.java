@@ -54,7 +54,7 @@ public class GrepWithFindCommandTest {
 	 */
 	@Test
 	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithSubComman*" };
+		app2Args = new String[] { "-name", "GrepWithSubComman*" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		FindApp findApp = new FindApp();
@@ -89,13 +89,11 @@ public class GrepWithFindCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find GrepWithSubComman*`",
+		shImpl.parseAndEvaluate("grep 'usage' `find -name GrepWithSubCommand.txt`",
 				outStream);
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
-				+ System.lineSeparator()
-				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}

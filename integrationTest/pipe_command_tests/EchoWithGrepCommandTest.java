@@ -58,16 +58,14 @@ public class EchoWithGrepCommandTest {
 
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
-		grepArgs = new String[] { "usage",
+		grepArgs = new String[] { "Pipe",
 				outStream.toString().replace(System.lineSeparator(), "") };
 
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(grepArgs, null, outStream);
 
-		String expected = " This file meant for the usage of grep with sub commands."
-				+ System.lineSeparator()
-				+ "This is the second usage of the word."
+		String expected = "PipeCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
@@ -81,11 +79,9 @@ public class EchoWithGrepCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("echo PipeCommandTestFiles | grep 'usage'",
+		shImpl.parseAndEvaluate("echo PipeCommandTestFiles | grep 'Pipe'",
 				outStream);
-		String expected = " This file meant for the usage of grep with sub commands."
-				+ System.lineSeparator()
-				+ "This is the second usage of the word."
+		String expected = "PipeCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
@@ -100,6 +96,6 @@ public class EchoWithGrepCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("echo | grep 'usage'", outStream);
+		shImpl.parseAndEvaluate("echo | grep", outStream);
 	}
 }

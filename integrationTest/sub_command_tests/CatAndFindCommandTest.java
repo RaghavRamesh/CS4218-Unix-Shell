@@ -26,7 +26,7 @@ public class CatAndFindCommandTest {
 	String[] catArgs;
 	String[] findArgs;
 
-	// Command under test: cat `find SubCommand.txt` `find SubCommand2.txt`
+	// Command under test: cat `find -name SubCommand.txt` `find -name SubCommand2.txt`
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,23 +52,24 @@ public class CatAndFindCommandTest {
 	public void testCatAndFindDirectly()
 			throws AbstractApplicationException {
 		// Run first find
-		findArgs = new String[] { "SubCommand.txt" };
+		findArgs = new String[] { "-name", "SubCommand.txt" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		
 		findApp = new FindApp();
 		findApp.run(findArgs, null, outStream);
 		
-		String findOutput = outStream.toString();
+		String findOutput = outStream.toString().replace(System.lineSeparator(), "");
 		outStream.reset();
 		
 		catArgs = new String[2];
 		catArgs[0] = findOutput;
 		
 		// Run second find
-		findArgs[0] = "SubCommand2.txt";
+		findArgs[0] = "-name";
+		findArgs[1] = "SubCommand2.txt";
 		findApp.run(findArgs, null, outStream);
 		
-		findOutput = outStream.toString();
+		findOutput = outStream.toString().replace(System.lineSeparator(), "");
 		outStream.reset();
 		
 		catArgs[1] = findOutput;
@@ -98,7 +99,7 @@ public class CatAndFindCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("cat `find SubCommand.txt` `find SubCommand2.txt`", outStream);
+		shImpl.parseAndEvaluate("cat `find -name SubCommand.txt` `find -name SubCommand2.txt`", outStream);
 		String expected = " This file meant for the usage of grep with sub commands." 
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
