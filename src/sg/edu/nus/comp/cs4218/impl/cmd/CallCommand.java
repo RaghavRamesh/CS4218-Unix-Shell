@@ -214,7 +214,7 @@ public class CallCommand implements Command {
 			return tokens;
 
 		int indexOfFirstAsterisk = relevantToken.indexOf('*');
-		int indexOfLastFileSeparator = relevantToken.lastIndexOf(File.separator);
+		int indexOfLastFileSeparator = relevantToken.lastIndexOf("/");
 
 		// if there is file seperator after *
 		if (indexOfLastFileSeparator != -1 && indexOfLastFileSeparator > indexOfFirstAsterisk)
