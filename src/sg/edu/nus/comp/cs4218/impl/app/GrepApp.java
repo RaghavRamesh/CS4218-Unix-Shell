@@ -55,7 +55,8 @@ public class GrepApp implements Application {
 				throw new GrepException(Consts.Messages.IN_STR_NOT_NULL);
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
-
+			int count = 0;
+			
 			try {
 				while ((line = reader.readLine()) != null) {
 					matcher.reset(line);
@@ -64,6 +65,11 @@ public class GrepApp implements Application {
 						writer.write(line);
 						writer.write(System.getProperty("line.separator"));
 					}
+					count++;
+				}
+				
+				if(count == 0){
+					writer.write(System.getProperty("line.separator"));
 				}
 				reader.close();
 			} catch (IOException e) {

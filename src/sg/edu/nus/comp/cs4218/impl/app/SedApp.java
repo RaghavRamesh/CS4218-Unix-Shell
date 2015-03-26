@@ -115,8 +115,9 @@ public class SedApp implements Application {
 		String inputLine;
 		Pattern pattern = Pattern.compile(regularExp);
 		try {
+			int count = 0;
 			while ((inputLine = reader.readLine()) != null) {
-
+				count++;
 				Matcher matcher = pattern.matcher(inputLine);
 
 				String output = "";
@@ -127,12 +128,19 @@ public class SedApp implements Application {
 				}
 				writer.println(output);
 			}
+			if(count == 0){
+				writer.write(System.lineSeparator());
+			}
 		} catch (IOException e) {
 			throw new SedException(e);
 		} finally {
 			writer.flush();
 			if (!isStdinInput) {
-				writer.close();
+				try {
+					streamToRead.close();
+				} catch (IOException e) {
+					throw new SedException(e);
+				}
 			}
 		}
 	}
