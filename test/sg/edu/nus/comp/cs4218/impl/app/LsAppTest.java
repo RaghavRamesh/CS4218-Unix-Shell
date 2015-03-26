@@ -345,7 +345,7 @@ public class LsAppTest {
 	private void checkAssertionsForIdealFileNamesAndDirs(
 			BufferedReader buffReader) throws IOException {
 		assertEquals("subdir1" + "\t" + "subdir2" + "\t" + "test1.txt" + "\t"
-				+ "test2.xyz" + "\t", buffReader.readLine());
+				+ "test2.xyz", buffReader.readLine());
 	}
 
 }

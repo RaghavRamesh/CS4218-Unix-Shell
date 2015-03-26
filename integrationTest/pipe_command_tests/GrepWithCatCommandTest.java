@@ -27,7 +27,7 @@ public class GrepWithCatCommandTest {
 	String[] catArgs;
 	String[] grepArgs;
 
-	// Command under test: cat PipeCommandTestFiles/* | grep "usage"
+	// Command under test: cat PipeCommandTestFiles/GrepWithPipeCommand.txt | grep "usage"
 
 	@Before
 	public void setUp() throws Exception {
@@ -53,7 +53,7 @@ public class GrepWithCatCommandTest {
 	@Test
 	public void testGrepWithCatDirectly() throws AbstractApplicationException {
 		// Build arguments for cat
-		catArgs = new String[] { "PipeCommandTestFiles/GrepWithPipeCommand.txt", "PipeCommandTestFiles/GrepWithPipeCommand2.txt" };
+		catArgs = new String[] { "PipeCommandTestFiles/GrepWithPipeCommand.txt" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		// Run
@@ -72,8 +72,6 @@ public class GrepWithCatCommandTest {
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
-				+ System.lineSeparator()
-				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
@@ -87,13 +85,11 @@ public class GrepWithCatCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("cat PipeCommandTestFiles/* | grep 'usage'",
+		shImpl.parseAndEvaluate("cat PipeCommandTestFiles/GrepWithPipeCommand.txt | grep 'usage'",
 				outStream);
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
-				+ System.lineSeparator()
-				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}

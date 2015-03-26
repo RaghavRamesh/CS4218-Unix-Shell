@@ -2,6 +2,7 @@ package pipe_command_tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -27,7 +28,11 @@ public class EchoWithGrepCommandTest {
 	String[] grepArgs;
 
 	/*
+<<<<<<< HEAD
 	 *  Command Under Test: echo PipeCommandTestFiles | grep 'Pipe'"
+=======
+	 *  Command Under Test: echo PipeCommandTestFiles | grep 'usage'"
+>>>>>>> master
 	 */
 	
 	@Before
@@ -58,13 +63,15 @@ public class EchoWithGrepCommandTest {
 
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
-				
-		grepArgs = new String[] { "Pipe",
-				outStream.toString().replace(System.lineSeparator(), "") };
 
+		grepArgs = new String[] { "Pipe"};
+
+		byte[] echoOutput = outStream.toByteArray(); 
+		ByteArrayInputStream inStream = new ByteArrayInputStream(echoOutput);
+		
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
-		grepApp.run(grepArgs, null, outStream);
+		grepApp.run(grepArgs, inStream, outStream);
 
 		String expected = "PipeCommandTestFiles"
 				+ System.lineSeparator();

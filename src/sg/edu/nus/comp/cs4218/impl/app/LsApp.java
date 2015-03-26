@@ -89,14 +89,19 @@ public class LsApp implements Application {
 				.getContentsInDirectory(requiredDirectory);
 		PrintWriter outPathWriter = new PrintWriter(stdout);
 
+		int count = 0;
 		for (File fileInCurrDir : currDirContents) {
+			
 			String fileNameToDisplay = fileInCurrDir.getName();
 			if (fileNameToDisplay != null && fileNameToDisplay.length() > 0
 					&& !fileNameToDisplay.startsWith(".")) {
 
 				outPathWriter.print(fileNameToDisplay);
-				outPathWriter.print("\t");
+				if(count!= currDirContents.length -1){
+					outPathWriter.write("\t");
+				}
 			}
+			count++;
 		}
 
 		outPathWriter.println();
