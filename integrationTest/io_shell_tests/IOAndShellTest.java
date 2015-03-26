@@ -165,10 +165,7 @@ public class IOAndShellTest {
   public void writeToFileThenOverwriteFail() throws IOException {
     cdTempFolder();
     try {
-      shell
-          .parseAndEvaluate(
-              "echo old > file.txt; cd nonsense;echo banana > file.txt",
-              System.out);
+      shell.parseAndEvaluate("echo old > file.txt; cd nonsense;echo banana > file.txt", System.out);
     } catch (AbstractApplicationException e) {
       String val = TestHelper.readFile(tmpFolderPath + "/file.txt");
       String expected = "old" + System.lineSeparator();
@@ -184,8 +181,7 @@ public class IOAndShellTest {
     cdTempFolder();
     ByteArrayOutputStream bao = new ByteArrayOutputStream();
     try {
-      shell.parseAndEvaluate(
-          "echo apple > a.txt; echo banana > < b.txt; find *.txt", bao);
+      shell.parseAndEvaluate("echo apple > a.txt; echo banana > < b.txt; find *.txt", bao);
     } catch (ShellException e) {
       String expected = "";
       assertEquals(expected, bao.toString());
