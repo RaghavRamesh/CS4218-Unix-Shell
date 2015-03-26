@@ -203,10 +203,6 @@ public class CallCommand implements Command {
 		String relevantToken = null;
 		int relevantTokenIdx = 0;
 		for (int idx = 0; idx < tokens.size(); idx++) {
-			if (!tokens.contains('"') && !tokens.contains("'")) {
-				continue;
-			}
-			
 			if (tokens.get(idx).contains("*") ) {
 				relevantToken = tokens.get(idx);
 				relevantTokenIdx = idx;
