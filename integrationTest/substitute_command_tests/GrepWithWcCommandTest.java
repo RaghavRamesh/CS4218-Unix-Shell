@@ -81,7 +81,7 @@ public class GrepWithWcCommandTest {
 		app2Args = new String[] { "GrepWithSub" };
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(app2Args, inStream, outStream);
-		String expected = "5 25 133 GrepWithSubCommand.txt"+ System.lineSeparator()+ "1 14 77 GrepWithSubCommand2.txt"
+		String expected = "5 25 138 GrepWithSubCommand.txt"+ System.lineSeparator()+ "1 14 78 GrepWithSubCommand2.txt"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
@@ -96,7 +96,7 @@ public class GrepWithWcCommandTest {
 
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("wc `ls`| grep \"GrepWithSub\"", outStream);
-		String expected = "5 25 133 GrepWithSubCommand.txt"+ System.lineSeparator()+ "1 14 77 GrepWithSubCommand2.txt"
+		String expected = "5 25 138 GrepWithSubCommand.txt"+ System.lineSeparator()+ "1 14 78 GrepWithSubCommand2.txt"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
