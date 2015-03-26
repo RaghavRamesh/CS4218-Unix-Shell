@@ -34,7 +34,7 @@ public class SedApp implements Application {
 		}
 
 		if (args.length < 1) {
-			throw new SedException(Consts.Messages.EXPECT_MIN_ONE_ARG);
+			throw new SedException(Consts.Messages.EXT_MIN_ONE_ARG);
 		}
 
 		if (stdout == null) {
@@ -47,41 +47,7 @@ public class SedApp implements Application {
 			throw new SedException(Consts.Messages.CANNOT_FIND_S);
 		}
 
-		// identify character at index 1 which is / (eg char at index 1 in
-		// s/apple/babana)
-		String symbol = regexReplacement.substring(1, 2);
-
-		// Represents list of valid symbols
-		// We don't allow ` because actual shell does not seem to allow it
-		String validSymbolsRegex = "([^a-zA-Z0-9` 	])";
-		boolean isValidRegex = symbol.matches(validSymbolsRegex);
-
-		if (!isValidRegex) {
-			throw new SedException(Consts.Messages.INVALID_SYMBOL);
-		}
-
-		List<Integer> indicesOfSymbol = new ArrayList<Integer>();
-
-		for (int i = 0; i < regexReplacement.length(); i++) {
-			if (regexReplacement.charAt(i) == symbol.charAt(0)) {
-				indicesOfSymbol.add(i);
-			}
-		}
-
-		if (indicesOfSymbol.size() != 3) {
-			throw new SedException(Consts.Messages.UNTERMINATED_SYMBOL + symbol);
-		}
-
-		if (indicesOfSymbol.get(2) == regexReplacement.length() - 1) {
-			isGlobalReplace = false;
-		} else if (indicesOfSymbol.get(2) == regexReplacement.length() - 2
-				&& regexReplacement.charAt(regexReplacement.length() - 1) == 'g') {
-			isGlobalReplace = true;
-		}
-
-		else {
-			throw new SedException(Consts.Messages.BAD_OPTION_IN_SUB);
-		}
+		List<Integer> indicesOfSymbol = processRegexInputString(regexReplacement);
 
 		String regularExp = regexReplacement.substring(
 				indicesOfSymbol.get(0) + 1, indicesOfSymbol.get(1));
@@ -89,7 +55,7 @@ public class SedApp implements Application {
 				indicesOfSymbol.get(1) + 1, indicesOfSymbol.get(2));
 
 		InputStream streamToRead = null;
-		
+
 		boolean isStdinInput = false;
 
 		if (args.length > 1) {
@@ -128,7 +94,7 @@ public class SedApp implements Application {
 				}
 				writer.println(output);
 			}
-			if(count == 0){
+			if (count == 0) {
 				writer.write(System.lineSeparator());
 			}
 		} catch (IOException e) {
@@ -143,6 +109,53 @@ public class SedApp implements Application {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 
+	 * @param regexReplacement
+	 *            string that has to be processed
+	 * @return list of indices of the symbol
+	 * @throws SedException
+	 */
+	private List<Integer> processRegexInputString(String regexReplacement)
+			throws SedException {
+		// identify character at index 1 which is / (eg char at index 1 in
+		// s/apple/babana)
+		String symbol = regexReplacement.substring(1, 2);
+
+		// Represents list of valid symbols
+		// We don't allow ` because actual shell does not seem to allow it
+		String validSymbolsRegex = "([^a-zA-Z0-9` 	])";
+		boolean isValidRegex = symbol.matches(validSymbolsRegex);
+
+		if (!isValidRegex) {
+			throw new SedException(Consts.Messages.INVALID_SYMBOL);
+		}
+
+		List<Integer> indicesOfSymbol = new ArrayList<Integer>();
+
+		for (int i = 0; i < regexReplacement.length(); i++) {
+			if (regexReplacement.charAt(i) == symbol.charAt(0)) {
+				indicesOfSymbol.add(i);
+			}
+		}
+
+		if (indicesOfSymbol.size() != 3) {
+			throw new SedException(Consts.Messages.UNTERMINATED_SYM + symbol);
+		}
+
+		if (indicesOfSymbol.get(2) == regexReplacement.length() - 1) {
+			isGlobalReplace = false;
+		} else if (indicesOfSymbol.get(2) == regexReplacement.length() - 2
+				&& regexReplacement.charAt(regexReplacement.length() - 1) == 'g') {
+			isGlobalReplace = true;
+		}
+
+		else {
+			throw new SedException(Consts.Messages.BAD_OPTION_IN_SUB);
+		}
+		return indicesOfSymbol;
 	}
 
 }

@@ -147,7 +147,7 @@ public class SedTest {
 			throws AbstractApplicationException {
 		expectedEx.expect(SedException.class);
 		expectedEx.expectMessage("sed: " 
-				+ Consts.Messages.EXPECT_MIN_ONE_ARG);
+				+ Consts.Messages.EXT_MIN_ONE_ARG);
 
 		SedApp cmdApp = new SedApp();
 		String[] args = new String[] {};

@@ -29,7 +29,7 @@ public class GrepWithLsCommandTest {
 	/*
 	 * Command under test: grep 'usage' `ls`
 	 */
-	
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -97,7 +97,7 @@ public class GrepWithLsCommandTest {
 				+ "This is the second usage of the word."
 				+ System.lineSeparator()
 				+ "Its tests the usage of various commands."
-				+ System.lineSeparator(); 
+				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 

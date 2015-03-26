@@ -42,7 +42,7 @@ public class GrepApp implements Application {
 		try {
 			pattern = Pattern.compile(args[0]);
 		} catch (PatternSyntaxException e) {
-			throw new GrepException(e.getMessage());
+			throw new GrepException(e);
 		}
 		Matcher matcher = pattern.matcher("");
 
@@ -73,7 +73,7 @@ public class GrepApp implements Application {
 				}
 				reader.close();
 			} catch (IOException e) {
-				throw new GrepException(e.getMessage());
+				throw new GrepException(e);
 			}
 
 		} else { // the first argument will be REGEX string, the rest will be filenames
@@ -93,9 +93,9 @@ public class GrepApp implements Application {
 					reader.close();
 
 				} catch (IOException e) {
-					throw new GrepException(e.getMessage());
+					throw new GrepException(e);
 				} catch (InvalidDirectoryException e) {
-					throw new GrepException(e.getMessage());
+					throw new GrepException(e);
 				}
 
 			}
