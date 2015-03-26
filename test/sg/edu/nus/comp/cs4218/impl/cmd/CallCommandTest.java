@@ -215,7 +215,7 @@ public class CallCommandTest {
 		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
 
 		tokens = Arrays.asList("echo", "*");
-		expected = Arrays.asList("echo", "README.md", "bin", "src", "test", "test-ef1", "test-files-ef1");
+		expected = Arrays.asList("echo", "integrationTest", "README.md", "bin", "src", "test", "test-ef1", "test-files-ef1", "test-files-integration");
 		actual = CallCommand.findGlobbing(tokens);
 		// ignoring order
 		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));

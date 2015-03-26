@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.app;
 
 import java.io.ByteArrayOutputStream;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +21,13 @@ public class GlobbingTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Environment.currentDirectory = System.getProperty("user.dir") + "/test-files-ef1";
+		Environment.setCurrentDirectory(System.getProperty("user.dir") + "/test-files-ef1");
 		shell = new ShellImplementation(null);
 	}
 
-	@Before
+	@After
 	public void tearDown() throws Exception {
-		Environment.currentDirectory = System.getProperty("user.dir");
+		Environment.setCurrentDirectory(System.getProperty("user.dir"));
 	}
 
 	@Test
