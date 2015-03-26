@@ -26,14 +26,6 @@ public class EchoWithGrepCommandTest {
 	Application grepApp;
 	String[] echoArgs;
 	String[] grepArgs;
-
-	/*
-<<<<<<< HEAD
-	 *  Command Under Test: echo PipeCommandTestFiles | grep 'Pipe'"
-=======
-	 *  Command Under Test: echo PipeCommandTestFiles | grep 'usage'"
->>>>>>> master
-	 */
 	
 	@Before
 	public void setUp() throws Exception {

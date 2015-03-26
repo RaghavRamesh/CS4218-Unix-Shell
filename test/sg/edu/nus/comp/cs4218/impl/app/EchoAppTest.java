@@ -76,24 +76,6 @@ public class EchoAppTest {
 		}
 	}
 
-	// @Test
-	// public void testWithMultipleArguments() {
-	// EchoApp cmdApp = new EchoApp();
-	//
-	// String[] args = new String[1];
-	// args[0] = "hello world";
-	// // args[1] = "hi there ";
-	// try {
-	// ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
-	// cmdApp.run(args, null, testOutputStream);
-	//
-	// assertEquals("hello world\n", testOutputStream);
-	//
-	// } catch (AbstractApplicationException e) {
-	// fail();
-	// }
-	// }
-
 	@Test
 	public void testEchoAppWithNoArgument() {
 		EchoApp cmdApp = new EchoApp();
