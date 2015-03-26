@@ -18,45 +18,53 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class TailGrepWc {
-  private static Shell shell;
-  private static String folderPath = System.getProperty("user.dir")
-      + "/test-files-integration";
-  private static String tmpFolderPath = folderPath + "/tmp";
+	private static Shell shell;
+	private static String folderPath = System.getProperty("user.dir")
+			+ "/test-files-integration";
+	private static String tmpFolderPath = folderPath + "/tmp";
 
-  @Before
-  public void setUp() throws Exception {
-    Environment.currentDirectory = folderPath;
-    (new File(tmpFolderPath)).mkdir();
-    shell = new ShellImplementation(null);
-  }
+	@Before
+	public void setUp() throws Exception {
+		Environment.currentDirectory = folderPath;
+		(new File(tmpFolderPath)).mkdir();
+		shell = new ShellImplementation(null);
+	}
 
-  @After
-  public void tearDown() throws Exception {
-    File tmpFolder = new File(tmpFolderPath);
-    TestHelper.purgeDirectory(tmpFolder);
-  }
+	@After
+	public void tearDown() throws Exception {
+		File tmpFolder = new File(tmpFolderPath);
+		TestHelper.purgeDirectory(tmpFolder);
+	}
 
-  void cdTempFolder() {
-    Environment.currentDirectory = tmpFolderPath;
-  }
-  
-  @Test
-  public void chainSuccess() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("tail -n 1 sample.txt | grep \"brown\" | sed s/brown/black/", bao);
-    String expected = "The quick black fox jumps over the lazy dog" + System.lineSeparator();
-    assertEquals(expected, bao.toString());
-  }
-  
-  @Test(expected = SedException.class)
-  public void chainFailSedInvalid() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("tail -n 1 sample.txt | grep \"brown\" | sed s/over/lower", bao);
-  }
-  
-  @Test(expected = ShellException.class)
-  public void chainFailTailWrongFile() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("tail -n 1 < haha.txt | grep \"brown\" | sed s/over/lower", bao);
-  }
+	void cdTempFolder() {
+		Environment.currentDirectory = tmpFolderPath;
+	}
+
+	@Test
+	public void chainSuccess() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate(
+				"tail -n 1 sample.txt | grep \"brown\" | sed s/brown/black/",
+				bao);
+		String expected = "The quick black fox jumps over the lazy dog"
+				+ System.lineSeparator();
+		assertEquals(expected, bao.toString());
+	}
+
+	@Test(expected = SedException.class)
+	public void chainFailSedInvalid() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate(
+				"tail -n 1 sample.txt | grep \"brown\" | sed s/over/lower", bao);
+	}
+
+	@Test(expected = ShellException.class)
+	public void chainFailTailWrongFile() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate(
+				"tail -n 1 < haha.txt | grep \"brown\" | sed s/over/lower", bao);
+	}
 }

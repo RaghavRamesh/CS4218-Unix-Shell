@@ -29,15 +29,17 @@ public class PwdAppTest {
 
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
-	
+
 	@Before
-	public void setUp(){
-		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+	public void setUp() {
+		Environment.currentDirectory = System
+				.getProperty(Consts.Keywords.USER_DIR);
 	}
-	
+
 	@After
-	public void tearDown(){
-		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+	public void tearDown() {
+		Environment.currentDirectory = System
+				.getProperty(Consts.Keywords.USER_DIR);
 	}
 
 	/*

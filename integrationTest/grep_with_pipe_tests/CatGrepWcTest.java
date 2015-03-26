@@ -18,45 +18,50 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class CatGrepWcTest {
-  private static Shell shell;
-  private static String folderPath = System.getProperty("user.dir")
-      + "/test-files-integration";
-  private static String tmpFolderPath = folderPath + "/tmp";
+	private static Shell shell;
+	private static String folderPath = System.getProperty("user.dir")
+			+ "/test-files-integration";
+	private static String tmpFolderPath = folderPath + "/tmp";
 
-  @Before
-  public void setUp() throws Exception {
-    Environment.currentDirectory = folderPath;
-    (new File(tmpFolderPath)).mkdir();
-    shell = new ShellImplementation(null);
-  }
+	@Before
+	public void setUp() throws Exception {
+		Environment.currentDirectory = folderPath;
+		(new File(tmpFolderPath)).mkdir();
+		shell = new ShellImplementation(null);
+	}
 
-  @After
-  public void tearDown() throws Exception {
-    File tmpFolder = new File(tmpFolderPath);
-    TestHelper.purgeDirectory(tmpFolder);
-  }
+	@After
+	public void tearDown() throws Exception {
+		File tmpFolder = new File(tmpFolderPath);
+		TestHelper.purgeDirectory(tmpFolder);
+	}
 
-  void cdTempFolder() {
-    Environment.currentDirectory = tmpFolderPath;
-  }
-  
-  @Test
-  public void chainSuccess() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("cat sample.txt | grep \"9000\" | wc -l", bao);
-    String expected = "1" + System.lineSeparator();
-    assertEquals(expected, bao.toString());
-  }
-  
-  @Test(expected = ShellException.class)
-  public void chainFailWcFromWrongFile() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("cat sample.txt | grep \"nonsense\" | wc -l < sam.txt", bao);
-  }
-  
-  @Test(expected = CatException.class)
-  public void chainFailCatInvalidFile() throws AbstractApplicationException, ShellException {
-    ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("cat samp.txt | grep \"9000\" | sed s/power/lower/", bao);
-  }
+	void cdTempFolder() {
+		Environment.currentDirectory = tmpFolderPath;
+	}
+
+	@Test
+	public void chainSuccess() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate("cat sample.txt | grep \"9000\" | wc -l", bao);
+		String expected = "1" + System.lineSeparator();
+		assertEquals(expected, bao.toString());
+	}
+
+	@Test(expected = ShellException.class)
+	public void chainFailWcFromWrongFile() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate(
+				"cat sample.txt | grep \"nonsense\" | wc -l < sam.txt", bao);
+	}
+
+	@Test(expected = CatException.class)
+	public void chainFailCatInvalidFile() throws AbstractApplicationException,
+			ShellException {
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		shell.parseAndEvaluate(
+				"cat samp.txt | grep \"9000\" | sed s/power/lower/", bao);
+	}
 }

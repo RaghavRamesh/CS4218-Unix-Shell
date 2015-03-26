@@ -39,10 +39,11 @@ public class LsAppTest {
 	@Before
 	public void setUp() throws Exception {
 
-		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+		Environment.currentDirectory = System
+				.getProperty(Consts.Keywords.USER_DIR);
 		// create a folder named TempTest in current
 
-		 originalCurrDir = Environment.getCurrentDirectory(); 
+		originalCurrDir = Environment.getCurrentDirectory();
 		tempTestDirectory = new File(originalCurrDir + File.separator
 				+ tempFolder);
 
@@ -62,7 +63,8 @@ public class LsAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
+		Environment.setCurrentDirectory(System
+				.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	/*

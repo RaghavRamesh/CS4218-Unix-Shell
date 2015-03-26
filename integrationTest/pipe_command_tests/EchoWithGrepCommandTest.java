@@ -26,9 +26,9 @@ public class EchoWithGrepCommandTest {
 	Application grepApp;
 	String[] echoArgs;
 	String[] grepArgs;
-	
+
 	// Command under test: echo PipeCommandTestFiles | grep 'Pipe'
-	
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -37,7 +37,7 @@ public class EchoWithGrepCommandTest {
 				+ File.separator
 				+ "test-files-integration";
 
-		echoApp= new EchoApp();
+		echoApp = new EchoApp();
 		grepApp = new GrepApp();
 	}
 
@@ -52,23 +52,22 @@ public class EchoWithGrepCommandTest {
 	 */
 	@Test
 	public void testEchoWithGrepDirectly() throws AbstractApplicationException {
-		echoArgs = new String[] { "PipeCommandTestFiles" }; 
+		echoArgs = new String[] { "PipeCommandTestFiles" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
 
-		grepArgs = new String[] { "Pipe"};
+		grepArgs = new String[] { "Pipe" };
 
-		byte[] echoOutput = outStream.toByteArray(); 
+		byte[] echoOutput = outStream.toByteArray();
 		ByteArrayInputStream inStream = new ByteArrayInputStream(echoOutput);
-		
+
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(grepArgs, inStream, outStream);
 
-		String expected = "PipeCommandTestFiles"
-				+ System.lineSeparator();
+		String expected = "PipeCommandTestFiles" + System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -83,8 +82,7 @@ public class EchoWithGrepCommandTest {
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("echo PipeCommandTestFiles | grep 'Pipe'",
 				outStream);
-		String expected = "PipeCommandTestFiles"
-				+ System.lineSeparator();
+		String expected = "PipeCommandTestFiles" + System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 

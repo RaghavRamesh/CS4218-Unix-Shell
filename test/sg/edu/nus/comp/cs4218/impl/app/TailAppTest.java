@@ -16,23 +16,22 @@ import org.junit.Test;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
-import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
 
 public class TailAppTest {
 	private static final String LINE_SEPARATOR = "line.separator";
 	private static final String LINE = "line";
 	private static final String TAIL = "tail: ";
 	private static final String TEMP_FILE_NAME = "temp-input-file-name.tmp";
-	
-  @Before
-  public void setUp() throws Exception {
-    Environment.currentDirectory = System.getProperty("user.dir");
-  }
-  
-  @After
-  public void tearDown() throws Exception {
-    Environment.currentDirectory = System.getProperty("user.dir");
-  }
+
+	@Before
+	public void setUp() throws Exception {
+		Environment.currentDirectory = System.getProperty("user.dir");
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Environment.currentDirectory = System.getProperty("user.dir");
+	}
 
 	@Test
 	public void testNullArgumentsArray() {
@@ -381,7 +380,7 @@ public class TailAppTest {
 
 		} catch (AbstractApplicationException e) {
 			String expected = "tail: can't open 'temp-input-file-name.tmp'. The file could not be found";
-			assertEquals(expected,e.getMessage());
+			assertEquals(expected, e.getMessage());
 		}
 	}
 

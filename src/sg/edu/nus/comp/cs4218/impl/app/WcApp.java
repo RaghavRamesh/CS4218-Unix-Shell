@@ -40,7 +40,8 @@ public class WcApp implements Application {
 	PrintWriter writer;
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 
 		if (args == null) {
 			throw new WcException(Consts.Messages.ARG_NOT_NULL);
@@ -51,7 +52,8 @@ public class WcApp implements Application {
 		}
 
 		reader = null;
-		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
+		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+				stdout)));
 
 		try {
 			ArrayList<String> fileNames = new ArrayList<String>();
@@ -93,7 +95,8 @@ public class WcApp implements Application {
 	 * @throws IOException
 	 * @throws InvalidFileException
 	 */
-	private ArrayList<String> processArguments(ArrayList<String> fileNames, ArrayList<String> filePaths, String... args) throws WcException,
+	private ArrayList<String> processArguments(ArrayList<String> fileNames,
+			ArrayList<String> filePaths, String... args) throws WcException,
 			InvalidFileException, IOException {
 
 		for (int i = 0; i < args.length; i++) {
@@ -126,7 +129,8 @@ public class WcApp implements Application {
 	 * @throws WcException
 	 * @throws IOException
 	 */
-	private void processCountFromInputStream(InputStream stdin) throws WcException, IOException {
+	private void processCountFromInputStream(InputStream stdin)
+			throws WcException, IOException {
 		if (stdin == null) {
 			throw new WcException(Consts.Messages.INP_STR_NOT_NULL);
 		}
@@ -153,8 +157,9 @@ public class WcApp implements Application {
 	 * @throws IOException
 	 */
 	// made protected to test the method
-	protected void processCountFromFiles(ArrayList<String> fileNames, ArrayList<String> filePaths) throws InvalidDirectoryException, WcException,
-			IOException {
+	protected void processCountFromFiles(ArrayList<String> fileNames,
+			ArrayList<String> filePaths) throws InvalidDirectoryException,
+			WcException, IOException {
 
 		if (fileNames == null)
 			throw new WcException(Consts.Messages.ARG_NOT_NULL);
@@ -170,7 +175,8 @@ public class WcApp implements Application {
 		for (int k = 0; k < fileNames.size(); k++) {
 			requiredDirectory = filePaths.get(k);
 
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(requiredDirectory)));
+			reader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(requiredDirectory)));
 
 			// Reset count of bytesLength,wordsLength,lineLength
 			this.bytesLength = 0;
@@ -209,7 +215,8 @@ public class WcApp implements Application {
 	 * @throws WcException
 	 */
 	// made protected to test the method
-	protected void readAndProcessLinesInReader(BufferedReader reader) throws IOException, WcException {
+	protected void readAndProcessLinesInReader(BufferedReader reader)
+			throws IOException, WcException {
 
 		String fileContents = FileProcessor.readAndConvertToString(reader);
 		bytesLength = FileProcessor.getByteCount(fileContents);
@@ -260,7 +267,8 @@ public class WcApp implements Application {
 	 * @param lineLength
 	 *            line length to display
 	 */
-	private void displayCount(PrintWriter writer, int bytesLength, int wordsLength, int lineLength) {
+	private void displayCount(PrintWriter writer, int bytesLength,
+			int wordsLength, int lineLength) {
 
 		String result = "";
 

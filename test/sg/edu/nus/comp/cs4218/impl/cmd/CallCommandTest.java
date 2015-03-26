@@ -117,21 +117,25 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindInput() throws ShellException, AbstractApplicationException {
+	public void testFindInput() throws ShellException,
+			AbstractApplicationException {
 		List<String> tokens = Arrays.asList("ls", "<", "d.txt");
 		assertEquals("d.txt", CallCommand.findInput(tokens));
 	}
 
 	@Test
-	public void testFindInputReturnNull() throws ShellException, AbstractApplicationException {
+	public void testFindInputReturnNull() throws ShellException,
+			AbstractApplicationException {
 		List<String> tokens = Arrays.asList("ls", "a.txt");
 		assertEquals(null, CallCommand.findInput(tokens));
 	}
 
 	@Test
-	public void testFindInputWithTooManyInput() throws ShellException, AbstractApplicationException {
+	public void testFindInputWithTooManyInput() throws ShellException,
+			AbstractApplicationException {
 		try {
-			List<String> tokens = Arrays.asList("ls", "<", "a.txt", "and", "<", "c.txt");
+			List<String> tokens = Arrays.asList("ls", "<", "a.txt", "and", "<",
+					"c.txt");
 			CallCommand.findInput(tokens);
 			fail(SHOULD_THROW);
 		} catch (ShellException e) {
@@ -143,7 +147,8 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindInputWithInvalidInput() throws ShellException, AbstractApplicationException {
+	public void testFindInputWithInvalidInput() throws ShellException,
+			AbstractApplicationException {
 		try {
 			List<String> tokens = Arrays.asList("ls", "<", ";");
 			CallCommand.findInput(tokens);
@@ -157,21 +162,25 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindOutput() throws ShellException, AbstractApplicationException {
+	public void testFindOutput() throws ShellException,
+			AbstractApplicationException {
 		List<String> tokens = Arrays.asList("wc", "haha", ">", "b2.txt");
 		assertEquals("b2.txt", CallCommand.findOutput(tokens));
 	}
 
 	@Test
-	public void testFindOutputReturnNull() throws ShellException, AbstractApplicationException {
+	public void testFindOutputReturnNull() throws ShellException,
+			AbstractApplicationException {
 		List<String> tokens = Arrays.asList("echo", "hello", "b1.txt");
 		assertEquals(null, CallCommand.findOutput(tokens));
 	}
 
 	@Test
-	public void testFindOutputWithTooManyOutput() throws ShellException, AbstractApplicationException {
+	public void testFindOutputWithTooManyOutput() throws ShellException,
+			AbstractApplicationException {
 		try {
-			List<String> tokens = Arrays.asList("echo", "hello", ">", "d1.txt", ">", "d2.txt");
+			List<String> tokens = Arrays.asList("echo", "hello", ">", "d1.txt",
+					">", "d2.txt");
 			CallCommand.findOutput(tokens);
 			fail(SHOULD_THROW);
 		} catch (ShellException e) {
@@ -183,7 +192,8 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindOutputWithInvalidInput() throws ShellException, AbstractApplicationException {
+	public void testFindOutputWithInvalidInput() throws ShellException,
+			AbstractApplicationException {
 		try {
 			List<String> tokens = Arrays.asList("ls", ">");
 			CallCommand.findOutput(tokens);
@@ -197,7 +207,8 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindArguments() throws ShellException, AbstractApplicationException {
+	public void testFindArguments() throws ShellException,
+			AbstractApplicationException {
 		String cmdLine = "< a.txt echo hello > b.txt world";
 		List<String> expected = Arrays.asList("echo", "hello", "world");
 		List<String> actual = new CallCommand(cmdLine).findArguments();
@@ -205,10 +216,13 @@ public class CallCommandTest {
 	}
 
 	@Test
-	public void testFindGlobbing() throws ShellException, IOException, InvalidDirectoryException {
+	public void testFindGlobbing() throws ShellException, IOException,
+			InvalidDirectoryException {
 		// debug
 		List<String> tokens = Arrays.asList("echo", "test-files-ef1/*");
-		List<String> expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139", "test-files-ef1/clam1533",
+		List<String> expected = Arrays.asList("echo",
+				"test-files-ef1/5callop.txt133",
+				"test-files-ef1/5callop.txt139", "test-files-ef1/clam1533",
 				"test-files-ef1/oyster1337", "test-files-ef1/sca110p.txt339");
 		List<String> actual = CallCommand.findGlobbing(tokens);
 		// ignoring order
@@ -225,7 +239,8 @@ public class CallCommandTest {
 		List<String> expected;
 		List<String> actual;
 		tokens = Arrays.asList("echo", "test-files-ef1/*33*");
-		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/clam1533", "test-files-ef1/oyster1337",
+		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133",
+				"test-files-ef1/clam1533", "test-files-ef1/oyster1337",
 				"test-files-ef1/sca110p.txt339");
 		actual = CallCommand.findGlobbing(tokens);
 		// ignoring order
@@ -238,7 +253,8 @@ public class CallCommandTest {
 		List<String> expected;
 		List<String> actual;
 		tokens = Arrays.asList("echo", "test-files-ef1/5*");
-		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139");
+		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133",
+				"test-files-ef1/5callop.txt139");
 		actual = CallCommand.findGlobbing(tokens);
 		// ignoring order
 		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));

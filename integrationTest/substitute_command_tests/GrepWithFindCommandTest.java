@@ -89,8 +89,8 @@ public class GrepWithFindCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("grep 'usage' `find -name GrepWithSubCommand.txt`",
-				outStream);
+		shImpl.parseAndEvaluate(
+				"grep 'usage' `find -name GrepWithSubCommand.txt`", outStream);
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."

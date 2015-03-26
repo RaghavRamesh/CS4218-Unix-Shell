@@ -30,7 +30,7 @@ public class LsWithGrepCommandTest {
 	/*
 	 * Command under test: ls PipeCommandTestFiles | grep 'Pipe'
 	 */
-	
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -60,10 +60,10 @@ public class LsWithGrepCommandTest {
 		LsApp lsApp = new LsApp();
 		lsApp.run(lsArgs, null, outStream);
 
-		grepArgs = new String[]{"Pipe"};
+		grepArgs = new String[] { "Pipe" };
 		byte[] bArray = outStream.toByteArray();
 		ByteArrayInputStream inStream = new ByteArrayInputStream(bArray);
-		
+
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(grepArgs, inStream, outStream);
@@ -82,14 +82,17 @@ public class LsWithGrepCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("ls PipeCommandTestFiles | grep 'Pipe'", outStream);
-		String expected = "GrepWithPipeCommand.txt\t"	+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
+		shImpl.parseAndEvaluate("ls PipeCommandTestFiles | grep 'Pipe'",
+				outStream);
+		String expected = "GrepWithPipeCommand.txt\t"
+				+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
 		String actual = outStream.toString();
 		assertEquals(expected, actual);
 	}
 
 	/*
-	 * Negative test: Ls application throws exception when directory does not exist
+	 * Negative test: Ls application throws exception when directory does not
+	 * exist
 	 */
 	@Test(expected = LsException.class)
 	public void testLsWithGrepFailing() throws AbstractApplicationException,

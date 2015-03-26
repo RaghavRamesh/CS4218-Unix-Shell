@@ -5,29 +5,29 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class PipeToken extends AbstractToken {
 
-  protected PipeToken(String parent, int begin) {
-    super(parent, begin);
-    assert(parent.charAt(begin) == '|');
-  }
+	protected PipeToken(String parent, int begin) {
+		super(parent, begin);
+		assert (parent.charAt(begin) == '|');
+	}
 
-  @Override
-  public Boolean appendNext() {
-    return false;
-  }
+	@Override
+	public Boolean appendNext() {
+		return false;
+	}
 
-  @Override
-  public TokenType getType() {
-    return TokenType.PIPE;
-  }
+	@Override
+	public TokenType getType() {
+		return TokenType.PIPE;
+	}
 
-  @Override
-  public String value() throws ShellException, AbstractApplicationException {
-    return String.valueOf(parent.charAt(begin));
-  }
+	@Override
+	public String value() throws ShellException, AbstractApplicationException {
+		return String.valueOf(parent.charAt(begin));
+	}
 
-  @Override
-  public void checkValid() throws ShellException {
-    // Do not need to check anything
-  }
+	@Override
+	public void checkValid() throws ShellException {
+		// Do not need to check anything
+	}
 
 }

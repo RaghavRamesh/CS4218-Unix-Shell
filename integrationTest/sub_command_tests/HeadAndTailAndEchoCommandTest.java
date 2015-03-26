@@ -29,7 +29,8 @@ public class HeadAndTailAndEchoCommandTest {
 	String[] headArgs;
 	String[] tailArgs;
 
-	// Command under test: echo `head -n 1 SubCommand.txt` `tail -n 1 SubCommand2.txt`
+	// Command under test: echo `head -n 1 SubCommand.txt` `tail -n 1
+	// SubCommand2.txt`
 
 	@Before
 	public void setUp() throws Exception {
@@ -59,20 +60,20 @@ public class HeadAndTailAndEchoCommandTest {
 		headArgs = new String[] { "-n", "1", "SubCommand.txt" };
 		headApp = new HeadApp();
 		headApp.run(headArgs, null, outStream);
-		
+
 		String headOutput = outStream.toString();
 		headOutput = headOutput.replace(System.lineSeparator(), "");
 		outStream.reset();
-		
+
 		// Run tail
 		tailArgs = new String[] { "-n", "1", "SubCommand2.txt" };
 		tailApp = new TailApp();
 		tailApp.run(tailArgs, null, outStream);
-		
+
 		String tailOutput = outStream.toString();
 		tailOutput = tailOutput.replace(System.lineSeparator(), "");
 		outStream.reset();
-		
+
 		// Run echo
 		echoArgs = new String[] { headOutput, tailOutput };
 		echoApp = new EchoApp();
@@ -94,7 +95,9 @@ public class HeadAndTailAndEchoCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("echo `head -n 1 SubCommand.txt` `tail -n 1 SubCommand2.txt`", outStream);
+		shImpl.parseAndEvaluate(
+				"echo `head -n 1 SubCommand.txt` `tail -n 1 SubCommand2.txt`",
+				outStream);
 		String expected = "This file meant for the usage of grep with sub commands. "
 				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
@@ -110,7 +113,8 @@ public class HeadAndTailAndEchoCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("echo `head` `tail -n 1 SubCommand2.txt`", outStream);
+		shImpl.parseAndEvaluate("echo `head` `tail -n 1 SubCommand2.txt`",
+				outStream);
 	}
 
 }

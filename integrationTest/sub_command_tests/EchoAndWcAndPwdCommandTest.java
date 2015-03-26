@@ -62,7 +62,7 @@ public class EchoAndWcAndPwdCommandTest {
 		String pwdOutput = outStream.toString();
 		pwdOutput = pwdOutput.replace(System.lineSeparator(), "");
 		outStream.reset();
-		
+
 		// Run wc
 		wcArgs = new String[] { "SubCommand.txt" };
 		wcApp = new WcApp();
@@ -77,10 +77,10 @@ public class EchoAndWcAndPwdCommandTest {
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
 
-		String expected = "2 19 96 SubCommand.txt " 
-		    + System.getProperty(Consts.Keywords.USER_DIR)
-		    + File.separator +"test-files-integration" + File.separator +"SubCommandTestFiles"
-				+ System.lineSeparator();
+		String expected = "2 19 96 SubCommand.txt "
+				+ System.getProperty(Consts.Keywords.USER_DIR) + File.separator
+				+ "test-files-integration" + File.separator
+				+ "SubCommandTestFiles" + System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
 	}
@@ -95,10 +95,10 @@ public class EchoAndWcAndPwdCommandTest {
 
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("echo `wc SubCommand.txt` `pwd`", outStream);
-		String expected = "2 19 96 SubCommand.txt " 
-		    + System.getProperty(Consts.Keywords.USER_DIR)
-		    + File.separator +"test-files-integration" + File.separator + "SubCommandTestFiles"
-				+ System.lineSeparator();
+		String expected = "2 19 96 SubCommand.txt "
+				+ System.getProperty(Consts.Keywords.USER_DIR) + File.separator
+				+ "test-files-integration" + File.separator
+				+ "SubCommandTestFiles" + System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 

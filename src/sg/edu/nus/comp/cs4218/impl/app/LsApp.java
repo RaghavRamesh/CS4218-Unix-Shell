@@ -91,13 +91,13 @@ public class LsApp implements Application {
 
 		int count = 0;
 		for (File fileInCurrDir : currDirContents) {
-			
+
 			String fileNameToDisplay = fileInCurrDir.getName();
 			if (fileNameToDisplay != null && fileNameToDisplay.length() > 0
 					&& !fileNameToDisplay.startsWith(".")) {
 
 				outPathWriter.print(fileNameToDisplay);
-				if(count!= currDirContents.length -1){
+				if (count != currDirContents.length - 1) {
 					outPathWriter.write("\t");
 				}
 			}

@@ -37,7 +37,8 @@ public class CallCommand implements Command {
 	private OutputStream outStream;
 	private Boolean closeOutput;
 
-	public CallCommand(String cmdLine) throws ShellException, AbstractApplicationException {
+	public CallCommand(String cmdLine) throws ShellException,
+			AbstractApplicationException {
 		try {
 			this.closeOutput = false;
 			this.commandLine = cmdLine;
@@ -54,14 +55,15 @@ public class CallCommand implements Command {
 	}
 
 	@Override
-	public void evaluate(InputStream stdin, OutputStream stdout) throws AbstractApplicationException, ShellException {
+	public void evaluate(InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException, ShellException {
 		if (substitutedTokens.isEmpty()) {
 			return;
 		}
 
 		try {
-		  substitutedTokens = findGlobbing(substitutedTokens);
-		  
+			substitutedTokens = findGlobbing(substitutedTokens);
+
 			// Priority IO redirection first
 			inStream = getInputStreamFromCommand();
 			if (inStream == null) {
@@ -79,10 +81,10 @@ public class CallCommand implements Command {
 			String[] args = argsWithoutApp.toArray(new String[numberOfArgs]);
 			app.run(args, inStream, outStream);
 		} catch (IOException e) {
-      throw new ShellException(e);
-    } catch (InvalidDirectoryException e) {
-      throw new ShellException(e);
-    } finally {
+			throw new ShellException(e);
+		} catch (InvalidDirectoryException e) {
+			throw new ShellException(e);
+		} finally {
 			terminate();
 		}
 	}
@@ -95,7 +97,8 @@ public class CallCommand implements Command {
 	 *            A list of tokens.
 	 * @return A list of substituted tokens.
 	 */
-	public static List<String> substituteAll(List<AbstractToken> tokens) throws AbstractApplicationException, ShellException, IOException {
+	public static List<String> substituteAll(List<AbstractToken> tokens)
+			throws AbstractApplicationException, ShellException, IOException {
 		String current = null;
 		List<String> list = new ArrayList<String>();
 		for (AbstractToken token : tokens) {
@@ -112,7 +115,8 @@ public class CallCommand implements Command {
 				// Split the strings inside into multiple args
 				List<String> strList = normalize(val);
 				if (!strList.isEmpty()) {
-					current = current == null ? strList.get(0) : current + strList.get(0);
+					current = current == null ? strList.get(0) : current
+							+ strList.get(0);
 					for (int i = 1; i < strList.size(); i++) {
 						list.add(current);
 						current = strList.get(i);
@@ -155,7 +159,8 @@ public class CallCommand implements Command {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_INPUT);
 				}
-				if (currentIndex == tokens.size() || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_INPUT);
 				}
 				result = tokens.get(currentIndex++);
@@ -182,7 +187,8 @@ public class CallCommand implements Command {
 				if (result != null) {
 					throw new ShellException(Consts.Messages.TOO_MANY_OUTPUT);
 				}
-				if (currentIndex == tokens.size() || Parser.isSpecialCharacter(tokens.get(currentIndex))) {
+				if (currentIndex == tokens.size()
+						|| Parser.isSpecialCharacter(tokens.get(currentIndex))) {
 					throw new ShellException(Consts.Messages.INVALID_OUTPUT);
 				}
 				result = tokens.get(currentIndex++);
@@ -191,19 +197,21 @@ public class CallCommand implements Command {
 		return result;
 	}
 
-	public static List<String> findGlobbing(List<String> tokens) throws ShellException, IOException, InvalidDirectoryException {
+	public static List<String> findGlobbing(List<String> tokens)
+			throws ShellException, IOException, InvalidDirectoryException {
 		// if the first argument is find, return
 		if (tokens.get(0).equals("find"))
 			return tokens;
-		
+
 		// find the token with *
 		// if not found a token with *, return as is
-		// if found, replace that token with several tokens that were returned while searching
+		// if found, replace that token with several tokens that were returned
+		// while searching
 
 		String relevantToken = null;
 		int relevantTokenIdx = 0;
 		for (int idx = 0; idx < tokens.size(); idx++) {
-			if (tokens.get(idx).contains("*") ) {
+			if (tokens.get(idx).contains("*")) {
 				relevantToken = tokens.get(idx);
 				relevantTokenIdx = idx;
 				break;
@@ -216,8 +224,9 @@ public class CallCommand implements Command {
 		int indexOfFirstAsterisk = relevantToken.indexOf('*');
 		int indexOfLastFileSeparator = relevantToken.lastIndexOf("/");
 
-		// if there is file seperator after *
-		if (indexOfLastFileSeparator != -1 && indexOfLastFileSeparator > indexOfFirstAsterisk)
+		// if there is file separator after *
+		if (indexOfLastFileSeparator != -1
+				&& indexOfLastFileSeparator > indexOfFirstAsterisk)
 			return tokens;
 
 		String directoryPrefix = "";
@@ -227,9 +236,12 @@ public class CallCommand implements Command {
 			globPattern = relevantToken;
 			absolutePathOfDirToLookIn = Environment.getCurrentDirectory();
 		} else {
-			directoryPrefix = relevantToken.substring(0, indexOfLastFileSeparator); // do not include the file separator
+			directoryPrefix = relevantToken.substring(0,
+					indexOfLastFileSeparator); // do not include the file
+												// separator
 			globPattern = relevantToken.substring(indexOfLastFileSeparator + 1);
-			absolutePathOfDirToLookIn = Environment.checkIsDirectory(directoryPrefix);
+			absolutePathOfDirToLookIn = Environment
+					.checkIsDirectory(directoryPrefix);
 		}
 
 		GlobFileSearcher fileSearcher = new GlobFileSearcher(globPattern);
@@ -318,7 +330,8 @@ public class CallCommand implements Command {
 
 	public OutputStream getOutputStreamFromCommand() throws ShellException {
 		try {
-			return (outputPath == null) ? null : new FileOutputStream(Environment.createFile(outputPath));
+			return (outputPath == null) ? null : new FileOutputStream(
+					Environment.createFile(outputPath));
 		} catch (FileNotFoundException e) {
 			throw new ShellException(e);
 		}

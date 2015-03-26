@@ -25,22 +25,30 @@ public class GlobFileSearcher extends SimpleFileVisitor<Path> {
 		return resultList;
 	}
 
-	public GlobFileSearcher(String globPattern) throws InvalidDirectoryException, IOException {
-		matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
+	public GlobFileSearcher(String globPattern)
+			throws InvalidDirectoryException, IOException {
+		matcher = FileSystems.getDefault()
+				.getPathMatcher("glob:" + globPattern);
 		rootDirectory = Environment.getCurrentDirectory();
 	}
 
 	@Override
-	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		
-		if (++numOfDirsTouched == 1) // the first dir touched, the one searching in
+	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+			throws IOException {
+
+		if (++numOfDirsTouched == 1) // the first dir touched, the one searching
+										// in
 			return FileVisitResult.CONTINUE;
 
 		Path pathName = dir.getFileName();
-		if (!new File(pathName.toString()).isHidden() && matcher.matches(pathName)) {
-			String resultToAdd = Environment.calculateRelativePath(rootDirectory, dir.toAbsolutePath().toString());
-			// removing the trailing File.Separator at the directory end before adding to display results
-			getResultList().add(resultToAdd.substring(0, resultToAdd.length() - 1));
+		if (!new File(pathName.toString()).isHidden()
+				&& matcher.matches(pathName)) {
+			String resultToAdd = Environment.calculateRelativePath(
+					rootDirectory, dir.toAbsolutePath().toString());
+			// removing the trailing File.Separator at the directory end before
+			// adding to display results
+			getResultList().add(
+					resultToAdd.substring(0, resultToAdd.length() - 1));
 		}
 		return FileVisitResult.SKIP_SUBTREE;
 	}
@@ -48,8 +56,10 @@ public class GlobFileSearcher extends SimpleFileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
 		Path pathName = file.getFileName();
-		if (!new File(pathName.toString()).isHidden() && matcher.matches(pathName)) {
-			String resultToAdd = Environment.calculateRelativePath(rootDirectory, file.toAbsolutePath().toString());
+		if (!new File(pathName.toString()).isHidden()
+				&& matcher.matches(pathName)) {
+			String resultToAdd = Environment.calculateRelativePath(
+					rootDirectory, file.toAbsolutePath().toString());
 			getResultList().add(resultToAdd);
 		}
 		return FileVisitResult.CONTINUE;

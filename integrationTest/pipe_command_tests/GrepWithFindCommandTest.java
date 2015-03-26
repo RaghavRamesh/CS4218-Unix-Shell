@@ -26,9 +26,9 @@ public class GrepWithFindCommandTest {
 	Application app2;
 	String[] app1Args;
 	String[] app2Args;
-	
+
 	// Command under test: find -name GrepWithPipeComman* | grep 'Pipe'
-	
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -54,7 +54,7 @@ public class GrepWithFindCommandTest {
 	 */
 	@Test
 	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] {"-name", "GrepWithPipeComman*"};
+		app2Args = new String[] { "-name", "GrepWithPipeComman*" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		FindApp findApp = new FindApp();
@@ -68,10 +68,8 @@ public class GrepWithFindCommandTest {
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(app1Args, inputStream, outStream);
 
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
-				+ System.lineSeparator();
+		String expected = "GrepWithPipeCommand.txt" + System.lineSeparator()
+				+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
 	}
@@ -87,10 +85,8 @@ public class GrepWithFindCommandTest {
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("find -name GrepWithPipeComman* | grep 'Pipe'",
 				outStream);
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt"
-				+ System.lineSeparator();
+		String expected = "GrepWithPipeCommand.txt" + System.lineSeparator()
+				+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 

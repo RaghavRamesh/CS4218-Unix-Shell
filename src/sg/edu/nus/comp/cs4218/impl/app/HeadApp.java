@@ -59,11 +59,12 @@ public class HeadApp implements Application {
 				throw new HeadException(Consts.Messages.ARG_NOT_EMPTY);
 
 			try {
-				reader = new BufferedReader(new FileReader(Environment.checkIsFile(args[0])));
+				reader = new BufferedReader(new FileReader(
+						Environment.checkIsFile(args[0])));
 			} catch (InvalidFileException | IOException e) {
 				throw new HeadException(e);
 			}
-		
+
 			writeToPrintStream(writer, numOfLines, reader);
 
 		} else if (args.length == 2 || args.length == 3) { // case 3 or 4
@@ -86,8 +87,9 @@ public class HeadApp implements Application {
 						if (args[2].length() == 0)
 							throw new HeadException(
 									Consts.Messages.ARG_NOT_EMPTY);
-						reader = new BufferedReader(new FileReader(Environment.checkIsFile((args[2]))));// case
-																				// 4
+						reader = new BufferedReader(new FileReader(
+								Environment.checkIsFile((args[2]))));// case
+						// 4
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {

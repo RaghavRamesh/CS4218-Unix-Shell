@@ -24,7 +24,8 @@ import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 public class GrepApp implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 		if (args == null) {
 			throw new GrepException(Consts.Messages.ARG_NOT_NULL);
 		}
@@ -47,10 +48,12 @@ public class GrepApp implements Application {
 		Matcher matcher = pattern.matcher("");
 
 		BufferedReader reader = null;
-		PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stdout)));
+		PrintWriter writer = new PrintWriter(new BufferedWriter(
+				new OutputStreamWriter(stdout)));
 		String line;
 
-		if (args.length == 1) { // only REGEX string provided, take input from stdin
+		if (args.length == 1) { // only REGEX string provided, take input from
+								// stdin
 			if (stdin == null) {
 				throw new GrepException(Consts.Messages.IN_STR_NOT_NULL);
 			}
@@ -76,12 +79,15 @@ public class GrepApp implements Application {
 				throw new GrepException(e.getMessage());
 			}
 
-		} else { // the first argument will be REGEX string, the rest will be filenames
+		} else { // the first argument will be REGEX string, the rest will be
+					// filenames
 			for (int i = 1; i < args.length; i++) {
 				String fileName = args[i];
 
 				try {
-					reader = new BufferedReader(new FileReader(Environment.getCurrentDirectory() + File.separator + fileName));
+					reader = new BufferedReader(new FileReader(
+							Environment.getCurrentDirectory() + File.separator
+									+ fileName));
 					while ((line = reader.readLine()) != null) {
 						matcher.reset(line);
 

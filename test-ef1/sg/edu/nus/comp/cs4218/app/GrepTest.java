@@ -14,86 +14,90 @@ import sg.edu.nus.comp.cs4218.impl.app.GrepApp;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-
 public class GrepTest {
-    private ByteArrayOutputStream stdout;
-    private Application app;
+	private ByteArrayOutputStream stdout;
+	private Application app;
 
-    @Before
-    public void setUp() throws Exception {
-        Environment.currentDirectory = System.getProperty("user.dir") + "/test-files-ef1/clam1533";
-        stdout = new ByteArrayOutputStream();
-        app = new GrepApp(); //TODO change here
-    }
-    
-    @After
-	public void tearDown(){
-		Environment.currentDirectory =  System.getProperty("user.dir");
+	@Before
+	public void setUp() throws Exception {
+		Environment.currentDirectory = System.getProperty("user.dir")
+				+ "/test-files-ef1/clam1533";
+		stdout = new ByteArrayOutputStream();
+		app = new GrepApp(); // TODO change here
 	}
 
-    @Test(expected = GrepException.class)
-    public void testGrepNullInputStream() throws AbstractApplicationException {
-        String[] args = new String[]{"bar|z"};
+	@After
+	public void tearDown() {
+		Environment.currentDirectory = System.getProperty("user.dir");
+	}
 
-        app.run(args, null, stdout);
-    }
+	@Test(expected = GrepException.class)
+	public void testGrepNullInputStream() throws AbstractApplicationException {
+		String[] args = new String[] { "bar|z" };
 
-    @Test(expected = GrepException.class)
-    public void cannotGrepDirectory() throws AbstractApplicationException {
-        String[] args = { "a", "abalone0000" };
+		app.run(args, null, stdout);
+	}
 
-        app.run(args, null, stdout);
-    }
+	@Test(expected = GrepException.class)
+	public void cannotGrepDirectory() throws AbstractApplicationException {
+		String[] args = { "a", "abalone0000" };
 
-    @Test(expected = GrepException.class)
-    public void testGrepEmptyPattern() throws AbstractApplicationException {
-        String[] args = new String[]{ "" };
-        app.run(args, new ByteArrayInputStream("foo".getBytes()), stdout);
-    }
+		app.run(args, null, stdout);
+	}
 
+	@Test(expected = GrepException.class)
+	public void testGrepEmptyPattern() throws AbstractApplicationException {
+		String[] args = new String[] { "" };
+		app.run(args, new ByteArrayInputStream("foo".getBytes()), stdout);
+	}
 
-    @Test
-    public void canMatchTwoArgumentsWithOneCharRegex() throws AbstractApplicationException {
-        String[] args = { "a", "cxintro01.txt" };
-        String expected = "A clam is a type of shellfish."
-                + System.lineSeparator();
+	@Test
+	public void canMatchTwoArgumentsWithOneCharRegex()
+			throws AbstractApplicationException {
+		String[] args = { "a", "cxintro01.txt" };
+		String expected = "A clam is a type of shellfish."
+				+ System.lineSeparator();
 
-        app.run(args, null, stdout);
-        Assert.assertEquals(expected, stdout.toString());
-    }
+		app.run(args, null, stdout);
+		Assert.assertEquals(expected, stdout.toString());
+	}
 
-    @Test
-    public void canGrepWithWhitespacedRegex() throws AbstractApplicationException {
-        String[] args = { "A ", "cxintro01.txt" };
-        String expected = "A clam is a type of shellfish."
-                + System.lineSeparator();
+	@Test
+	public void canGrepWithWhitespacedRegex()
+			throws AbstractApplicationException {
+		String[] args = { "A ", "cxintro01.txt" };
+		String expected = "A clam is a type of shellfish."
+				+ System.lineSeparator();
 
-        app.run(args, null, stdout);
-        Assert.assertEquals(expected, stdout.toString());
-    }
+		app.run(args, null, stdout);
+		Assert.assertEquals(expected, stdout.toString());
+	}
 
-    @Test
-    public void testGrepValidPatternAndNoMatchViaStdin() throws AbstractApplicationException {
-        String[] args = new String[]{"bar|z"};
-        app.run(args, new ByteArrayInputStream(("adinda"   + System.lineSeparator()
-                + "riandy"   + System.lineSeparator()
-                + "sudarsan" + System.lineSeparator()
-                + "yuan qing").getBytes()), stdout);
-        Assert.assertEquals("", stdout.toString());
-    }
-    
-    @Test(expected=GrepException.class)
-    public void testGrepWithNullOutputStream() throws AbstractApplicationException{
-    	 String[] args = { "A ", "cxintro01.txt" };
+	@Test
+	public void testGrepValidPatternAndNoMatchViaStdin()
+			throws AbstractApplicationException {
+		String[] args = new String[] { "bar|z" };
+		app.run(args,
+				new ByteArrayInputStream(("adinda" + System.lineSeparator()
+						+ "riandy" + System.lineSeparator() + "sudarsan"
+						+ System.lineSeparator() + "yuan qing").getBytes()),
+				stdout);
+		Assert.assertEquals("", stdout.toString());
+	}
 
-         app.run(args, null, null);
-    }
-    
-    @Test(expected= GrepException.class)
-    public void testEmptyArguments() throws AbstractApplicationException{
-    	String[] args = new String[]{};
+	@Test(expected = GrepException.class)
+	public void testGrepWithNullOutputStream()
+			throws AbstractApplicationException {
+		String[] args = { "A ", "cxintro01.txt" };
 
-        app.run(args, null, stdout) ;
-    }
+		app.run(args, null, null);
+	}
+
+	@Test(expected = GrepException.class)
+	public void testEmptyArguments() throws AbstractApplicationException {
+		String[] args = new String[] {};
+
+		app.run(args, null, stdout);
+	}
 
 }

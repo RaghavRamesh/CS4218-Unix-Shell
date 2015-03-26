@@ -22,7 +22,8 @@ public class FindAppTest {
 	private static final String TEMP_FILE_NAME1 = "tempFileName1.tmp";
 	private static final String TEMP_FILE_NAME2 = "tempFileName2.tmp";
 	private static final String TEMP_FILE_ROOT = "tempFileInRoot.tmp";
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	private static final String LINE_SEPARATOR = System
+			.getProperty("line.separator");
 	private static final String TEMP1 = "temp1";
 	private static final String FIND = "find: ";
 	FindApp findApp = null;
@@ -44,32 +45,38 @@ public class FindAppTest {
 		 */
 
 		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
-		tempRootDirectory = new File(originalCurrDir + File.separator + "TempTestDir");
+		tempRootDirectory = new File(originalCurrDir + File.separator
+				+ "TempTestDir");
 		boolean status = tempRootDirectory.mkdir();
 		if (!status) {
 			fail();
 		}
 		Environment.setCurrentDirectory(tempRootDirectory.getAbsolutePath());
 
-		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath() + File.separator + TEMP_FILE_ROOT);
+		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + TEMP_FILE_ROOT);
 		PrintWriter fileInRootWtr = new PrintWriter(tempFileInRoot);
 		fileInRootWtr.println("random data");
 		fileInRootWtr.close();
 
-		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath() + File.separator + TEMP1);
+		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + TEMP1);
 		if (!tempSubDirectory1.mkdir()) {
 			fail();
 		}
-		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath() + File.separator + TEMP_FILE_NAME1);
+		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath()
+				+ File.separator + TEMP_FILE_NAME1);
 		PrintWriter tempFile1Writer = new PrintWriter(tempFileIn1);
 		tempFile1Writer.println("random data");
 		tempFile1Writer.close();
 
-		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath() + File.separator + "temp2");
+		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath()
+				+ File.separator + "temp2");
 		if (!tempSubDirectory2.mkdir()) {
 			fail();
 		}
-		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath() + File.separator + TEMP_FILE_NAME2);
+		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath()
+				+ File.separator + TEMP_FILE_NAME2);
 		PrintWriter tempFile2Writer = new PrintWriter(tempFileIn2);
 		tempFile2Writer.println("random data");
 		tempFile2Writer.close();
@@ -87,7 +94,8 @@ public class FindAppTest {
 		tempSubDirectory1.delete();
 		tempSubDirectory2.delete();
 		tempRootDirectory.delete();
-		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
+		Environment.setCurrentDirectory(System
+				.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	@Test
@@ -157,7 +165,8 @@ public class FindAppTest {
 			findApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), FIND + Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), FIND
+					+ Consts.Messages.OUT_STR_NOT_NULL);
 
 		}
 	}
@@ -328,11 +337,13 @@ public class FindAppTest {
 	}
 
 	@Test
-	public void test1MatchWithAbsoluteSearchPathSupplied() throws InvalidDirectoryException, IOException {
+	public void test1MatchWithAbsoluteSearchPathSupplied()
+			throws InvalidDirectoryException, IOException {
 		findApp = new FindApp();
 
 		String[] args = new String[3];
-		args[0] = Environment.getCurrentDirectory() + File.separator + TEMP1 + File.separator;
+		args[0] = Environment.getCurrentDirectory() + File.separator + TEMP1
+				+ File.separator;
 		args[1] = "-name";
 		args[2] = "temp*Name*";
 

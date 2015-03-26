@@ -74,7 +74,8 @@ public class WcAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
+		Environment.setCurrentDirectory(System
+				.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	@Test
@@ -296,7 +297,8 @@ public class WcAppTest {
 	 * Test with file having only one empty line
 	 */
 	@Test
-	public void testReadAndProcessLinesInFileWithEmptyLine() throws IOException, WcException {
+	public void testReadAndProcessLinesInFileWithEmptyLine()
+			throws IOException, WcException {
 		WcApp cmdApp = new WcApp();
 
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();

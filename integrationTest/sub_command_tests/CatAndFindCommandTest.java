@@ -26,7 +26,8 @@ public class CatAndFindCommandTest {
 	String[] catArgs;
 	String[] findArgs;
 
-	// Command under test: cat `find -name SubCommand.txt` `find -name SubCommand2.txt`
+	// Command under test: cat `find -name SubCommand.txt` `find -name
+	// SubCommand2.txt`
 
 	@Before
 	public void setUp() throws Exception {
@@ -49,43 +50,43 @@ public class CatAndFindCommandTest {
 	 * This test considers the applications atomically
 	 */
 	@Test
-	public void testCatAndFindDirectly()
-			throws AbstractApplicationException {
+	public void testCatAndFindDirectly() throws AbstractApplicationException {
 		// Run first find
 		findArgs = new String[] { "-name", "SubCommand.txt" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		
+
 		findApp = new FindApp();
 		findApp.run(findArgs, null, outStream);
-		
-		String findOutput = outStream.toString().replace(System.lineSeparator(), "");
+
+		String findOutput = outStream.toString().replace(
+				System.lineSeparator(), "");
 		outStream.reset();
-		
+
 		catArgs = new String[2];
 		catArgs[0] = findOutput;
-		
+
 		// Run second find
 		findArgs[0] = "-name";
 		findArgs[1] = "SubCommand2.txt";
 		findApp.run(findArgs, null, outStream);
-		
+
 		findOutput = outStream.toString().replace(System.lineSeparator(), "");
 		outStream.reset();
-		
+
 		catArgs[1] = findOutput;
 
 		// Run cat
 		catApp = new CatApp();
 		catApp.run(catArgs, null, outStream);
-		
-		String expected = " This file meant for the usage of grep with sub commands." 
-						+ System.lineSeparator()
-						+ "This is the second usage of the word."
-						+ System.lineSeparator()
-				        + " This is a second file for testting."
-				        + System.lineSeparator()
-				        + "Its tests the usage of various commands."
-						+ System.lineSeparator();
+
+		String expected = " This file meant for the usage of grep with sub commands."
+				+ System.lineSeparator()
+				+ "This is the second usage of the word."
+				+ System.lineSeparator()
+				+ " This is a second file for testting."
+				+ System.lineSeparator()
+				+ "Its tests the usage of various commands."
+				+ System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
 	}
@@ -99,15 +100,17 @@ public class CatAndFindCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("cat `find -name SubCommand.txt` `find -name SubCommand2.txt`", outStream);
-		String expected = " This file meant for the usage of grep with sub commands." 
+		shImpl.parseAndEvaluate(
+				"cat `find -name SubCommand.txt` `find -name SubCommand2.txt`",
+				outStream);
+		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
 				+ System.lineSeparator()
-		        + " This is a second file for testting."
-		        + System.lineSeparator()
-		        + "Its tests the usage of various commands."
-		        + System.lineSeparator();
+				+ " This is a second file for testting."
+				+ System.lineSeparator()
+				+ "Its tests the usage of various commands."
+				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -115,8 +118,8 @@ public class CatAndFindCommandTest {
 	 * Negative test: Wc application throws exception when arguments is empty
 	 */
 	@Test(expected = FindException.class)
-	public void testCatAndFindFailing()
-			throws AbstractApplicationException, ShellException {
+	public void testCatAndFindFailing() throws AbstractApplicationException,
+			ShellException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);

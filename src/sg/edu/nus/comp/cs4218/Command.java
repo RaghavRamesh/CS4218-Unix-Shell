@@ -7,16 +7,17 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public interface Command {
-	
+
 	/**
-	 * Evaluates command using data provided through stdin stream. Write result to stdout stream. 
+	 * Evaluates command using data provided through stdin stream. Write result
+	 * to stdout stream.
 	 */
-	public void evaluate(InputStream stdin, OutputStream stdout) 
-				throws AbstractApplicationException, ShellException;
-	
+	public void evaluate(InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException, ShellException;
+
 	/**
 	 * Terminates current execution of the command.
 	 */
 	public void terminate();
-	
+
 }

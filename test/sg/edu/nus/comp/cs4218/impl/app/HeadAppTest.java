@@ -22,16 +22,18 @@ public class HeadAppTest {
 	private static final String HEAD = "head: ";
 	private static final String TEMP_INPUT_FILE = "temp-input-file-name.tmp";
 	private static final String LINE_SEPARATOR = "line.separator";
-	
-  @Before
-  public void setUp() throws Exception {
-    Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
-  }
-  
-  @After
-  public void tearDown() throws Exception{
-	  Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
-  }
+
+	@Before
+	public void setUp() throws Exception {
+		Environment.currentDirectory = System
+				.getProperty(Consts.Keywords.USER_DIR);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Environment.currentDirectory = System
+				.getProperty(Consts.Keywords.USER_DIR);
+	}
 
 	@Test
 	public void testNullArgumentsArray() {
@@ -364,7 +366,7 @@ public class HeadAppTest {
 
 		} catch (AbstractApplicationException e) {
 			String expected = "head: can't open 'temp-input-file-name.tmp'. The file could not be found";
-			assertEquals(expected,e.getMessage());
+			assertEquals(expected, e.getMessage());
 		}
 	}
 

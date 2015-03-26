@@ -63,7 +63,8 @@ public class TailApp implements Application {
 				throw new TailException(Consts.Messages.ARG_NOT_EMPTY);
 
 			try {
-				reader = new BufferedReader(new FileReader(Environment.checkIsFile(args[0])));
+				reader = new BufferedReader(new FileReader(
+						Environment.checkIsFile(args[0])));
 			} catch (InvalidFileException | IOException e) {
 				throw new TailException(e);
 			}
@@ -89,8 +90,9 @@ public class TailApp implements Application {
 						if (args[2].length() == 0)
 							throw new TailException(
 									Consts.Messages.ARG_NOT_EMPTY);
-						reader = new BufferedReader(new FileReader(Environment.checkIsFile(args[2])));// case
-																				// 4
+						reader = new BufferedReader(new FileReader(
+								Environment.checkIsFile(args[2])));// case
+						// 4
 					}
 					writeToPrintStream(writer, numOfLines, reader);
 				} catch (NumberFormatException e) {

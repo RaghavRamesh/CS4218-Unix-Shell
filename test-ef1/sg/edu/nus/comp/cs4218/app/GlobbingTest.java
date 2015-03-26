@@ -21,7 +21,8 @@ public class GlobbingTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Environment.setCurrentDirectory(System.getProperty("user.dir") + "/test-files-ef1");
+		Environment.setCurrentDirectory(System.getProperty("user.dir")
+				+ "/test-files-ef1");
 		shell = new ShellImplementation(null);
 	}
 
@@ -31,7 +32,8 @@ public class GlobbingTest {
 	}
 
 	@Test
-	public void returnOriginalArgWhenGlobbingHasNoFileMatch() throws AbstractApplicationException, ShellException {
+	public void returnOriginalArgWhenGlobbingHasNoFileMatch()
+			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo no*matches";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
@@ -41,7 +43,8 @@ public class GlobbingTest {
 	}
 
 	@Test
-	public void returnOriginalArgWhenFileNameIsBetweenDirectories() throws AbstractApplicationException, ShellException {
+	public void returnOriginalArgWhenFileNameIsBetweenDirectories()
+			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo oyster1337/*/mussel7715";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
@@ -51,24 +54,28 @@ public class GlobbingTest {
 	}
 
 	@Test
-	public void returnExpandedArgsWhenGlobbingHasMatches() throws AbstractApplicationException, ShellException {
+	public void returnExpandedArgsWhenGlobbingHasMatches()
+			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo *.txt13*";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
 
-		String expected = "5callop.txt133 5callop.txt139" + System.lineSeparator();
+		String expected = "5callop.txt133 5callop.txt139"
+				+ System.lineSeparator();
 
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
 	@Test
-	public void returnBothFilesAndDirectoriesAlphabeticallyWhenMatched() throws AbstractApplicationException, ShellException {
+	public void returnBothFilesAndDirectoriesAlphabeticallyWhenMatched()
+			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo *";
 
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
 
-		String expected = "5callop.txt133 5callop.txt139 clam1533 oyster1337 sca110p.txt339" + System.lineSeparator();
+		String expected = "5callop.txt133 5callop.txt139 clam1533 oyster1337 sca110p.txt339"
+				+ System.lineSeparator();
 
 		Assert.assertEquals(expected, stdout.toString());
 	}

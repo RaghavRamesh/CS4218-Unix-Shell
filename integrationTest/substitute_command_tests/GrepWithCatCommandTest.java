@@ -28,7 +28,7 @@ public class GrepWithCatCommandTest {
 	/*
 	 * Command under test: cat `ls` | grep "usage"
 	 */
-	
+
 	@Before
 	public void setUp() throws Exception {
 
@@ -110,7 +110,8 @@ public class GrepWithCatCommandTest {
 	}
 
 	/*
-	 * Negative test: Cat application throws exception because a.txt does not exist
+	 * Negative test: Cat application throws exception because a.txt does not
+	 * exist
 	 */
 	@Test(expected = CatException.class)
 	public void testGrepWithCatFailing() throws AbstractApplicationException,

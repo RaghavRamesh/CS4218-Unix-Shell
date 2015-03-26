@@ -19,14 +19,15 @@ public class SeqCommand implements Command {
 
 	public SeqCommand(String commandLine) throws ShellException,
 			AbstractApplicationException {
-	  this.commandLine = commandLine;
+		this.commandLine = commandLine;
 		this.commands = new ArrayList<Command>();
 		List<AbstractToken> tokens = Parser.tokenize(commandLine);
 
 		String currentCommand = "";
 		for (AbstractToken token : tokens) {
 			if (token.getType() == TokenType.SEMICOLON) {
-				Command command = ShellImplementation.getCommand(currentCommand.trim());
+				Command command = ShellImplementation.getCommand(currentCommand
+						.trim());
 				commands.add(command);
 				currentCommand = "";
 			} else {
@@ -53,8 +54,8 @@ public class SeqCommand implements Command {
 		// TODO Auto-generated method stub
 	}
 
-//	@Override
-//	public String toString() {
-//	  return commandLine;
-//	}
+	// @Override
+	// public String toString() {
+	// return commandLine;
+	// }
 }
