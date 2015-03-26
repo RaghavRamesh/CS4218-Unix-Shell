@@ -21,7 +21,7 @@ public class FileSearcher extends SimpleFileVisitor<Path> {
 	private final String rootDirectory;
 	private final PrintWriter writer;
 
-	public FileSearcher(String globPattern, String rootDir, PrintWriter pw) throws InvalidDirectoryException {
+	public FileSearcher(String globPattern, String rootDir, PrintWriter pwriter) throws InvalidDirectoryException {
 		matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
 
 		File rootDirAsFile = new File(rootDir);
@@ -30,7 +30,7 @@ public class FileSearcher extends SimpleFileVisitor<Path> {
 		}
 
 		rootDirectory = rootDir;
-		writer = pw;
+		writer = pwriter;
 	}
 
 	@Override

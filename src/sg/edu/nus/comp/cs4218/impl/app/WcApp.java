@@ -11,11 +11,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Consts;
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.FileProcessor;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 import sg.edu.nus.comp.cs4218.exception.InvalidFileException;
@@ -141,7 +141,7 @@ public class WcApp implements Application {
 
 		displayCount(writer, bytesLength, wordsLength, lineLength);
 
-		writer.write("\n");
+		writer.write(System.lineSeparator());
 	}
 
 	/**
@@ -190,8 +190,8 @@ public class WcApp implements Application {
 			reader.close();
 
 			if (writer != null) {
-				writer.write(fileNames.get(k));
-				writer.write("\n");
+				writer.write(" "+ fileNames.get(k));
+				writer.write(System.lineSeparator());
 			}
 		}
 
@@ -218,71 +218,15 @@ public class WcApp implements Application {
 	protected void readAndProcessLinesInReader(BufferedReader reader)
 			throws IOException, WcException {
 		
-		String fileContents = readAndConvertToString(reader);
-		bytesLength = getByteCount(fileContents);
-		wordsLength = getWordsLength(fileContents);
-		lineLength = getLineLength(fileContents);
+		String fileContents = FileProcessor.readAndConvertToString(reader);
+		bytesLength = FileProcessor.getByteCount(fileContents);
+		wordsLength = FileProcessor.getWordsLength(fileContents);
+		lineLength =  FileProcessor.getLineLength(fileContents);
 		
 		// read line by line
 		totalBytes = totalBytes + bytesLength;
 		totalWordsLength = totalWordsLength + wordsLength;
 		totalLineLength = totalLineLength + lineLength;
-	}
-
-	private int getLineLength(String fileContents) throws WcException {
-		int count = 0;
-		if(fileContents == null){
-			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
-		}
-		
-		for(int i=0; i< fileContents.length(); i++){
-			if(fileContents.charAt(i) == '\n'){
-				count++;
-			}
-		}
-		
-		return count;
-	}
-
-	private int getWordsLength(String fileContents) throws WcException {
-		int count = 0;
-		if(fileContents == null){
-			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
-		}
-		
-		if(fileContents.length() == 0)
-			return 0;
-		
-		String[] tokenList = fileContents.trim().split("\\s+");
-		for(String token:tokenList){
-			if(token.length() > 0){
-				count++;
-			}
-		}
-		
-		return count;
-	}
-
-	private int getByteCount(String fileContents) throws WcException {
-		if(fileContents == null){
-			throw new WcException(Consts.Messages.CONTENTS_NOT_NULL);
-		}
-		
-		return fileContents.length();
-	}
-
-	private String readAndConvertToString(BufferedReader reader)
-			throws IOException {
-		StringBuilder builder = new StringBuilder();
-		int currentChar =  reader.read();
-		while(currentChar != -1){
-			builder.append((char)currentChar);
-			currentChar = reader.read();
-		}
-		
-		reader.close();
-		
-		return  builder.toString();
 	}
 
 	/**
@@ -326,6 +270,8 @@ public class WcApp implements Application {
 	private void displayCount(PrintWriter writer, int bytesLength,
 			int wordsLength, int lineLength) {
 
+		String result = "";
+		
 		if (writer == null)
 			return;
 
@@ -337,17 +283,19 @@ public class WcApp implements Application {
 		}
 
 		if (displayLineLength) {
-			writer.write(lineLength + " ");
+			result = result + lineLength + " ";
 		}
 		
 		if (displayWords) {
-			writer.write(wordsLength + " ");
+			result = result + wordsLength + " ";
 		}
 		
 		if (displayBytes) {
-			writer.write(bytesLength + " ");
+			result = result + bytesLength + " ";
 		}
 
+		result = result.trim();
+		writer.write(result);		
 	}
 
 }

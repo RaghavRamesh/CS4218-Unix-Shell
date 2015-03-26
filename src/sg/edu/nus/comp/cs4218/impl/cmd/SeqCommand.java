@@ -53,8 +53,8 @@ public class SeqCommand implements Command {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public String toString() {
-	  return commandLine;
-	}
+//	@Override
+//	public String toString() {
+//	  return commandLine;
+//	}
 }

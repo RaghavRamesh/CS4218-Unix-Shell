@@ -27,9 +27,9 @@ public class GrepWithEchoCommandTest {
 	String[] app2Args;
 
 	/*
-	 *  Command Under Test: "grep 'usage' `echo GrepWithSubCommand.txt`"
+	 * Command Under Test: "grep 'usage' `echo GrepWithSubCommand.txt`"
 	 */
-	
+
 	@Before
 	public void setUp() throws Exception {
 

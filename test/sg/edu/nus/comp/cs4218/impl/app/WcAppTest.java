@@ -141,7 +141,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("1 14 67 ", buffReader.readLine());
+			assertEquals("1 14 67", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -224,7 +224,7 @@ public class WcAppTest {
 
 			BufferedReader buffReader = new BufferedReader(
 					new InputStreamReader(new FileInputStream(tempOutput)));
-			assertEquals("14 ", buffReader.readLine());
+			assertEquals("14", buffReader.readLine());
 			buffReader.close();
 
 		} catch (IOException e) {
@@ -302,7 +302,7 @@ public class WcAppTest {
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
 				bOutStream));
-		writer.println();
+		writer.write("\n");
 		writer.close();
 
 		byte[] byteArray = bOutStream.toByteArray();
@@ -313,7 +313,7 @@ public class WcAppTest {
 				bInStream));
 		cmdApp.readAndProcessLinesInReader(reader);
 
-		assertEquals(2, cmdApp.bytesLength);
+		assertEquals(1, cmdApp.bytesLength);
 		assertEquals(0, cmdApp.wordsLength);
 		assertEquals(1, cmdApp.lineLength);
 	}
@@ -329,7 +329,7 @@ public class WcAppTest {
 		ByteArrayOutputStream bOutStream = new ByteArrayOutputStream();
 		PrintWriter writer = new PrintWriter(new BufferedOutputStream(
 				bOutStream));
-		writer.println(" Hey this is a line with spaces! ");
+		writer.write(" Hey this is a line with spaces! \n");
 		writer.close();
 
 		byte[] byteArray = bOutStream.toByteArray();
@@ -340,11 +340,11 @@ public class WcAppTest {
 				bInStream));
 		cmdApp.readAndProcessLinesInReader(reader);
 
-		assertEquals(35, cmdApp.bytesLength);
+		assertEquals(34, cmdApp.bytesLength);
 		assertEquals(7, cmdApp.wordsLength);
 		assertEquals(1, cmdApp.lineLength);
 
-		assertEquals(35, cmdApp.totalBytes);
+		assertEquals(34, cmdApp.totalBytes);
 		assertEquals(7, cmdApp.totalWordsLength);
 		assertEquals(1, cmdApp.totalLineLength);
 	}

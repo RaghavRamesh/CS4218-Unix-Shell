@@ -22,6 +22,11 @@ public class GlobbingTest {
         Environment.currentDirectory = System.getProperty("user.dir") + "/test-files-ef1";
         shell = null; //TODO change here
     }
+    
+    @Before
+    public void  tearDown() throws Exception {
+        Environment.currentDirectory = System.getProperty("user.dir");
+    }
 
     @Test
     public void returnOriginalArgWhenGlobbingHasNoFileMatch() throws AbstractApplicationException, ShellException {

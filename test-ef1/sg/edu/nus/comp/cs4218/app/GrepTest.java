@@ -81,5 +81,19 @@ public class GrepTest {
                 + "yuan qing").getBytes()), stdout);
         Assert.assertEquals("", stdout.toString());
     }
+    
+    @Test(expected=GrepException.class)
+    public void testGrepWithNullOutputStream() throws AbstractApplicationException{
+    	 String[] args = { "A ", "cxintro01.txt" };
+
+         app.run(args, null, null);
+    }
+    
+    @Test(expected= GrepException.class)
+    public void testEmptyArguments() throws AbstractApplicationException{
+    	String[] args = new String[]{};
+
+        app.run(args, null, stdout) ;
+    }
 
 }

@@ -62,13 +62,13 @@ public abstract class AbstractToken {
     }
   }
   
-  public String getParent() {
-    return parent;
-  }
-
-  public int getBegin() {
-    return begin;
-  }
+//  public String getParent() {
+//    return parent;
+//  }
+//
+//  public int getBegin() {
+//    return begin;
+//  }
 
   public int getEnd() {
     return end;
