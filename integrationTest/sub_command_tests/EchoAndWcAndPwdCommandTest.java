@@ -77,8 +77,9 @@ public class EchoAndWcAndPwdCommandTest {
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
 
-		String expected = "2 19 96 SubCommand.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 - "
-				+ "Software Testing And Debugging/CS4218-Shell/test-files-integration/SubCommandTestFiles"
+		String expected = "2 19 96 SubCommand.txt " 
+		    + System.getProperty(Consts.Keywords.USER_DIR)
+		    + "/test-files-integration/SubCommandTestFiles"
 				+ System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
@@ -94,8 +95,9 @@ public class EchoAndWcAndPwdCommandTest {
 
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("echo `wc SubCommand.txt` `pwd`", outStream);
-		String expected = "2 19 96 SubCommand.txt /Users/raghav/Dropbox/NUS/SEM 8/CS4218 - "
-				+ "Software Testing And Debugging/CS4218-Shell/test-files-integration/SubCommandTestFiles"
+		String expected = "2 19 96 SubCommand.txt " 
+		    + System.getProperty(Consts.Keywords.USER_DIR)
+		    + "/test-files-integration/SubCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
