@@ -192,7 +192,10 @@ public class CallCommand implements Command {
 	}
 
 	public static List<String> findGlobbing(List<String> tokens) throws ShellException, IOException, InvalidDirectoryException {
-
+		// if the first argument is find, return
+		if (tokens.get(0).equals("find"))
+			return tokens;
+		
 		// find the token with *
 		// if not found a token with *, return as is
 		// if found, replace that token with several tokens that were returned while searching
