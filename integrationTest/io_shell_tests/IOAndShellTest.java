@@ -68,7 +68,7 @@ public class IOAndShellTest {
   public void changeDirAndFind() throws AbstractApplicationException,
       ShellException {
     ByteArrayOutputStream bao = new ByteArrayOutputStream();
-    shell.parseAndEvaluate("cd tmp; cd ..; find sam*.txt", bao);
+    shell.parseAndEvaluate("cd tmp; cd ..; find -name sam*.txt", bao);
     String expected = "sample.txt" + System.lineSeparator();
     assertEquals(expected, bao.toString());
   }
@@ -100,7 +100,7 @@ public class IOAndShellTest {
     cdTempFolder();
     ByteArrayOutputStream bao = new ByteArrayOutputStream();
     shell.parseAndEvaluate(
-        "echo apple > a.txt; echo banana > b.txt; find *.txt", bao);
+        "echo apple > a.txt; echo banana > b.txt; find -name *.txt", bao);
     String expected = "a.txt" + System.lineSeparator() + "b.txt"
         + System.lineSeparator();
     assertEquals(expected, bao.toString());

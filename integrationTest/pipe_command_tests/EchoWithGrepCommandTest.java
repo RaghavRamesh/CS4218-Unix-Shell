@@ -27,7 +27,7 @@ public class EchoWithGrepCommandTest {
 	String[] grepArgs;
 
 	/*
-	 *  Command Under Test: echo PipeCommandTestFiles/* | grep 'usage'"
+	 *  Command Under Test: echo PipeCommandTestFiles | grep 'Pipe'"
 	 */
 	
 	@Before
@@ -53,11 +53,12 @@ public class EchoWithGrepCommandTest {
 	 */
 	@Test
 	public void testEchoWithGrepDirectly() throws AbstractApplicationException {
-		echoArgs = new String[] { "PipeCommandTestFiles/*" }; 
+		echoArgs = new String[] { "PipeCommandTestFiles" }; 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		echoApp = new EchoApp();
 		echoApp.run(echoArgs, null, outStream);
+				
 		grepArgs = new String[] { "Pipe",
 				outStream.toString().replace(System.lineSeparator(), "") };
 

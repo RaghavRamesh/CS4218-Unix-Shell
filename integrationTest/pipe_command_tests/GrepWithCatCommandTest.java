@@ -53,7 +53,7 @@ public class GrepWithCatCommandTest {
 	@Test
 	public void testGrepWithCatDirectly() throws AbstractApplicationException {
 		// Build arguments for cat
-		catArgs = new String[] { "PipeCommandTestFiles/*" };
+		catArgs = new String[] { "PipeCommandTestFiles/GrepWithPipeCommand.txt", "PipeCommandTestFiles/GrepWithPipeCommand2.txt" };
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		// Run
@@ -92,6 +92,8 @@ public class GrepWithCatCommandTest {
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
+				+ System.lineSeparator()
+				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
