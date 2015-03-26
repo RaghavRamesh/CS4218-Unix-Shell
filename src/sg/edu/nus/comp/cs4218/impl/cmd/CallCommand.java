@@ -129,12 +129,21 @@ public class CallCommand implements Command {
 		addNonNull(list, current);
 		return list;
 	}
-
+	/**
+	 * Takes a string input and trims the string
+	 * @param String to trim
+	 * @return List of split strings
+	 */
 	private static List<String> normalize(String input) {
 		String str = input.replaceAll("\\s+", " ").trim();
 		return Arrays.asList(str.split("\\s"));
 	}
 
+	/**
+	 * Adds non null string to list
+	 * @param list of strings
+	 * @param non null str
+	 */
 	private static void addNonNull(List<String> list, String str) {
 		if (str != null) {
 			list.add(str);
@@ -196,7 +205,15 @@ public class CallCommand implements Command {
 		}
 		return result;
 	}
-
+	
+	/**
+	 * Performs globbing by substituting the value of * with corresponding values
+	 * @param tokens that may contain *
+	 * @return * substituted tokens
+	 * @throws ShellException
+	 * @throws IOException
+	 * @throws InvalidDirectoryException
+	 */
 	public static List<String> findGlobbing(List<String> tokens)
 			throws ShellException, IOException, InvalidDirectoryException {
 		// if the first argument is find, return
