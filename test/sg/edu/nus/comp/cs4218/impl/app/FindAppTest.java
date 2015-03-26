@@ -22,8 +22,7 @@ public class FindAppTest {
 	private static final String TEMP_FILE_NAME1 = "tempFileName1.tmp";
 	private static final String TEMP_FILE_NAME2 = "tempFileName2.tmp";
 	private static final String TEMP_FILE_ROOT = "tempFileInRoot.tmp";
-	private static final String LINE_SEPARATOR = System
-			.getProperty("line.separator");
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	private static final String TEMP1 = "temp1";
 	private static final String FIND = "find: ";
 	FindApp findApp = null;
@@ -45,38 +44,32 @@ public class FindAppTest {
 		 */
 
 		originalCurrDir = Environment.getCurrentDirectory();
-		tempRootDirectory = new File(originalCurrDir + File.separator
-				+ "TempTestDir");
+		tempRootDirectory = new File(originalCurrDir + File.separator + "TempTestDir");
 		boolean status = tempRootDirectory.mkdir();
 		if (!status) {
 			fail();
 		}
 		Environment.setCurrentDirectory(tempRootDirectory.getAbsolutePath());
 
-		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath()
-				+ File.separator + TEMP_FILE_ROOT);
+		tempFileInRoot = new File(tempRootDirectory.getAbsolutePath() + File.separator + TEMP_FILE_ROOT);
 		PrintWriter fileInRootWtr = new PrintWriter(tempFileInRoot);
 		fileInRootWtr.println("random data");
 		fileInRootWtr.close();
 
-		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath()
-				+ File.separator + TEMP1);
+		tempSubDirectory1 = new File(tempRootDirectory.getAbsolutePath() + File.separator + TEMP1);
 		if (!tempSubDirectory1.mkdir()) {
 			fail();
 		}
-		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath()
-				+ File.separator + TEMP_FILE_NAME1);
+		tempFileIn1 = new File(tempSubDirectory1.getAbsolutePath() + File.separator + TEMP_FILE_NAME1);
 		PrintWriter tempFile1Writer = new PrintWriter(tempFileIn1);
 		tempFile1Writer.println("random data");
 		tempFile1Writer.close();
 
-		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath()
-				+ File.separator + "temp2");
+		tempSubDirectory2 = new File(tempRootDirectory.getAbsolutePath() + File.separator + "temp2");
 		if (!tempSubDirectory2.mkdir()) {
 			fail();
 		}
-		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath()
-				+ File.separator + TEMP_FILE_NAME2);
+		tempFileIn2 = new File(tempSubDirectory2.getAbsolutePath() + File.separator + TEMP_FILE_NAME2);
 		PrintWriter tempFile2Writer = new PrintWriter(tempFileIn2);
 		tempFile2Writer.println("random data");
 		tempFile2Writer.close();
@@ -118,7 +111,7 @@ public class FindAppTest {
 			findApp.run(args, null, System.out);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), FIND + Consts.Messages.NO_INP_FOUND);
+			assertEquals(FIND + Consts.Messages.ARG_NOT_NULL, e.getMessage());
 		}
 	}
 
@@ -132,10 +125,18 @@ public class FindAppTest {
 			cmdApp.run(args, null, testOutputStream);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), FIND + Consts.Messages.ARG_NOT_NULL);
+			assertEquals(FIND + Consts.Messages.ARG_NOT_NULL, e.getMessage());
 		}
 
 		args = new String[2];
+		try {
+			cmdApp.run(args, null, testOutputStream);
+			fail();
+		} catch (AbstractApplicationException e) {
+			assertEquals(FIND + Consts.Messages.ARG_NOT_NULL, e.getMessage());
+		}
+
+		args = new String[3];
 		try {
 			cmdApp.run(args, null, testOutputStream);
 			fail();
@@ -156,8 +157,7 @@ public class FindAppTest {
 			findApp.run(args, null, null);
 			fail();
 		} catch (AbstractApplicationException e) {
-			assertEquals(e.getMessage(), FIND
-					+ Consts.Messages.OUT_STR_NOT_NULL);
+			assertEquals(e.getMessage(), FIND + Consts.Messages.OUT_STR_NOT_NULL);
 
 		}
 	}
@@ -165,9 +165,10 @@ public class FindAppTest {
 	@Test
 	public void testWithInvalidSearchPath() {
 		findApp = new FindApp();
-		String[] args = new String[2];
+		String[] args = new String[3];
 		args[0] = "aDirectoryNameThatDoesntExist" + File.separator;
-		args[1] = "temp*";
+		args[1] = "-name";
+		args[2] = "temp*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -182,8 +183,9 @@ public class FindAppTest {
 	public void testNoMatches() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "temp*Name*afsdf";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "temp*Name*afsdf";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -200,8 +202,9 @@ public class FindAppTest {
 	public void testEmptyFindString() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -218,8 +221,9 @@ public class FindAppTest {
 	public void testAllMatchesInDifferentDirs() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "*";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -240,8 +244,9 @@ public class FindAppTest {
 	public void test3MatchesIn3DifferentDirsIncludingTempRoot() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "t*mp*";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "t*mp*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -262,8 +267,9 @@ public class FindAppTest {
 	public void test1MatchInTempRoot() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "temp*Root*";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "temp*Root*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -281,8 +287,9 @@ public class FindAppTest {
 	public void test2MatchesInSubDirs() {
 		findApp = new FindApp();
 
-		String[] args = new String[1];
-		args[0] = "temp*Name*";
+		String[] args = new String[2];
+		args[0] = "-name";
+		args[1] = "temp*Name*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -302,9 +309,10 @@ public class FindAppTest {
 	public void test1MatchWithRelativeSearchPathSupplied() {
 		findApp = new FindApp();
 
-		String[] args = new String[2];
+		String[] args = new String[3];
 		args[0] = TEMP1 + File.separator;
-		args[1] = "temp*Name*";
+		args[1] = "-name";
+		args[2] = "temp*Name*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -320,15 +328,13 @@ public class FindAppTest {
 	}
 
 	@Test
-	public void test1MatchWithAbsoluteSearchPathSupplied()
-			throws InvalidDirectoryException, IOException {
+	public void test1MatchWithAbsoluteSearchPathSupplied() throws InvalidDirectoryException, IOException {
 		findApp = new FindApp();
 
-		String[] args = new String[2];
-		args[0] = Environment.getCurrentDirectory() + File.separator + TEMP1
-				+ File.separator;
-
-		args[1] = "temp*Name*";
+		String[] args = new String[3];
+		args[0] = Environment.getCurrentDirectory() + File.separator + TEMP1 + File.separator;
+		args[1] = "-name";
+		args[2] = "temp*Name*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
@@ -348,9 +354,10 @@ public class FindAppTest {
 	public void testNoMatchesWithSearchPathSupplied() {
 		findApp = new FindApp();
 
-		String[] args = new String[2];
+		String[] args = new String[3];
 		args[0] = TEMP1 + File.separator;
-		args[1] = "temp*Name*asdf*";
+		args[1] = "-name";
+		args[2] = "temp*Name*asdf*";
 
 		try {
 			ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
