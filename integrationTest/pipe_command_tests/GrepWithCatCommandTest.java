@@ -92,6 +92,8 @@ public class GrepWithCatCommandTest {
 		String expected = " This file meant for the usage of grep with sub commands."
 				+ System.lineSeparator()
 				+ "This is the second usage of the word."
+				+ System.lineSeparator()
+				+ "Its tests the usage of various commands."
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
