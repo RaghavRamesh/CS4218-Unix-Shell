@@ -49,7 +49,7 @@ public class CallCommand implements Command {
 			// System.out.println("[CallCommand] inputPath: " + this.inputPath);
 			this.outputPath = findOutput(substitutedTokens);
 			// System.out.println("[CallCommand] outputPath: " + this.outputPath);
-			this.findGlobbing(substitutedTokens);
+			findGlobbing(substitutedTokens);
 		} catch (IOException e) {
 			throw new ShellException(e);
 		} catch (InvalidDirectoryException e) {
@@ -198,15 +198,23 @@ public class CallCommand implements Command {
 		int indexOfFirstAsterisk = relevantToken.indexOf('*');
 		int indexOfLastFileSeparator = relevantToken.lastIndexOf(File.separator);
 
-		if (indexOfLastFileSeparator > indexOfFirstAsterisk) {
-			// TODO: throw exception
+		if (indexOfLastFileSeparator != -1 && indexOfLastFileSeparator > indexOfFirstAsterisk) {
+			throw new ShellException(Consts.Messages.FILE_SEPARATOR_AFTER_ASTERISK);
 		}
 
-		String directoryToLookIn = relevantToken.substring(0, indexOfLastFileSeparator); // do not include the file separator
-		String globPattern = relevantToken.substring(indexOfFirstAsterisk);
+		String directoryPrefix = "";
+		String globPattern = null;
+		String absolutePathOfDirToLookIn = null;
+		if (indexOfLastFileSeparator == -1) {
+			globPattern = relevantToken;
+			absolutePathOfDirToLookIn = Environment.getCurrentDirectory();
+		} else {
+			directoryPrefix = relevantToken.substring(0, indexOfLastFileSeparator); // do not include the file separator
+			globPattern = relevantToken.substring(indexOfLastFileSeparator + 1);
+			absolutePathOfDirToLookIn = Environment.checkIsDirectory(directoryPrefix);
+		}
 
-		String absolutePathOfDirToLookIn = Environment.checkIsDirectory(directoryToLookIn);
-		GlobFileSearcher fileSearcher = new GlobFileSearcher(globPattern, directoryToLookIn);
+		GlobFileSearcher fileSearcher = new GlobFileSearcher(globPattern);
 		Files.walkFileTree(Paths.get(absolutePathOfDirToLookIn), fileSearcher);
 		List<String> fileAndDirNames = fileSearcher.getResultList();
 

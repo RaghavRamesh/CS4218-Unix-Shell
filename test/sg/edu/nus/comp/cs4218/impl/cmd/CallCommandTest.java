@@ -1,6 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -207,6 +208,29 @@ public class CallCommandTest {
 	public void testFindGlobbing() throws ShellException, IOException, InvalidDirectoryException {
 		// debug
 		List<String> tokens = Arrays.asList("echo", "test-files-ef1/*");
-		CallCommand.findGlobbing(tokens);
+		List<String> expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139", "test-files-ef1/clam1533",
+				"test-files-ef1/oyster1337", "test-files-ef1/sca110p.txt339");
+		List<String> actual = CallCommand.findGlobbing(tokens);
+		// ignoring order
+		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+
+		tokens = Arrays.asList("echo", "*");
+		expected = Arrays.asList("echo", "README.md", "bin", "src", "test", "test-ef1", "test-files-ef1");
+		actual = CallCommand.findGlobbing(tokens);
+		// ignoring order
+		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+
+		tokens = Arrays.asList("echo", "test-files-ef1/5*");
+		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139");
+		actual = CallCommand.findGlobbing(tokens);
+		// ignoring order
+		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+
+		tokens = Arrays.asList("echo", "test-files-ef1/*33*");
+		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/clam1533", "test-files-ef1/oyster1337",
+				"test-files-ef1/sca110p.txt339");
+		actual = CallCommand.findGlobbing(tokens);
+		// ignoring order
+		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
 	}
 }

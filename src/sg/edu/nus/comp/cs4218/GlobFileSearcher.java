@@ -1,5 +1,6 @@
 package sg.edu.nus.comp.cs4218;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -14,9 +15,9 @@ import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
 
 public class GlobFileSearcher extends SimpleFileVisitor<Path> {
 	private final PathMatcher matcher;
-	private String dirPrefix;
-	// private String
 	private List<String> resultList;
+	private String rootDirectory;
+	private int numOfDirsTouched = 0;
 
 	public List<String> getResultList() {
 		if (resultList == null)
@@ -24,45 +25,36 @@ public class GlobFileSearcher extends SimpleFileVisitor<Path> {
 		return resultList;
 	}
 
-	public GlobFileSearcher(String globPattern, String dirPre) throws InvalidDirectoryException, IOException {
+	public GlobFileSearcher(String globPattern) throws InvalidDirectoryException, IOException {
 		matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
-		dirPrefix = dirPre;
+		rootDirectory = Environment.getCurrentDirectory();
 	}
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 		// if it encounters the subdirectory being searched in
-		if (dir.toString().endsWith(dirPrefix))
+		// if (dirPrefix.length() > 0 && dir.toString().endsWith(dirPrefix))
+		// return FileVisitResult.CONTINUE;
+
+		if (++numOfDirsTouched == 1) // the first dir touched, the one searching in
 			return FileVisitResult.CONTINUE;
 
-		try {
-			String resultToAdd = Environment.calculateRelativePath(Environment.getCurrentDirectory(), dir.toAbsolutePath().toString());
-			// removing the trailing File.Separator before adding to display results
-			getResultList().add(resultToAdd.substring(0, resultToAdd.length() - 1)); // TODO: change to relative path of the sub directory
-		} catch (InvalidDirectoryException e) {
-			// TODO:
+		Path pathName = dir.getFileName();
+		if (!new File(pathName.toString()).isHidden() && matcher.matches(pathName)) {
+			String resultToAdd = Environment.calculateRelativePath(rootDirectory, dir.toAbsolutePath().toString());
+			// removing the trailing File.Separator at the directory end before adding to display results
+			getResultList().add(resultToAdd.substring(0, resultToAdd.length() - 1));
 		}
-
 		return FileVisitResult.SKIP_SUBTREE;
 	}
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-		// if (writer == null)
-		// return FileVisitResult.CONTINUE;
-
 		Path pathName = file.getFileName();
-		if (pathName != null && matcher.matches(pathName)) {
-			try {
-				String resultToAdd = Environment.calculateRelativePath(Environment.getCurrentDirectory(), file.toAbsolutePath().toString());
-				getResultList().add(resultToAdd); // TODO: change to relative path of the sub directory
-			} catch (InvalidDirectoryException e) {
-				// TODO:
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
+		if (!new File(pathName.toString()).isHidden() && matcher.matches(pathName)) {
+			String resultToAdd = Environment.calculateRelativePath(rootDirectory, file.toAbsolutePath().toString());
+			getResultList().add(resultToAdd);
 		}
 		return FileVisitResult.CONTINUE;
 	}
-
 }
