@@ -214,21 +214,31 @@ public class CallCommandTest {
 		// ignoring order
 		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
 
-		tokens = Arrays.asList("echo", "*");
-		expected = Arrays.asList("echo", "integrationTest", "README.md", "bin", "src", "test", "test-ef1", "test-files-ef1", "test-files-integration");
-		actual = CallCommand.findGlobbing(tokens);
-		// ignoring order
-		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+		testFindGlobbingWhenPrecededByNo();
 
-		tokens = Arrays.asList("echo", "test-files-ef1/5*");
-		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139");
-		actual = CallCommand.findGlobbing(tokens);
-		// ignoring order
-		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+		testFindGlobbingWhenInputContainsTwoStar();
+	}
 
+	private void testFindGlobbingWhenInputContainsTwoStar()
+			throws ShellException, IOException, InvalidDirectoryException {
+		List<String> tokens;
+		List<String> expected;
+		List<String> actual;
 		tokens = Arrays.asList("echo", "test-files-ef1/*33*");
 		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/clam1533", "test-files-ef1/oyster1337",
 				"test-files-ef1/sca110p.txt339");
+		actual = CallCommand.findGlobbing(tokens);
+		// ignoring order
+		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));
+	}
+
+	private void testFindGlobbingWhenPrecededByNo() throws ShellException,
+			IOException, InvalidDirectoryException {
+		List<String> tokens;
+		List<String> expected;
+		List<String> actual;
+		tokens = Arrays.asList("echo", "test-files-ef1/5*");
+		expected = Arrays.asList("echo", "test-files-ef1/5callop.txt133", "test-files-ef1/5callop.txt139");
 		actual = CallCommand.findGlobbing(tokens);
 		// ignoring order
 		assertTrue(expected.containsAll(actual) && actual.containsAll(expected));

@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +26,11 @@ public class TailAppTest {
 	
   @Before
   public void setUp() throws Exception {
+    Environment.currentDirectory = System.getProperty("user.dir");
+  }
+  
+  @After
+  public void tearDown() throws Exception {
     Environment.currentDirectory = System.getProperty("user.dir");
   }
 

@@ -29,6 +29,7 @@ public class EnvironmentTest {
 	public void setUp() throws Exception {
 
 		boolean status = true ;
+		Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 		originalCurrDir = Environment.getCurrentDirectory();
 		// create a folder named TempTest in current
 

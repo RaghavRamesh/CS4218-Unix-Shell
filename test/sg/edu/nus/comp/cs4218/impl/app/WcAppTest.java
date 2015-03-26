@@ -48,7 +48,7 @@ public class WcAppTest {
 
 	@Before
 	public void setUp() throws Exception {
-		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);;
+		currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
 		// create a folder named TempTest in current
 
 		tempTestDirectory = new File(currentDirectory + File.separator
@@ -74,7 +74,7 @@ public class WcAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		Environment.setCurrentDirectory(currentDirectory);
+		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	@Test

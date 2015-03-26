@@ -32,10 +32,7 @@ public class GlobFileSearcher extends SimpleFileVisitor<Path> {
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-		// if it encounters the subdirectory being searched in
-		// if (dirPrefix.length() > 0 && dir.toString().endsWith(dirPrefix))
-		// return FileVisitResult.CONTINUE;
-
+		
 		if (++numOfDirsTouched == 1) // the first dir touched, the one searching in
 			return FileVisitResult.CONTINUE;
 

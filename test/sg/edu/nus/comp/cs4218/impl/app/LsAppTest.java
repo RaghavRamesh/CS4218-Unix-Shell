@@ -62,7 +62,7 @@ public class LsAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		Environment.setCurrentDirectory(originalCurrDir);
+		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	/*
