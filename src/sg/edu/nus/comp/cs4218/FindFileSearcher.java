@@ -16,12 +16,13 @@ import sg.edu.nus.comp.cs4218.exception.InvalidDirectoryException;
  *         A FileSearcher used by FindApp
  *         Writes the relative paths of successful matches to a PrintWriter object
  */
-public class FileSearcher extends SimpleFileVisitor<Path> {
+
+public class FindFileSearcher extends SimpleFileVisitor<Path> {
 	private final PathMatcher matcher;
 	private final String rootDirectory;
 	private final PrintWriter writer;
 
-	public FileSearcher(String globPattern, String rootDir, PrintWriter pwriter) throws InvalidDirectoryException {
+	public FindFileSearcher(String globPattern, String rootDir, PrintWriter pwriter) throws InvalidDirectoryException {
 		matcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
 
 		File rootDirAsFile = new File(rootDir);

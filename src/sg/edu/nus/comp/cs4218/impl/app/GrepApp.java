@@ -42,7 +42,7 @@ public class GrepApp implements Application {
 		try {
 			pattern = Pattern.compile(args[0]);
 		} catch (PatternSyntaxException e) {
-			throw new GrepException(e);
+			throw new GrepException(e.getMessage());
 		}
 		Matcher matcher = pattern.matcher("");
 
@@ -56,7 +56,7 @@ public class GrepApp implements Application {
 			}
 			reader = new BufferedReader(new InputStreamReader(stdin));
 			int count = 0;
-			
+
 			try {
 				while ((line = reader.readLine()) != null) {
 					matcher.reset(line);
@@ -67,13 +67,13 @@ public class GrepApp implements Application {
 					}
 					count++;
 				}
-				
-				if(count == 0){
+
+				if (count == 0) {
 					writer.write(System.getProperty("line.separator"));
 				}
 				reader.close();
 			} catch (IOException e) {
-				throw new GrepException(e);
+				throw new GrepException(e.getMessage());
 			}
 
 		} else { // the first argument will be REGEX string, the rest will be filenames
@@ -93,9 +93,9 @@ public class GrepApp implements Application {
 					reader.close();
 
 				} catch (IOException e) {
-					throw new GrepException(e);
+					throw new GrepException(e.getMessage());
 				} catch (InvalidDirectoryException e) {
-					throw new GrepException(e);
+					throw new GrepException(e.getMessage());
 				}
 
 			}
