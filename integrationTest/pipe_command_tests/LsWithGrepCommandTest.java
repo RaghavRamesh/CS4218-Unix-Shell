@@ -2,6 +2,7 @@ package pipe_command_tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -59,21 +60,16 @@ public class LsWithGrepCommandTest {
 		LsApp lsApp = new LsApp();
 		lsApp.run(lsArgs, null, outStream);
 
-		String fileNamesResult = new String(outStream.toString().trim());
-		String[] fileNames = fileNamesResult.split("\t");
-		grepArgs = new String[fileNames.length + 1];
-		grepArgs[0] = "Pipe";
-		for (int i = 1; i < fileNames.length + 1; i++) {
-			grepArgs[i] = fileNames[i - 1].replace(System.lineSeparator(), "");
-		}
-
+		grepArgs = new String[]{"Pipe"};
+		byte[] bArray = outStream.toByteArray();
+		ByteArrayInputStream inStream = new ByteArrayInputStream(bArray);
+		
 		outStream.reset();
 		GrepApp grepApp = new GrepApp();
-		grepApp.run(grepArgs, null, outStream);
+		grepApp.run(grepArgs, inStream, outStream);
 
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt";
+		String expected = "GrepWithPipeCommand.txt\t"
+				+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -87,11 +83,8 @@ public class LsWithGrepCommandTest {
 
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("ls PipeCommandTestFiles | grep 'Pipe'", outStream);
-		String expected = "GrepWithPipeCommand.txt"
-				+ System.lineSeparator()
-				+ "GrepWithPipeCommand2.txt";
+		String expected = "GrepWithPipeCommand.txt\t"	+ "GrepWithPipeCommand2.txt" + System.lineSeparator();
 		String actual = outStream.toString();
-		actual = actual.replace(System.lineSeparator(), "");
 		assertEquals(expected, actual);
 	}
 
