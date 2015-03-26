@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +26,11 @@ public class HeadAppTest {
   @Before
   public void setUp() throws Exception {
     Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
+  }
+  
+  @After
+  public void tearDown() throws Exception{
+	  Environment.currentDirectory = System.getProperty(Consts.Keywords.USER_DIR);
   }
 
 	@Test

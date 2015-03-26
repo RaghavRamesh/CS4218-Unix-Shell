@@ -43,7 +43,7 @@ public class FindAppTest {
 		 * TempTestDir->temp2->tempFileName2.tmp
 		 */
 
-		originalCurrDir = Environment.getCurrentDirectory();
+		originalCurrDir = System.getProperty(Consts.Keywords.USER_DIR);
 		tempRootDirectory = new File(originalCurrDir + File.separator + "TempTestDir");
 		boolean status = tempRootDirectory.mkdir();
 		if (!status) {
@@ -87,7 +87,7 @@ public class FindAppTest {
 		tempSubDirectory1.delete();
 		tempSubDirectory2.delete();
 		tempRootDirectory.delete();
-		Environment.setCurrentDirectory(originalCurrDir);
+		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	@Test

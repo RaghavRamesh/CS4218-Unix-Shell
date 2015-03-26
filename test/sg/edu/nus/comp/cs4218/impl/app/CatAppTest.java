@@ -65,7 +65,7 @@ public class CatAppTest {
 		// Delete the temporary folder and change the current Directory to
 		// previous case
 		tempTestDirectory.delete();
-		Environment.setCurrentDirectory(currentDirectory);
+		Environment.setCurrentDirectory(System.getProperty(Consts.Keywords.USER_DIR));
 	}
 
 	/*
