@@ -61,9 +61,9 @@ public class PwdWithGrepCommandTest {
 		grepArgs = new String[] { "Pipe" };
 		GrepApp grepApp = new GrepApp();
 		grepApp.run(grepArgs, inStream, outStream);
-		String expected = System.getProperty(Consts.Keywords.USER_DIR)
-		    + "/test-files-integration/PipeCommandTestFiles"
-				+ System.lineSeparator();
+		String expected = System.getProperty(Consts.Keywords.USER_DIR) 
+			    + File.separator +"test-files-integration" + File.separator + "PipeCommandTestFiles"
+					+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
 
@@ -78,7 +78,7 @@ public class PwdWithGrepCommandTest {
 		ShellImplementation shImpl = new ShellImplementation(null);
 		shImpl.parseAndEvaluate("pwd | grep 'Pipe'", outStream);
 		String expected = System.getProperty(Consts.Keywords.USER_DIR) 
-		    + "/test-files-integration/PipeCommandTestFiles"
+		    + File.separator +"test-files-integration" + File.separator + "PipeCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}

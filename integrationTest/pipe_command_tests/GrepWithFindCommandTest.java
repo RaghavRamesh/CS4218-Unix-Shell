@@ -54,7 +54,7 @@ public class GrepWithFindCommandTest {
 	 */
 	@Test
 	public void testGrepWithFindDirectly() throws AbstractApplicationException {
-		app2Args = new String[] { "GrepWithPipeComman*" };
+		app2Args = new String[] {"-name", "GrepWithPipeComman*"};
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		FindApp findApp = new FindApp();
@@ -85,7 +85,7 @@ public class GrepWithFindCommandTest {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
 		ShellImplementation shImpl = new ShellImplementation(null);
-		shImpl.parseAndEvaluate("find GrepWithPipeComman* | grep 'Pipe'",
+		shImpl.parseAndEvaluate("find -name GrepWithPipeComman* | grep 'Pipe'",
 				outStream);
 		String expected = "GrepWithPipeCommand.txt"
 				+ System.lineSeparator()

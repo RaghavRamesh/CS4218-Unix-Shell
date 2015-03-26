@@ -79,7 +79,7 @@ public class EchoAndWcAndPwdCommandTest {
 
 		String expected = "2 19 96 SubCommand.txt " 
 		    + System.getProperty(Consts.Keywords.USER_DIR)
-		    + "/test-files-integration/SubCommandTestFiles"
+		    + File.separator +"test-files-integration" + File.separator +"SubCommandTestFiles"
 				+ System.lineSeparator();
 
 		assertEquals(expected, outStream.toString());
@@ -97,7 +97,7 @@ public class EchoAndWcAndPwdCommandTest {
 		shImpl.parseAndEvaluate("echo `wc SubCommand.txt` `pwd`", outStream);
 		String expected = "2 19 96 SubCommand.txt " 
 		    + System.getProperty(Consts.Keywords.USER_DIR)
-		    + "/test-files-integration/SubCommandTestFiles"
+		    + File.separator +"test-files-integration" + File.separator + "SubCommandTestFiles"
 				+ System.lineSeparator();
 		assertEquals(expected, outStream.toString());
 	}
