@@ -28,8 +28,8 @@ import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class CallCommand implements Command {
-
 	private final String commandLine;
+	private String substitutedCommand;
 	private List<String> substitutedTokens;
 	private String inputPath;
 	private String outputPath;
@@ -39,19 +39,16 @@ public class CallCommand implements Command {
 
 	public CallCommand(String cmdLine) throws ShellException,
 			AbstractApplicationException {
-		try {
-			this.closeOutput = false;
-			this.commandLine = cmdLine;
-			List<AbstractToken> tokens = Parser.tokenize(cmdLine);
-			for (AbstractToken token : tokens) {
-				token.checkValid();
-			}
-			this.substitutedTokens = substituteAll(tokens);
-			this.inputPath = findInput(substitutedTokens);
-			this.outputPath = findOutput(substitutedTokens);
-		} catch (IOException e) {
-			throw new ShellException(e);
-		}
+	  try {
+	    this.closeOutput = false;
+	    this.commandLine = cmdLine;
+	    this.substitutedCommand = substituteBackquotes(cmdLine);
+      this.substitutedTokens = substituteAll(Parser.tokenize(substitutedCommand));
+      this.inputPath = findInput(substitutedTokens);
+      this.outputPath = findOutput(substitutedTokens);
+    } catch (IOException e) {
+      throw new ShellException(e);
+    }
 	}
 
 	@Override
@@ -88,6 +85,31 @@ public class CallCommand implements Command {
 			terminate();
 		}
 	}
+	
+	public static String substituteBackquotes(String cmdLine) throws ShellException, AbstractApplicationException {
+    List<AbstractToken> tokens = Parser.tokenize(cmdLine);
+    for (AbstractToken token : tokens) {
+      token.checkValid();
+    }
+    String result = "";
+    for (AbstractToken token : tokens) {
+      TokenType type = token.getType();
+      String val = token.value();
+      if (type == TokenType.BACK_QUOTES) {
+        // Split the strings inside into multiple args
+        List<String> strList = normalize(val);
+        if (!strList.isEmpty()) {
+          result += strList.get(0);
+          for (int i = 1; i < strList.size(); i++) {
+            result += " " + strList.get(i);
+          }
+        }
+      } else {
+        result += val;
+      }
+    }
+    return result;
+	}
 
 	/**
 	 * Substitute each input token with the corresponding result from command
@@ -99,6 +121,9 @@ public class CallCommand implements Command {
 	 */
 	public static List<String> substituteAll(List<AbstractToken> tokens)
 			throws AbstractApplicationException, ShellException, IOException {
+	  for (AbstractToken token : tokens) {
+	    token.checkValid();
+	  }
 		String current = null;
 		List<String> list = new ArrayList<String>();
 		for (AbstractToken token : tokens) {
@@ -111,17 +136,6 @@ public class CallCommand implements Command {
 				addNonNull(list, current);
 				current = null;
 				list.add(val);
-			} else if (type == TokenType.BACK_QUOTES) {
-				// Split the strings inside into multiple args
-				List<String> strList = normalize(val);
-				if (!strList.isEmpty()) {
-					current = current == null ? strList.get(0) : current
-							+ strList.get(0);
-					for (int i = 1; i < strList.size(); i++) {
-						list.add(current);
-						current = strList.get(i);
-					}
-				}
 			} else {
 				current = current == null ? val : current + val;
 			}
