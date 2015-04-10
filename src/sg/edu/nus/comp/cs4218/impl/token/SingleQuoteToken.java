@@ -33,7 +33,7 @@ public class SingleQuoteToken extends AbstractToken {
 	@Override
 	public String value() throws ShellException {
 		checkValid();
-		return parent.substring(begin + 1, end);
+		return parent.substring(begin, end + 1);
 	}
 
 	@Override

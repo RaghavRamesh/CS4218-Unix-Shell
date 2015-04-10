@@ -53,9 +53,18 @@ public class SingleQuoteTokenTest {
 		token.appendNext();
 		token.appendNext();
 		try {
-			assertEquals("a", token.value());
+			assertEquals("'a'", token.value());
 		} catch (ShellException e) {
 			fail(WRONG_EXCEPTION);
 		}
 	}
+	
+	 @Test(expected = ShellException.class)
+	 public void testValueInvalid() throws ShellException {
+	   String str = "'a";
+	   SingleQuoteToken token = (SingleQuoteToken) TokenFactory.getToken(str, 0);
+	   token.appendNext();
+	   token.appendNext();
+	   token.value();
+	 }
 }

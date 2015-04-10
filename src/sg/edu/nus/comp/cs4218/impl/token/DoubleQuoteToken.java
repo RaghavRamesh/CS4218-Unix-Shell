@@ -58,10 +58,15 @@ public class DoubleQuoteToken extends AbstractToken {
 
 		String content = parent.substring(begin + 1, end);
 		List<AbstractToken> tokens = Parser.tokenize(content);
-		String result = "";
+		String result = "\"";
 		for (AbstractToken token : tokens) {
-			result += chomp(token.value());
+		  if (token.getType() == TokenType.BACK_QUOTES) {
+		    result += chomp(token.value());
+		  } else {
+		    result += token.toString();
+		  }
 		}
+		result += "\"";
 		return result;
 	}
 

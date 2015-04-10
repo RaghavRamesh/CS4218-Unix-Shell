@@ -43,7 +43,7 @@ public class CallCommand implements Command {
 	    this.closeOutput = false;
 	    this.commandLine = cmdLine;
 	    this.substitutedCommand = substituteBackquotes(cmdLine);
-      this.substitutedTokens = substituteAll(Parser.tokenize(substitutedCommand));
+      this.substitutedTokens = splitArguments(substitutedCommand);
       this.inputPath = findInput(substitutedTokens);
       this.outputPath = findOutput(substitutedTokens);
     } catch (IOException e) {
@@ -86,6 +86,14 @@ public class CallCommand implements Command {
 		}
 	}
 	
+	 /**
+	  * Substitute each back quote token with the corresponding result from command
+	  * substitution if necessary.
+	  * 
+	  * @param cmdLine
+	  *            original command line
+	  * @return command line after command substitution.
+	  */
 	public static String substituteBackquotes(String cmdLine) throws ShellException, AbstractApplicationException {
     List<AbstractToken> tokens = Parser.tokenize(cmdLine);
     for (AbstractToken token : tokens) {
@@ -112,15 +120,15 @@ public class CallCommand implements Command {
 	}
 
 	/**
-	 * Substitute each input token with the corresponding result from command
-	 * substitution if necessary.
+	 * Split the command line into arguments/tokens. Also remove quotes from quote tokens.
 	 * 
-	 * @param tokens
-	 *            A list of tokens.
+	 * @param input
+	 *            the command line after command substitution
 	 * @return A list of substituted tokens.
 	 */
-	public static List<String> substituteAll(List<AbstractToken> tokens)
+	public static List<String> splitArguments(String input)
 			throws AbstractApplicationException, ShellException, IOException {
+	  List<AbstractToken> tokens = Parser.tokenize(input);
 	  for (AbstractToken token : tokens) {
 	    token.checkValid();
 	  }
@@ -137,12 +145,16 @@ public class CallCommand implements Command {
 				current = null;
 				list.add(val);
 			} else {
+			  if (type == TokenType.SINGLE_QUOTES || type == TokenType.DOUBLE_QUOTES) {
+			    val = val.substring(1, val.length() - 1);
+			  }
 				current = current == null ? val : current + val;
 			}
 		}
 		addNonNull(list, current);
 		return list;
 	}
+	
 	/**
 	 * Takes a string input and trims the string
 	 * @param String to trim
