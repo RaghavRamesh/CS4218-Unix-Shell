@@ -51,6 +51,11 @@ public class SedApp implements Application {
 
 		String regularExp = regexReplacement.substring(
 				indicesOfSymbol.get(0) + 1, indicesOfSymbol.get(1));
+		
+		/*
+		 * Fix for hackathon bug testSedOneWithQuote
+		 */
+		regularExp = regularExp.replaceAll("\"", "");
 		String replacement = regexReplacement.substring(
 				indicesOfSymbol.get(1) + 1, indicesOfSymbol.get(2));
 
