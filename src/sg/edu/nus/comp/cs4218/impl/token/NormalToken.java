@@ -7,7 +7,6 @@ public class NormalToken extends AbstractToken {
 
 	protected NormalToken(String parent, int begin) {
 		super(parent, begin);
-		assert (Parser.isNormalCharacter(parent.charAt(begin)));
 	}
 
 	@Override

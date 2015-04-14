@@ -13,7 +13,6 @@ public class DoubleQuoteToken extends AbstractToken {
 
 	public DoubleQuoteToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '"');
 		quoteStack = new Stack<Character>();
 		quoteStack.push(parent.charAt(begin));
 	}

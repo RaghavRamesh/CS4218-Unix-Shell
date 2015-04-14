@@ -53,13 +53,15 @@ public class HackathonTest {
         + "test-hackathon-files" + NEWLINE;
     assertEquals(expected, stdout.toString());
   }
-  
+
   /**
-   * The bug is due to the re-evaluation of content between double quotes in the method value(). 
-   * content = parent.substring(begin + 1, end); tokens = Parser.tokenize(content);
+   * The bug is due to the re-evaluation of content between double quotes in the
+   * method value(). content = parent.substring(begin + 1, end); tokens =
+   * Parser.tokenize(content);
    */
   @Test
-  public void testParseSingleQuotesInsideDoubleQuotes() throws AbstractApplicationException, ShellException {
+  public void testParseSingleQuotesInsideDoubleQuotes()
+      throws AbstractApplicationException, ShellException {
     cmdLine = "echo \"'\"";
     shell.parseAndEvaluate(cmdLine, stdout);
     expected = "'" + NEWLINE;

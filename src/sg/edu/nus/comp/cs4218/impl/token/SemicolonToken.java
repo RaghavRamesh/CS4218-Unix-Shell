@@ -6,7 +6,6 @@ public class SemicolonToken extends AbstractToken {
 
 	protected SemicolonToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == ';');
 	}
 
 	@Override

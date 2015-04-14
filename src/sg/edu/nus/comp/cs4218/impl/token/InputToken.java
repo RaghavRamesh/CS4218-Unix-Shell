@@ -6,7 +6,6 @@ public class InputToken extends AbstractToken {
 
 	protected InputToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '<');
 	}
 
 	@Override

@@ -6,7 +6,6 @@ public class SpaceToken extends AbstractToken {
 
 	protected SpaceToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == ' ');
 	}
 
 	@Override

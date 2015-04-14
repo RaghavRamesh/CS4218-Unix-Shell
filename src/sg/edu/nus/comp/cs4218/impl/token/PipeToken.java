@@ -7,7 +7,6 @@ public class PipeToken extends AbstractToken {
 
 	protected PipeToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '|');
 	}
 
 	@Override

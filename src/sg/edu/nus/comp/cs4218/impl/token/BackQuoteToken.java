@@ -12,7 +12,6 @@ public class BackQuoteToken extends AbstractToken {
 
 	protected BackQuoteToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '`');
 	}
 
 	@Override
