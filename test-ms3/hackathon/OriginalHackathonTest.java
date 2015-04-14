@@ -1,4 +1,4 @@
-package test.hackathon;
+package hackathon;
 
 import static org.junit.Assert.*;
 
