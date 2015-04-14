@@ -12,10 +12,15 @@ public abstract class AbstractToken {
 	protected final int begin;
 	protected int end;
 
-	protected AbstractToken(String parent, int begin) {
+	public AbstractToken(String parent, int begin) {
 		this.parent = parent;
 		this.begin = begin;
 		this.end = begin;
+	}
+	
+	public AbstractToken(String parent, int begin, int end) {
+	  this(parent, begin);
+	  this.end = end;
 	}
 
 	public abstract Boolean appendNext();
@@ -54,14 +59,6 @@ public abstract class AbstractToken {
 			return TokenType.NORMAL;
 		}
 	}
-
-	// public String getParent() {
-	// return parent;
-	// }
-	//
-	// public int getBegin() {
-	// return begin;
-	// }
 
 	public int getEnd() {
 		return end;

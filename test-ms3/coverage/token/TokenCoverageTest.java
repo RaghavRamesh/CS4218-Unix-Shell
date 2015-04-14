@@ -7,10 +7,13 @@ import org.junit.Test;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken;
+import sg.edu.nus.comp.cs4218.impl.token.BackQuoteToken;
 import sg.edu.nus.comp.cs4218.impl.token.DoubleQuoteToken;
 import sg.edu.nus.comp.cs4218.impl.token.NormalToken;
 import sg.edu.nus.comp.cs4218.impl.token.PipeToken;
 import sg.edu.nus.comp.cs4218.impl.token.SemicolonToken;
+import sg.edu.nus.comp.cs4218.impl.token.SingleQuoteToken;
+import sg.edu.nus.comp.cs4218.impl.token.SpaceToken;
 import sg.edu.nus.comp.cs4218.impl.token.TokenFactory;
 
 public class TokenCoverageTest {
@@ -66,5 +69,82 @@ public class TokenCoverageTest {
       token.appendNext();
     }
     assertEquals("\"hi\"", token.value());
+  }
+
+  @Test(expected = ShellException.class)
+  public void testDoubleQuoteWrongFirstQuote() throws ShellException,
+      AbstractApplicationException {
+    DoubleQuoteToken token = new DoubleQuoteToken("'\"", 0, 1);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testDoubleQuoteOnlyOneCharacter() throws ShellException,
+      AbstractApplicationException {
+    DoubleQuoteToken token = new DoubleQuoteToken("\"", 0, 0);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testDoubleQuoteWrongSecondQuote() throws ShellException,
+      AbstractApplicationException {
+    DoubleQuoteToken token = new DoubleQuoteToken("\"'", 0, 1);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testSingleQuoteWrongFirstQuote() throws ShellException,
+      AbstractApplicationException {
+    SingleQuoteToken token = new SingleQuoteToken("`'", 0, 1);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testSingleQuoteOnlyOneCharacter() throws ShellException,
+      AbstractApplicationException {
+    SingleQuoteToken token = new SingleQuoteToken("'", 0, 0);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testSingleQuoteWrongSecondQuote() throws ShellException,
+      AbstractApplicationException {
+    SingleQuoteToken token = new SingleQuoteToken("'a", 0, 1);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testBackQuoteWrongFirstQuote() throws ShellException,
+      AbstractApplicationException {
+    BackQuoteToken token = new BackQuoteToken("b`", 0, 1);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testBackQuoteOnlyOneCharacter() throws ShellException,
+      AbstractApplicationException {
+    BackQuoteToken token = new BackQuoteToken("`", 0, 0);
+    token.checkValid();
+  }
+
+  @Test(expected = ShellException.class)
+  public void testBackQuoteWrongSecondQuote() throws ShellException,
+      AbstractApplicationException {
+    BackQuoteToken token = new BackQuoteToken("`'", 0, 1);
+    token.checkValid();
+  }
+
+  @Test
+  public void testSpaceTokenAppendNoMore() {
+    String str = " ";
+    SpaceToken token = new SpaceToken(str, 0);
+    assertEquals(false, token.appendNext());
+  }
+
+  @Test
+  public void testNormalTokenAppendNoMore() {
+    String str = "a";
+    NormalToken token = new NormalToken(str, 0);
+    assertEquals(false, token.appendNext());
   }
 }

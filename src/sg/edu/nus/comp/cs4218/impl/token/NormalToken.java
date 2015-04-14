@@ -5,7 +5,7 @@ import sg.edu.nus.comp.cs4218.impl.Parser;
 
 public class NormalToken extends AbstractToken {
 
-	protected NormalToken(String parent, int begin) {
+	public NormalToken(String parent, int begin) {
 		super(parent, begin);
 	}
 

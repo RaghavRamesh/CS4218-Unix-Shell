@@ -17,7 +17,12 @@ public class DoubleQuoteToken extends AbstractToken {
 		quoteStack.push(parent.charAt(begin));
 	}
 
-	@Override
+	public DoubleQuoteToken(String parent, int begin, int end) {
+	  super(parent, begin, end);
+	  quoteStack = new Stack<Character>();
+  }
+
+  @Override
 	public Boolean appendNext() {
 		if (end >= parent.length() - 1) {
 			return false;

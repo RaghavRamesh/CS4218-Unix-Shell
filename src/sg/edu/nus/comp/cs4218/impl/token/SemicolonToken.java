@@ -4,7 +4,7 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class SemicolonToken extends AbstractToken {
 
-	protected SemicolonToken(String parent, int begin) {
+	public SemicolonToken(String parent, int begin) {
 		super(parent, begin);
 	}
 
