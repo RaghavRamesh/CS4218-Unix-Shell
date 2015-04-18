@@ -4,9 +4,8 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class SpaceToken extends AbstractToken {
 
-	protected SpaceToken(String parent, int begin) {
+	public SpaceToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == ' ');
 	}
 
 	@Override

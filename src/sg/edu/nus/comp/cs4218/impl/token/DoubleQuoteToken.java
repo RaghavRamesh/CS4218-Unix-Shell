@@ -13,12 +13,16 @@ public class DoubleQuoteToken extends AbstractToken {
 
 	public DoubleQuoteToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '"');
 		quoteStack = new Stack<Character>();
 		quoteStack.push(parent.charAt(begin));
 	}
 
-	@Override
+	public DoubleQuoteToken(String parent, int begin, int end) {
+	  super(parent, begin, end);
+	  quoteStack = new Stack<Character>();
+  }
+
+  @Override
 	public Boolean appendNext() {
 		if (end >= parent.length() - 1) {
 			return false;
@@ -58,10 +62,15 @@ public class DoubleQuoteToken extends AbstractToken {
 
 		String content = parent.substring(begin + 1, end);
 		List<AbstractToken> tokens = Parser.tokenize(content);
-		String result = "";
+		String result = "\"";
 		for (AbstractToken token : tokens) {
-			result += chomp(token.value());
+		  if (token.getType() == TokenType.BACK_QUOTES) {
+		    result += chomp(token.value());
+		  } else {
+		    result += token.toString();
+		  }
 		}
+		result += "\"";
 		return result;
 	}
 

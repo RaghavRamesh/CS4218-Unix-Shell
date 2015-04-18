@@ -5,6 +5,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
+import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.token.AbstractToken.TokenType;
 
 public class DoubleQuoteTokenTest {
@@ -53,9 +55,19 @@ public class DoubleQuoteTokenTest {
 			token.appendNext();
 		}
 		try {
-			assertEquals(" abc ", token.value());
+			assertEquals("\" abc \"", token.value());
 		} catch (Exception e) {
 			fail(SHOULD_NOT_THROWN);
 		}
 	}
+	
+	 @Test(expected = ShellException.class)
+	 public void testValueInvalid() throws ShellException, AbstractApplicationException {
+	   String str = "\"a";
+	   DoubleQuoteToken token = (DoubleQuoteToken) TokenFactory.getToken(str, 0);
+	   for (int i = 0; i < 2; i++) {
+	     token.appendNext();
+	   }
+	   token.value();
+	 }
 }

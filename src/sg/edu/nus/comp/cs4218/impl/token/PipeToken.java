@@ -5,9 +5,8 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 
 public class PipeToken extends AbstractToken {
 
-	protected PipeToken(String parent, int begin) {
+	public PipeToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '|');
 	}
 
 	@Override

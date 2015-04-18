@@ -6,7 +6,6 @@ public class OutputToken extends AbstractToken {
 
 	public OutputToken(String parent, int begin) {
 		super(parent, begin);
-		assert (parent.charAt(begin) == '>');
 	}
 
 	@Override
