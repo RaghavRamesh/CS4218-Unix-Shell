@@ -77,10 +77,11 @@ public class DoubleQuoteToken extends AbstractToken {
 	// Remove newline characters at the end of the string
 	public static String chomp(String input) {
 		int lastIndex = input.length() - 1;
-		while (lastIndex >= 0) {
-			Character lastChar = input.charAt(lastIndex);
-			if (String.valueOf(lastChar).equals(System.lineSeparator())) {
-				lastIndex--;
+		int newlineLength = System.lineSeparator().length();
+		while (lastIndex >= newlineLength - 1) {
+			String last = input.substring(lastIndex - newlineLength + 1, lastIndex + 1); 
+			if (last.equals(System.lineSeparator())) {
+				lastIndex -= newlineLength;
 			} else {
 				break;
 			}
