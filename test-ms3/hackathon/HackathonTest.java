@@ -2,6 +2,7 @@ package hackathon;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -14,6 +15,7 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImplementation;
+import sg.edu.nus.comp.cs4218.impl.app.SedApp;
 
 public class HackathonTest {
   private static ByteArrayOutputStream stdout;
@@ -67,4 +69,20 @@ public class HackathonTest {
     expected = "'" + NEWLINE;
     assertEquals(expected, stdout.toString());
   }
+  
+	/**
+	 * The bug is due to Sed app not ignoring the double quotes
+	 */
+	@Test
+	public void testSedOneWithQuote() throws AbstractApplicationException, ShellException{
+		SedApp cmdApp = new SedApp();
+		String replacement = "s"+ SLASH + "\"Clams\"" + SLASH + "X"+ SLASH;
+		String testString = "Clams here Clams second"+ NEWLINE + "Clams there" + NEWLINE;
+		String expected = "X here Clams second"+ NEWLINE + "X there" + NEWLINE;
+		String[] args = new String[] { replacement };
+		ByteArrayInputStream stdin = new ByteArrayInputStream(testString.getBytes());
+		stdout = new ByteArrayOutputStream();
+		cmdApp.run(args, stdin, stdout);
+		assertEquals(expected, stdout.toString());
+	}
 }
