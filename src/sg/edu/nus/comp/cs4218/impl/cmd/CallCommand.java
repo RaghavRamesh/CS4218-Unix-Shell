@@ -39,16 +39,16 @@ public class CallCommand implements Command {
 
 	public CallCommand(String cmdLine) throws ShellException,
 			AbstractApplicationException {
-	  try {
-	    this.closeOutput = false;
-	    this.commandLine = cmdLine;
-	    this.substitutedCommand = substituteBackquotes(cmdLine);
-      this.substitutedTokens = splitArguments(substitutedCommand);
-      this.inputPath = findInput(substitutedTokens);
-      this.outputPath = findOutput(substitutedTokens);
-    } catch (IOException e) {
-      throw new ShellException(e);
-    }
+		try {
+			this.closeOutput = false;
+			this.commandLine = cmdLine;
+			this.substitutedCommand = substituteBackquotes(cmdLine);
+			this.substitutedTokens = splitArguments(substitutedCommand);
+			this.inputPath = findInput(substitutedTokens);
+			this.outputPath = findOutput(substitutedTokens);
+		} catch (IOException e) {
+			throw new ShellException(e);
+		}
 	}
 
 	@Override
@@ -85,42 +85,44 @@ public class CallCommand implements Command {
 			terminate();
 		}
 	}
-	
-	 /**
-	  * Substitute each back quote token with the corresponding result from command
-	  * substitution if necessary.
-	  * 
-	  * @param cmdLine
-	  *            original command line
-	  * @return command line after command substitution.
-	  */
-	public static String substituteBackquotes(String cmdLine) throws ShellException, AbstractApplicationException {
-    List<AbstractToken> tokens = Parser.tokenize(cmdLine);
-    for (AbstractToken token : tokens) {
-      token.checkValid();
-    }
-    String result = "";
-    for (AbstractToken token : tokens) {
-      TokenType type = token.getType();
-      String val = token.value();
-      if (type == TokenType.BACK_QUOTES) {
-        // Split the strings inside into multiple args
-        List<String> strList = normalize(val);
-        if (!strList.isEmpty()) {
-          result += strList.get(0);
-          for (int i = 1; i < strList.size(); i++) {
-            result += " " + strList.get(i);
-          }
-        }
-      } else {
-        result += val;
-      }
-    }
-    return result;
+
+	/**
+	 * Substitute each back quote token with the corresponding result from
+	 * command substitution if necessary.
+	 * 
+	 * @param cmdLine
+	 *            original command line
+	 * @return command line after command substitution.
+	 */
+	public static String substituteBackquotes(String cmdLine)
+			throws ShellException, AbstractApplicationException {
+		List<AbstractToken> tokens = Parser.tokenize(cmdLine);
+		for (AbstractToken token : tokens) {
+			token.checkValid();
+		}
+		String result = "";
+		for (AbstractToken token : tokens) {
+			TokenType type = token.getType();
+			String val = token.value();
+			if (type == TokenType.BACK_QUOTES) {
+				// Split the strings inside into multiple args
+				List<String> strList = normalize(val);
+				if (!strList.isEmpty()) {
+					result += strList.get(0);
+					for (int i = 1; i < strList.size(); i++) {
+						result += " " + strList.get(i);
+					}
+				}
+			} else {
+				result += val;
+			}
+		}
+		return result;
 	}
 
 	/**
-	 * Split the command line into arguments/tokens. Also remove quotes from quote tokens.
+	 * Split the command line into arguments/tokens. Also remove quotes from
+	 * quote tokens.
 	 * 
 	 * @param input
 	 *            the command line after command substitution
@@ -128,10 +130,10 @@ public class CallCommand implements Command {
 	 */
 	public static List<String> splitArguments(String input)
 			throws AbstractApplicationException, ShellException, IOException {
-	  List<AbstractToken> tokens = Parser.tokenize(input);
-	  for (AbstractToken token : tokens) {
-	    token.checkValid();
-	  }
+		List<AbstractToken> tokens = Parser.tokenize(input);
+		for (AbstractToken token : tokens) {
+			token.checkValid();
+		}
 		String current = null;
 		List<String> list = new ArrayList<String>();
 		for (AbstractToken token : tokens) {
@@ -145,19 +147,22 @@ public class CallCommand implements Command {
 				current = null;
 				list.add(val);
 			} else {
-			  if (type == TokenType.SINGLE_QUOTES || type == TokenType.DOUBLE_QUOTES) {
-			    val = val.substring(1, val.length() - 1);
-			  }
+				if (type == TokenType.SINGLE_QUOTES
+						|| type == TokenType.DOUBLE_QUOTES) {
+					val = val.substring(1, val.length() - 1);
+				}
 				current = current == null ? val : current + val;
 			}
 		}
 		addNonNull(list, current);
 		return list;
 	}
-	
+
 	/**
 	 * Takes a string input and trims the string
-	 * @param String to trim
+	 * 
+	 * @param String
+	 *            to trim
 	 * @return List of split strings
 	 */
 	private static List<String> normalize(String input) {
@@ -167,8 +172,11 @@ public class CallCommand implements Command {
 
 	/**
 	 * Adds non null string to list
-	 * @param list of strings
-	 * @param non null str
+	 * 
+	 * @param list
+	 *            of strings
+	 * @param non
+	 *            null str
 	 */
 	private static void addNonNull(List<String> list, String str) {
 		if (str != null) {
@@ -231,10 +239,13 @@ public class CallCommand implements Command {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Performs globbing by substituting the value of * with corresponding values
-	 * @param tokens that may contain *
+	 * Performs globbing by substituting the value of * with corresponding
+	 * values
+	 * 
+	 * @param tokens
+	 *            that may contain *
 	 * @return * substituted tokens
 	 * @throws ShellException
 	 * @throws IOException

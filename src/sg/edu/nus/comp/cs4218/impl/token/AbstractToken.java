@@ -17,10 +17,10 @@ public abstract class AbstractToken {
 		this.begin = begin;
 		this.end = begin;
 	}
-	
+
 	public AbstractToken(String parent, int begin, int end) {
-	  this(parent, begin);
-	  this.end = end;
+		this(parent, begin);
+		this.end = end;
 	}
 
 	public abstract Boolean appendNext();
