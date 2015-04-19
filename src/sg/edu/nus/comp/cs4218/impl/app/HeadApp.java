@@ -74,6 +74,9 @@ public class HeadApp implements Application {
 			if (args[0].equals("-n")) {
 				try {
 					numOfLines = Integer.parseInt(args[1]);
+					/*
+					 * Fix for Bug testHeadNoFileName
+					 */
 					if (args.length == 2) {
 						if (stdin == null) {
 							throw new HeadException(Consts.Messages.IN_STR_NOT_NULL);

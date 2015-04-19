@@ -76,7 +76,9 @@ public class HackathonTest {
 	}
 
 	/**
-	 * The bug is due to Sed app not ignoring the double quotes
+	 * The bug is due to Sed app not ignoring the double quotes in the method run.
+	 * 
+	 * Fixed by replacing all double quotes in regular expression to empty string in SedApp class ( lines 55 - 58)
 	 */
 	@Test
 	public void testSedOneWithQuote() throws AbstractApplicationException, ShellException {
@@ -92,7 +94,9 @@ public class HackathonTest {
 	}
 
 	/**
-	 * Testing a bug introduced due to changed internal requirements in the incoming arguments for HeadApp
+	 * Testing a bug introduced due to absence of exception handling for missing file name argument
+	 * 
+	 * Fixed by adding the exception handling for file name argument in HeadApp (line 77 -92)
 	 */
 	@Test(expected = HeadException.class)
 	public void testHeadNoFileName() throws AbstractApplicationException, ShellException {
@@ -101,7 +105,9 @@ public class HackathonTest {
 	}
 
 	/**
-	 * Testing a bug introduced due to changed internal requirements in the incoming arguments for TailApp
+	 * Testing a bug introduced due to absence of exception handling for missing file name argument
+	 * 
+	 * Fixed by adding the exception handling for file name argument in TailApp (line 80-87)
 	 */
 	@Test(expected = TailException.class)
 	public void testTailNoFileName() throws AbstractApplicationException, ShellException {

@@ -77,6 +77,9 @@ public class TailApp implements Application {
 			if (args[0].equals("-n")) {
 				try {
 					numOfLines = Integer.parseInt(args[1]);
+					/*
+					 * Fix for hackathlon test testTailNoFileName
+					 */
 					if (args.length == 2) {
 						if (stdin == null) {
 							throw new TailException(Consts.Messages.IN_STR_NOT_NULL);
